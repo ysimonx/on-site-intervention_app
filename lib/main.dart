@@ -1,7 +1,7 @@
 // ignore_for_file: unused_import
 
-import 'package:app_renovadmin/ui/homepage.dart';
-import 'package:app_renovadmin/ui/login.dart';
+import 'ui/homepage.dart';
+import 'ui/login.dart';
 import 'package:flutter/material.dart';
 
 void main() {

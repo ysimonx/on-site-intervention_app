@@ -5,8 +5,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:app_renovadmin/files/formulaire_json_file.dart';
-import 'package:app_renovadmin/network/api/constants.dart';
+import '../../files/formulaire_json_file.dart';
+import '../../network/api/constants.dart';
 import 'package:dio/dio.dart';
 
 import '../dio_client.dart';

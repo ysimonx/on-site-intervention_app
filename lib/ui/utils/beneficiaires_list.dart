@@ -3,8 +3,8 @@
 import 'dart:io';
 import 'dart:convert';
 
-import 'package:app_renovadmin/models/models.dart';
-import 'package:app_renovadmin/files/beneficiaire_json_file.dart';
+import '../../models/models.dart';
+import '../../files/beneficiaire_json_file.dart';
 import 'package:geolocator/geolocator.dart';
 
 class BeneficiairesList {

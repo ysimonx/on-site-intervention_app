@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print, unnecessary_brace_in_string_interps
 
 import 'dart:convert';
-import 'package:app_renovadmin/models/models.dart';
+import '../../models/models.dart';
 import 'package:geolocator/geolocator.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider/path_provider.dart';

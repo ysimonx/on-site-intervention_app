@@ -3,15 +3,15 @@
 import 'dart:async';
 
 import 'package:airplane_mode_checker/airplane_mode_checker.dart';
-import 'package:app_renovadmin/network/api/login_api.dart';
-import 'package:app_renovadmin/network/dio_client.dart';
-import 'package:app_renovadmin/ui/beneficiaires.dart';
-import 'package:app_renovadmin/ui/utils/permission_location.dart';
+import '../network/api/login_api.dart';
+import '../network/dio_client.dart';
+import 'beneficiaires.dart';
+import 'utils/permission_location.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:app_renovadmin/ui/widget/app_bar.dart';
+import 'widget/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';

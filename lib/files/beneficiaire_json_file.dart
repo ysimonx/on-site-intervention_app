@@ -49,8 +49,8 @@
 
 import 'dart:io';
 import 'dart:convert';
-import 'package:app_renovadmin/models/models.dart';
-import 'package:app_renovadmin/files/formulaire_json_file.dart';
+import '../models/models.dart';
+import '../files/formulaire_json_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 const String localSubDirectoryFormulaires = 'formulaires';

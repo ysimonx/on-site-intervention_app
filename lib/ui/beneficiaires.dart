@@ -2,22 +2,22 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'package:app_renovadmin/network/api/geste_api.dart';
-import 'package:app_renovadmin/files/formulaire_json_file.dart';
-import 'package:app_renovadmin/files/beneficiaire_json_file.dart';
+import '../network/api/geste_api.dart';
+import '../files/formulaire_json_file.dart';
+import '../files/beneficiaire_json_file.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:map_launcher/map_launcher.dart';
 
-import 'package:app_renovadmin/network/api/image_api.dart';
-import 'package:app_renovadmin/network/dio_client.dart';
-import 'package:app_renovadmin/ui/formulaire.dart';
-import 'package:app_renovadmin/ui/widget/app_bar.dart';
-import 'package:app_renovadmin/models/models.dart';
-import 'package:app_renovadmin/ui/widget/beneficiaires/beneficiaires_item.dart';
-import 'package:app_renovadmin/ui/utils/beneficiaires_list.dart';
+import '../network/api/image_api.dart';
+import '../network/dio_client.dart';
+import '../ui/formulaire.dart';
+import '../ui/widget/app_bar.dart';
+import '../models/models.dart';
+import './widget/beneficiaires/beneficiaires_item.dart';
+import './utils/beneficiaires_list.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 

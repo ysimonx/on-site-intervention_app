@@ -1,9 +1,9 @@
 // ignore_for_file: unused_import
 
-import 'package:app_renovadmin/models/models.dart';
-import 'package:app_renovadmin/network/api/image_api.dart';
-import 'package:app_renovadmin/ui/login.dart';
-import 'package:app_renovadmin/ui/widget/app_bar.dart';
+import '../models/models.dart';
+import '../network/api/image_api.dart';
+import '../ui/login.dart';
+import '../ui/widget/app_bar.dart';
 import 'package:camera/camera.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';

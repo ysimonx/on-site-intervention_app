@@ -2,8 +2,8 @@
 
 import 'dart:convert';
 
-import 'package:app_renovadmin/files/formulaire_json_file.dart';
-import 'package:app_renovadmin/files/beneficiaire_json_file.dart';
+import '../files/formulaire_json_file.dart';
+import '../files/beneficiaire_json_file.dart';
 
 import 'package:uuid/uuid.dart';
 

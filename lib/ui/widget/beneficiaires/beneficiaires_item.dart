@@ -2,9 +2,9 @@
 
 import 'dart:convert';
 
-import 'package:app_renovadmin/models/models.dart';
-import 'package:app_renovadmin/ui/formulaire.dart';
-import 'package:app_renovadmin/files/formulaire_json_file.dart';
+import '../../../models/models.dart';
+import '../../formulaire.dart';
+import '../../../files/formulaire_json_file.dart';
 
 import 'package:flutter/material.dart';
 

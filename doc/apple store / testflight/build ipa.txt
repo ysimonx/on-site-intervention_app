@@ -1,0 +1,34 @@
+ysimonx@MacBook-Pro-de-Yannick app_renovadmin % flutter build ipa
+
+et ensuite -> https://appstoreconnect.apple.com/apps/6450047026/testflight/ios
+
+...
+Archiving com.example.appRenovadmin...
+Automatically signing iOS for device deployment using specified development team in Xcode project: 9SGKL7VUD3
+Running Xcode build...                                                  
+ └─Compiling, linking and signing...                        26,2s
+Xcode archive done.                                         56,5s
+Built /Users/ysimonx/Developpement/app_renovadmin/build/ios/archive/Runner.xcarchive.
+
+[!] App Settings Validation
+    • Version Number: 1.0.0
+    • Build Number: 1
+    • Display Name: App Renovadmin
+    • Deployment Target: 11.0
+    • Bundle Identifier: com.example.appRenovadmin
+    ! Your application still contains the default "com.example" bundle identifier.
+
+[!] App Icon and Launch Image Assets Validation
+    ! App icon is set to the default placeholder icon. Replace with unique icons.
+    ! Launch image is set to the default placeholder icon. Replace with unique launch image.
+
+To update the settings, please refer to https://docs.flutter.dev/deployment/ios
+
+Building App Store IPA...                                          41,1s
+Built IPA to /Users/ysimonx/Developpement/app_renovadmin/build/ios/ipa.
+To upload to the App Store either:
+   ==> celle que j'ai choisie 
+    1. Drag and drop the "build/ios/ipa/*.ipa" bundle into the Apple Transporter macOS app https://apps.apple.com/us/app/transporter/id1450874784
+    2. Run "xcrun altool --upload-app --type ios -f build/ios/ipa/*.ipa --apiKey your_api_key --apiIssuer your_issuer_id".
+       See "man altool" for details about how to authenticate with the App Store Connect API key.
+

@@ -1,0 +1,10 @@
+ITMS-90078: Missing Push Notification Entitlement - Your app appears to register with the Apple Push Notification service, but the app signature's entitlements do not include the 'aps-environment' entitlement. If your app uses the Apple Push Notification service, make sure your App ID is enabled for Push Notification in the Provisioning Portal, and resubmit after signing your app with a Distribution provisioning profile that includes the 'aps-environment' entitlement. Xcode does not automatically copy the aps-environment entitlement from provisioning profiles at build time. This behavior is intentional. To use this entitlement, either enable Push Notifications in the project editor's Capabilities pane, or manually add the entitlement to your entitlements file. For more information, see https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/HandlingRemoteNotifications.html#//apple_ref/doc/uid/TP40008194-CH6-SW1.
+
+After you’ve corrected the issues, you can upload a new binary to App Store Connect.
+
+Best regards,
+
+The App Store Team
+
+
+reponse : https://www.ernestchiang.com/en/posts/2020/flutter-itms-90078-missing-push-notification-entitlement/

@@ -1,0 +1,606 @@
+<html>
+    <head>
+    <style>
+
+        *,
+        *::before,
+        *::after {
+        box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Figtree", sans-serif;
+            font-size: 0.9rem;
+            line-height: 1.2rem;
+        }
+        figure {
+            margin: 0;
+            padding: 0;
+
+            width: 300px;
+            height: 300px;
+        }
+
+        .articles {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            # max-width: 1200px;
+            margin-inline: auto;
+            padding-inline: 24px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .article-wrapper {
+            display: flex;
+            flex-direction: row;
+            background-color: #CCC;
+        }
+        article {
+            width: 800px;
+            height: 300px;
+            --img-scale: 1.001;
+            --title-color: black;
+            --link-icon-translate: -20px;
+            --link-icon-opacity: 0;
+            position: relative;
+            border-radius: 16px;
+            box-shadow: none;
+            background: #fff;
+            transform-origin: center;
+            transition: all 0.4s ease-in-out;
+            overflow: hidden;
+        }
+
+
+/* basic article elements styling */
+article h2 {
+  margin: 0 0 3px 0;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  color: var(--title-color);
+  transition: color 0.3s ease-out;
+}
+article h3 {
+  margin: 0 0 2px 0;
+  font-size: 1.0rem;
+  letter-spacing: 0.02em;
+  color: var(--title-color);
+  transition: color 0.3s ease-out;
+}
+
+.article-body {
+  padding: 10px;
+}
+
+
+article a::after {
+  position: absolute;
+  inset-block: 0;
+  inset-inline: 0;
+  cursor: pointer;
+  content: "";
+}
+
+article a .icon {
+  min-width: 24px;
+  width: 24px;
+  height: 24px;
+  margin-left: 5px;
+  transform: translateX(var(--link-icon-translate));
+  opacity: var(--link-icon-opacity);
+  transition: all 0.3s;
+}
+
+img {
+    width: inherit;
+    height: inherit;
+    object-fit: cover;
+}
+
+
+.sr-only:not(:focus):not(:active) {
+  clip: rect(0 0 0 0); 
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap; 
+  width: 1px;
+}
+    </style>
+
+    </head>
+    <body>
+        <div id="main">
+            <div id="timeline">
+                <section class="articles">
+                    
+                
+                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Façade de la maison</h2>
+                                <h3>Entrepose/Cyril Laroque</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Vue d'ensemble unité intérieure</h2>
+                                <h3>BCI/Franck Annamayer</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Vanne d'équilibrage</h2>
+                                <h3>BCI/Jean-Laurent Schaub</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Vue d'ensemble unité extérieure</h2>
+                                <h3>Entrepose/Jean-Laurent Schaub</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Façade de la maison</h2>
+                                <h3>Entrepose/Franck Annamayer</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Vue d'ensemble unité intérieure</h2>
+                                <h3>BCI/Jean-Laurent Schaub</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Façade de la maison</h2>
+                                <h3>Plombier arnold/Cyril Laroque</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Ajout de photos</h2>
+                                <h3>BCI/Jean-Laurent Schaub</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Plaque signalétique unité extérieure</h2>
+                                <h3>BCI/Cyril Laroque</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Vue d'ensemble unité intérieure</h2>
+                                <h3>Plombier arnold/Franck Annamayer</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Radiateur</h2>
+                                <h3>BCI/Jean-Laurent Schaub</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Fixation unité intérieure</h2>
+                                <h3>Plombier arnold/Franck Annamayer</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Calorifuge circuit frigorigene</h2>
+                                <h3>Plombier arnold/Jean-Laurent Schaub</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Fixation unité intérieure</h2>
+                                <h3>Entrepose/Franck Annamayer</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Calorifuge circuit frigorigene</h2>
+                                <h3>Plombier arnold/Jean-Laurent Schaub</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Façade de la maison</h2>
+                                <h3>Plombier arnold/Franck Annamayer</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Plaque signalétique unité extérieure</h2>
+                                <h3>Plombier arnold/Franck Annamayer</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Calorifuge circuit frigorigene</h2>
+                                <h3>BCI/Franck Annamayer</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Plaque signalétique unité extérieure</h2>
+                                <h3>Plombier arnold/Jean-Laurent Schaub</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                    <article>  
+                        <div class="article-wrapper">  
+                            <figure>
+                                <img src="https://picsum.photos/id/1011/800/450"/>
+                            </figure>
+                            <div class="article-body">
+                                <div>29/12/2009 03:01:21</div>
+                                <h2>Vue d'ensemble unité intérieure</h2>
+                                <h3>BCI/Jean-Laurent Schaub</h3>
+
+                                <h3><a href="geste.html">Installation Pompe à chaleur</a></h3>
+                                <p><b>Commentaire</b>:<i>bla bla bla </i></p>
+                                <p>
+                                ref cadastrale : BX451 / Longitude: 43.4452019 / Latitude: 5.6311607<br />
+                                    Attendu photo : Numero de plaque signaletique<br />
+                                    Attendu bénéficiaire : Carte identité
+                                    <br />
+                                </p>
+                               <select><option>à valider</option><option>à refaire</option><option>accepté</option></select>
+                                
+                            </div>
+                        </div>
+                    </article>
+                   
+                                 </articles>
+                </section>
+            </div>
+        </div>
+    </body>
+</html>

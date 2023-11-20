@@ -1,0 +1,130 @@
+{
+	"id": "d0019d91-0c5e-11ee-a084-475da635ad19",
+	"name": "Avant dépose",
+	"geste": {
+		"id": "d0019d90-0c5e-11ee-a084-475da635ad19",
+		"name": "Pompe à Chaleur Air/Eau"
+	},
+	"beneficiaire": {
+		"id": "d0014f70-0c5e-11ee-a084-475da635ad19",
+		"name": "Cristiano Ronaldo"
+	},
+	"average_location": {
+		"longitude": 5.6739098,
+		"latitude": 43.44477079999999
+	},
+	"fields": [{
+		"id": "d001ebb0-0c5e-11ee-a084-475da635ad19",
+		"name": "piece-identite",
+		"commentaire": "",
+		"noPhoto": false,
+		"instructions": {
+			"type": "photo",
+			"label": "Pièce d’identité du bénéficiaire face recto",
+			"instruction": "Pièce d’identité du bénéficiaire face recto",
+			"item_requirements": ["Prénom", "nom"],
+			"exemple": "assets/images_guides/piece-identite.png"
+		},
+		"photos": [{
+			"id": "52cbb560-0c6b-11ee-a9da-e7884b0f9e3c",
+			"path": "/data/user/0/com.renovadmin.app_renovadmin/cache/CAP4206054464034674153.jpg",
+			"status": "Pending",
+			"location": {
+				"longitude": 5.673905,
+				"latitude": 43.4447679
+			}
+		}, {
+			"id": "4e5e7030-0c6b-11ee-a9da-e7884b0f9e3c",
+			"path": "/data/user/0/com.renovadmin.app_renovadmin/cache/CAP6886539362438972327.jpg",
+			"status": "Pending",
+			"location": {
+				"longitude": 5.673906,
+				"latitude": 43.4447706
+			}
+		}]
+	}, {
+		"id": "d00239d0-0c5e-11ee-a084-475da635ad19",
+		"name": "ancienne-chaudiere",
+		"commentaire": "",
+		"noPhoto": false,
+		"instructions": {
+			"type": "photo",
+			"label": "Ancienne chaudière avant dépose",
+			"instruction": "Ancienne chaudière avant dépose",
+			"item_requirements": ["Chaudière posée"],
+			"exemple": "assets/images_guides/ancienne-chaudiere.png"
+		},
+		"photos": [{
+			"id": "f2de85c0-0c5f-11ee-8ac5-8d4d09e74f39",
+			"path": "/data/user/0/com.renovadmin.app_renovadmin/cache/CAP7600502462715064849.jpg",
+			"status": "Pending",
+			"location": {
+				"longitude": 5.6739111,
+				"latitude": 43.4447713
+			}
+		}]
+	}, {
+		"id": "d00239d1-0c5e-11ee-a084-475da635ad19",
+		"name": "plaque-signaletique-ancienne-chaudiere",
+		"commentaire": "",
+		"noPhoto": false,
+		"instructions": {
+			"type": "photo",
+			"label": "Plaque signalétique de l’ancienne chaudière",
+			"instruction": "Plaque signalétique de l’ancienne chaudière",
+			"item_requirements": ["Marque de la chaudière", "Référence"],
+			"exemple": "assets/images_guides/plaque-signaletique-ancienne-chaudiere.png"
+		},
+		"photos": [{
+			"id": "f5048820-0c61-11ee-8b8a-27e16d572214",
+			"path": "/data/user/0/com.renovadmin.app_renovadmin/cache/CAP2938117222262580419.jpg",
+			"status": "Pending",
+			"location": {
+				"longitude": 5.6739142,
+				"latitude": 43.4447744
+			}
+		}]
+	}, {
+		"id": "d00239d2-0c5e-11ee-a084-475da635ad19",
+		"name": "futur-emplacement-unite-exterieure",
+		"commentaire": "",
+		"noPhoto": false,
+		"instructions": {
+			"type": "photo",
+			"label": "Emplacement unité extérieure",
+			"instruction": "Emplacement unité extérieure",
+			"item_requirements": ["Espace libre", "Les murs alentours", "Les fenêtres et portes alentours", "La nature du sol si la PAC est posée au sol", "L’espace au mur si la PAC est fixée au mur"],
+			"exemple": "assets/icons/renovadmin1024x1024.png"
+		},
+		"photos": [{
+			"id": "2b59ae50-0c62-11ee-808f-632c5951432e",
+			"path": "/data/user/0/com.renovadmin.app_renovadmin/cache/CAP7815774979928615900.jpg",
+			"status": "Pending",
+			"location": {
+				"longitude": 5.6739136,
+				"latitude": 43.444772
+			}
+		}]
+	}, {
+		"id": "d00239d3-0c5e-11ee-a084-475da635ad19",
+		"name": "ajout-de-photo",
+		"commentaire": "",
+		"noPhoto": false,
+		"instructions": {
+			"type": "photo",
+			"label": "Toutes photos complémentaires jugées nécessaires",
+			"instruction": "Toutes photos complémentaires jugées nécessaires",
+			"item_requirements": [""],
+			"exemple": "assets/icons/renovadmin1024x1024.png"
+		},
+		"photos": [{
+			"id": "794624c0-0c6e-11ee-a844-756c41bc639d",
+			"path": "/data/user/0/com.renovadmin.app_renovadmin/cache/CAP3021424049012294853.jpg",
+			"status": "Pending",
+			"location": {
+				"longitude": 5.6739089,
+				"latitude": 43.4447686
+			}
+		}]
+	}]
+}

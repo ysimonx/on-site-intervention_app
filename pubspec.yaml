@@ -49,6 +49,7 @@ dependencies:
   map_launcher: ^2.5.0+1
   flutter_secure_storage: ^8.0.0
   intl: ^0.18.1
+  gap: ^3.0.1
 
 dev_dependencies:
   flutter_test:

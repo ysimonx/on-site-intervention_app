@@ -6,8 +6,6 @@ import 'api/constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-// cf https://www.dev-influence.com/article/refresh-jwt-token-interceptor-in-flutter
-
 class DioClient {
   // dio instance
   final Dio _dio;

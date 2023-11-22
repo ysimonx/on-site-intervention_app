@@ -2,7 +2,7 @@ class Endpoints {
   Endpoints._();
 
   // base url
-  static const String baseUrl = "http://192.168.85.124:4999";
+  static const String baseUrl = "https://api.on-site-intervention.com";
 
   // receiveTimeout
   static const Duration receiveTimeout = Duration(seconds: 15000);

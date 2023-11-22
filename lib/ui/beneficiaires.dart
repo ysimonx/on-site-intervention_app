@@ -77,6 +77,7 @@ class _BeneficiairesPageState extends State<BeneficiairesPage> {
     myLocation = null;
 
     processingImageUpload = false;
+    /*
     timerProcessUploadPending =
         Timer.periodic(const Duration(seconds: 10), (timer) async {
       if (processingImageUpload) {
@@ -88,6 +89,7 @@ class _BeneficiairesPageState extends State<BeneficiairesPage> {
       await imageApi.processUploadPendingImages();
       processingImageUpload = false;
     });
+    
 
     Future.delayed(const Duration(seconds: 2), () async {
       await processBackOfficeFeedback();
@@ -101,7 +103,7 @@ class _BeneficiairesPageState extends State<BeneficiairesPage> {
       myLocation = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
     });
-
+    */
     super.initState();
   }
 
@@ -135,8 +137,8 @@ class _BeneficiairesPageState extends State<BeneficiairesPage> {
   @override
   void dispose() {
     print("processUploadPendingImages dispose timer");
-    timerProcessUploadPending.cancel();
-    timerProcessDownloadBackOfficeFeedback.cancel();
+    //timerProcessUploadPending.cancel();
+    //timerProcessDownloadBackOfficeFeedback.cancel();
 
     super.dispose();
   }

@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_brace_in_string_interps, avoid_print, unnecessary_import
+// ignore_for_file: unnecessary_brace_in_string_interps, avoid_print, unnecessary_import, unused_import
 
 import 'dart:async';
 
@@ -8,9 +8,7 @@ import 'beneficiaires.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/scheduler.dart';
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'widget/app_bar.dart';
-import './utils/colors.dart';
 import './utils/context.dart';
 
 import 'package:flutter/material.dart';
@@ -26,10 +24,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late DioClient dioClient;
-
-  int _dummy = 0;
-
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -71,11 +65,6 @@ class _LoginPageState extends State<LoginPage> {
             context.showErrorSnackBar("Echec d'authentification $e");
             return;
           }
-          if (!mounted) return;
-
-          setState(() {
-            _dummy++;
-          });
         },
         color: Theme.of(context).colorScheme.inversePrimary,
         textColor: Colors.white,
@@ -105,7 +94,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    dioClient = DioClient(Dio());
   }
 
   Future<dynamic> isAlreadyLoggedInAndGeolocAuthorized(int dummy) async {
@@ -120,8 +108,7 @@ class _LoginPageState extends State<LoginPage> {
             preferredSize: const Size.fromHeight(100),
             child: BaseAppBar(widget.title)),
         body: FutureBuilder(
-            future: isAlreadyLoggedInAndGeolocAuthorized(
-                _dummy), // il suffit de changer la valeur _dummy pour rafraichir cette liste :)
+            future: LoginApi.hasAnAccessToken(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data == true) {

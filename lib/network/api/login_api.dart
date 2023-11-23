@@ -66,10 +66,9 @@ class LoginApi {
     }
   }
 
-  static Future<void> deleteTokens() async {
-    const storage = FlutterSecureStorage();
-    await storage.delete(key: LoginApi.keyAccessToken);
-    await storage.delete(key: LoginApi.keyRefreshToken);
+  Future<void> deleteTokens() async {
+    await _storage.delete(key: LoginApi.keyAccessToken);
+    await _storage.delete(key: LoginApi.keyRefreshToken);
     return;
   }
 }

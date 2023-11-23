@@ -28,12 +28,11 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController passwordController = TextEditingController();
 
   bool alreadyStartBeneficiairePage = false;
+  LoginApi loginApi = LoginApi();
 
   Widget submit() {
     return MaterialButton(
         onPressed: () async {
-          final LoginApi loginApi = LoginApi();
-
           String email = "";
 
           email = emailController.text.trim();
@@ -57,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
               context.showErrorSnackBar("Echec d'authentification");
               return;
             }
+
             setState(() {});
           } catch (e) {
             if (!context.mounted) {
@@ -96,11 +96,6 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
-  Future<dynamic> isAlreadyLoggedInAndGeolocAuthorized(int dummy) async {
-    bool isAlreadLoggedIn = await LoginApi.hasAnAccessToken();
-    return isAlreadLoggedIn;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
             preferredSize: const Size.fromHeight(100),
             child: BaseAppBar(widget.title)),
         body: FutureBuilder(
-            future: LoginApi.hasAnAccessToken(),
+            future: loginApi.hasAnAccessToken(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data == true) {

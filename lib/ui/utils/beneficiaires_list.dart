@@ -4,30 +4,19 @@ import 'dart:io';
 import 'dart:convert';
 
 import '../../models/models.dart';
-import '../../files/beneficiaire_json_file.dart';
-import 'package:geolocator/geolocator.dart';
 
 class BeneficiairesList {
   Future<List<Map<String, dynamic>>>
-      buildListOfBeneficiairesFromSavedFormulaires(
-          int dummy, Position? myLocation) async {
+      buildListOfBeneficiairesFromSavedFormulaires(int dummy) async {
     //
     // pour trier la liste par distance croissante par rapport à ma position
     //
     // je recupere la geoloc actuelle
     //
     //
-    if (myLocation != null) {
-    } else {
-      myLocation = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-    }
-
-    print(myLocation.toString());
 
     // listing de tous les Bénéficiaires
-    List<FileSystemEntity> files =
-        await BeneficiaireJSONFile.getJSONFilesList();
+    List<FileSystemEntity> files = [];
 
     // Pour chaque Bénéficiaire stocké en json dans /beneficiares/....json
     // je vais chercher les informations nécessaires et suffisantes pour afficher la liste dans beneficiaires*.dart
@@ -41,8 +30,8 @@ class BeneficiairesList {
       print(json.toString());
 
       // Calcul d'une variable appelée distance, mais qui est une formule approximative simple pour trier par ordre croissant ()
-      double distance =
-          calcDistanceBetween(myLocation, json["average_location"]);
+      double distance = 0.0;
+
       print(distance);
 
       Map<String, dynamic> b = Beneficiaire.fromJSON(json);
@@ -59,15 +48,5 @@ class BeneficiairesList {
 
     print(resultListBeneficiaires.length);
     return resultListBeneficiaires;
-  }
-
-  double calcDistanceBetween(Position myPosition, jsonPosition) {
-    if (jsonPosition["longitude"] == 0.0 || jsonPosition["latitude"] == 0.0) {
-      return 0.0;
-    }
-    double dlng = myPosition.longitude - jsonPosition["longitude"];
-    double dlat = myPosition.latitude - jsonPosition["latitude"];
-    double result = dlng * dlng + dlat * dlat;
-    return result;
   }
 }

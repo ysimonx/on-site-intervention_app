@@ -12,29 +12,22 @@ class LoginApi {
   static const String keyAccessToken = "accessToken";
   static const String keyRefreshToken = "refreshToken";
 
-  LoginApi();
+  var accessToken;
+  var refreshToken;
+
+  late FlutterSecureStorage _storage;
+
+  LoginApi() {
+    _storage = const FlutterSecureStorage();
+  }
+
   DioClient dioClient = DioClient(Dio());
 
-  static Future<bool> hasAnAccessToken() async {
-    const storage = FlutterSecureStorage();
-    if (await storage.containsKey(key: keyAccessToken)) {
+  Future<bool> hasAnAccessToken() async {
+    if (await _storage.containsKey(key: keyAccessToken)) {
       return true;
     }
     return false;
-  }
-
-  Future<Response?> listUsers() async {
-    try {
-      final Response response = await dioClient.get(Endpoints.listUsers);
-      print(response.statusCode);
-      return response;
-    } on DioException catch (e) {
-      if (e.response != null) {
-        print(e.response!.statusCode);
-        return e.response;
-      }
-      rethrow;
-    }
   }
 
   Future<Response> login(
@@ -52,12 +45,13 @@ class LoginApi {
       );
 
       if (response.statusCode == 200) {
-        String accessToken = response.data["access_token"];
-        String refreshToken = response.data["refresh_token"];
+        accessToken = response.data["access_token"];
+        refreshToken = response.data["refresh_token"];
+        print(accessToken);
+        print(refreshToken);
 
-        const storage = FlutterSecureStorage();
-        await storage.write(key: keyAccessToken, value: accessToken);
-        await storage.write(key: keyRefreshToken, value: refreshToken);
+        await _storage.write(key: keyAccessToken, value: accessToken);
+        await _storage.write(key: keyRefreshToken, value: refreshToken);
       }
 
       return response;

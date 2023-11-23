@@ -2,9 +2,6 @@
 
 import 'dart:convert';
 
-import '../files/formulaire_json_file.dart';
-import '../files/beneficiaire_json_file.dart';
-
 import 'package:uuid/uuid.dart';
 
 class Photo {
@@ -403,13 +400,6 @@ class Formulaire {
     var json = jsonEncode(x);
 
     String filename = buildFileName(beneficiaire, this);
-    //  "${beneficiaire.id}_${id}.json";
-
-    // attention le nom de fichier commence par l'id du bénéficiaire , ceci est utile pour d'autres parties de l'appli
-
-    // ECRITURE A SURVEILLER (attention au nom du fichier !)
-    FormulaireJSONFile f = FormulaireJSONFile(filename: filename);
-    await f.writeToFile(json);
 
     // update theses informations at "beneficiaire" level
     await beneficiaire.save();
@@ -554,10 +544,7 @@ class Beneficiaire {
     return uuid.v1();
   }
 
-  Future<void> save() async {
-    BeneficiaireJSONFile f = BeneficiaireJSONFile(beneficiaire: this);
-    await f.updateBeneficiaireFileFromFormulaires();
-  }
+  Future<void> save() async {}
 
   static Map<String, dynamic> fromJSON(json) {
     List<Map<String, dynamic>> lg = [];

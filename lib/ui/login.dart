@@ -4,7 +4,7 @@ import 'dart:async';
 
 import '../network/api/login_api.dart';
 import '../network/dio_client.dart';
-import 'beneficiaires.dart';
+import 'widget/_login_identified_content.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -107,14 +107,7 @@ class _LoginPageState extends State<LoginPage> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data == true) {
-                  if (!alreadyStartBeneficiairePage) {
-                    navigateToBeneficiairesPage();
-                    alreadyStartBeneficiairePage = false;
-                  }
-                  return const Center(
-                      child: Center(
-                    child: CircularProgressIndicator(),
-                  ));
+                  return const LoginIdentifiedContent(title: "test");
                 }
 
                 return Center(
@@ -156,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
       (_) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const BeneficiairesPage(
+            builder: (context) => const LoginIdentifiedContent(
               title: 'Mes chantiers',
             ),
           ),

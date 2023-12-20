@@ -1,92 +1,182 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unnecessary_brace_in_string_interps, avoid_print, unnecessary_import, unused_import
 
-import 'login.dart';
+import 'dart:async';
+
+import '../network/api/login_api.dart';
+import '../network/dio_client.dart';
+import 'widget/_login_identified_content.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/scheduler.dart';
+
+import 'widget/app_bar.dart';
+import './utils/context.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+import 'widget/app_bar2.dart';
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class HomePage extends StatefulWidget {
+  const HomePage({super.key, required this.title});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
+
+  final String title;
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _HomePageState extends State<HomePage> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  bool alreadyStartBeneficiairePage = false;
+  LoginApi loginApi = LoginApi();
+
+  int _count = 0;
+
+  Widget submit() {
+    return MaterialButton(
+        onPressed: () async {
+          String email = "";
+
+          email = emailController.text.trim();
+          email = email.replaceAll("\n", " ");
+          email = email.replaceAll("\r", " ");
+
+          String password = "";
+
+          password = passwordController.text.trim();
+          password = password.replaceAll("\n", " ");
+          password = password.replaceAll("\r", " ");
+
+          try {
+            Response result =
+                await loginApi.login(email: email, password: password);
+
+            if (result.statusCode == 401) {
+              if (!context.mounted) {
+                return;
+              }
+              context.showErrorSnackBar("Echec d'authentification");
+              return;
+            }
+
+            setState(() {});
+          } catch (e) {
+            if (!context.mounted) {
+              return;
+            }
+            context.showErrorSnackBar("Echec d'authentification $e");
+            return;
+          }
+        },
+        color: Theme.of(context).colorScheme.inversePrimary,
+        textColor: Colors.white,
+        child: const Text("Submit"));
+  }
+
+  Widget emailForm() {
+    return TextFormField(
+        controller: emailController,
+        decoration: const InputDecoration(hintText: "email"),
+        validator: validateEmail);
+  }
+
+  Widget passwordForm() {
+    return TextFormField(
+      controller: passwordController,
+      obscureText: true,
+      decoration: const InputDecoration(hintText: "Password"),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+        appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(100),
+            child: BaseAppBar2(widget.title,
+                onDeconnexion: (value) => setState(() {
+                      _count += value;
+                    }))),
+        body: FutureBuilder(
+            future: loginApi.hasAnAccessToken(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data == true) {
+                  return const LoginIdentifiedContent(title: "test");
+                }
+
+                return Center(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        emailForm(),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        passwordForm(),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        submit(),
+                        const SizedBox(
+                          height: 80,
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return const Text("error");
+              } else {
+                return const SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: CircularProgressIndicator(),
+                );
+              }
+            }));
+  }
+
+  void navigateToBeneficiairesPage() async {
+    SchedulerBinding.instance.addPostFrameCallback(
+      (_) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const LoginIdentifiedContent(
+              title: 'Mes chantiers',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            )
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+          ),
+        );
+      },
     );
+  }
+
+  String? validateEmail(String? value) {
+    const pattern = r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'"
+        r'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-'
+        r'\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*'
+        r'[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4]'
+        r'[0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9]'
+        r'[0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\'
+        r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
+    final regex = RegExp(pattern);
+
+    return value!.isNotEmpty && !regex.hasMatch(value)
+        ? 'Enter a valid email address'
+        : null;
   }
 }

@@ -1,7 +1,6 @@
 // ignore_for_file: unused_import
 
 import 'ui/homepage.dart';
-import 'ui/login.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -38,7 +37,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
       ),
-      home: const LoginPage(title: 'Login'),
+      home: const HomePage(title: 'Accueil'),
     );
   }
 }

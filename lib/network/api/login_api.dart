@@ -33,7 +33,11 @@ class LoginApi {
   Future<Response> login(
       {required String email, required String password}) async {
     try {
-      var formData = {"email": email, "password": password};
+      var formData = {
+        "email": email,
+        "password": password,
+        "tenant_id": "fidwork"
+      };
       String json = jsonEncode(formData);
 
       final Response response = await dioClient.post(

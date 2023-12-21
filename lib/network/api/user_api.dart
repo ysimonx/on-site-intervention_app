@@ -24,25 +24,18 @@ class UserApi {
         print(response.data);
         await writeUserMe(jsonEncode(response.data));
       }
-
-      dynamic content = await readUserMe();
-      Map<String, dynamic> contentJson = jsonDecode(content);
-
-      User me = User.fromJson(contentJson);
-
-      print(me.toJSON());
-      await writeUserMe(jsonEncode(me.toJSON()));
-
-      return me;
     } on DioException catch (e) {
-      if (e.response != null) {
-        print(e.response!.statusCode);
-        if (e.response!.statusCode == 401) {
-          rethrow;
-        }
-      }
-      rethrow;
+      print(e.message);
     }
+
+    dynamic content = await readUserMe();
+    Map<String, dynamic> contentJson = jsonDecode(content);
+
+    User me = User.fromJson(contentJson);
+
+    print(me.toJSON());
+
+    return me;
   }
 
   Future<String> get _localPath async {

@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "app_renovadmin",
+            "name": "on_site_intervention_app",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "app_renovadmin (profile mode)",
+            "name": "on_site_intervention_app (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "app_renovadmin (release mode)",
+            "name": "on_site_intervention_app (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

@@ -23,4 +23,6 @@ class Endpoints {
   static const String uploadGeste = "/api/v1/geste";
   static const String downloadBackOfficeFeedBack =
       "/api/v1/controle/filter_by_gestes";
+
+  static const String userMe = '/api/v1/user/me/config';
 }

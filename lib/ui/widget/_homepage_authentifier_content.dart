@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class LoginIdentifiedContent extends StatefulWidget {
-  const LoginIdentifiedContent({super.key, required this.title});
+class HomepageAuthentifiedContent extends StatefulWidget {
+  const HomepageAuthentifiedContent({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -15,10 +15,12 @@ class LoginIdentifiedContent extends StatefulWidget {
   final String title;
 
   @override
-  State<LoginIdentifiedContent> createState() => _LoginIdentifiedContentState();
+  State<HomepageAuthentifiedContent> createState() =>
+      _HomepageAuthentifiedContentState();
 }
 
-class _LoginIdentifiedContentState extends State<LoginIdentifiedContent> {
+class _HomepageAuthentifiedContentState
+    extends State<HomepageAuthentifiedContent> {
   int _counter = 0;
 
   void _incrementCounter() {

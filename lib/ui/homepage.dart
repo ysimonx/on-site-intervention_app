@@ -2,9 +2,13 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+
+import '../models/model_user.dart';
 import '../network/api/login_api.dart';
+import '../network/api/user_api.dart';
 import '../network/dio_client.dart';
-import 'widget/_login_identified_content.dart';
+import 'widget/_homepage_authentifier_content.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -31,6 +35,7 @@ class _HomePageState extends State<HomePage> {
 
   bool alreadyStartBeneficiairePage = false;
   LoginApi loginApi = LoginApi();
+  UserApi userAPI = UserApi();
 
   int _count = 0;
 
@@ -100,6 +105,18 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  Future<User> moi() async {
+    bool ok = await loginApi.hasAnAccessToken();
+
+    if (ok) {
+      User userMe = await userAPI.me();
+      print(userMe.toJSON());
+      return userMe;
+    }
+    User userNull = User(id: "", firstname: "", lastname: "");
+    return userNull;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,11 +127,13 @@ class _HomePageState extends State<HomePage> {
                       _count += value;
                     }))),
         body: FutureBuilder(
-            future: loginApi.hasAnAccessToken(),
+            future: moi(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                if (snapshot.data == true) {
-                  return const LoginIdentifiedContent(title: "test");
+                User me = snapshot.data;
+
+                if (me.isAuthorized()) {
+                  return const HomepageAuthentifiedContent(title: "test");
                 }
 
                 return Center(
@@ -156,7 +175,7 @@ class _HomePageState extends State<HomePage> {
       (_) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const LoginIdentifiedContent(
+            builder: (context) => const HomepageAuthentifiedContent(
               title: 'Mes chantiers',
             ),
           ),

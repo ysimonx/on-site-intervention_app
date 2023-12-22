@@ -17,24 +17,20 @@ class UserApi {
   DioClient dioClient = DioClient(Dio());
 
   Future<User> me() async {
+    // attempt to retrieve my profile from server
     try {
       final Response response = await dioClient.get(Endpoints.userMe);
-
       if (response.statusCode == 200) {
-        print(response.data);
         await writeUserMe(jsonEncode(response.data));
       }
     } on DioException catch (e) {
       print(e.message);
     }
 
+    // return data already downloaded, even in mobile-first Mode
     dynamic content = await readUserMe();
     Map<String, dynamic> contentJson = jsonDecode(content);
-
     User me = User.fromJson(contentJson);
-
-    print(me.toJSON());
-
     return me;
   }
 

@@ -12,7 +12,6 @@ import 'widget/_homepage_authentifier_content.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/scheduler.dart';
 
-import 'widget/app_bar.dart';
 import './utils/context.dart';
 
 import 'package:flutter/material.dart';
@@ -36,8 +35,6 @@ class _HomePageState extends State<HomePage> {
   bool alreadyStartBeneficiairePage = false;
   LoginApi loginApi = LoginApi();
   UserApi userAPI = UserApi();
-
-  int _count = 0;
 
   Widget submit() {
     return MaterialButton(
@@ -105,12 +102,12 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  Future<User> moi() async {
+  Future<User> getMe() async {
     bool ok = await loginApi.hasAnAccessToken();
 
     if (ok) {
       User userMe = await userAPI.me();
-      print(userMe.toJSON());
+      // print(userMe.toJSON());
       return userMe;
     }
     User userNull = User(id: "", firstname: "", lastname: "");
@@ -123,17 +120,15 @@ class _HomePageState extends State<HomePage> {
         appBar: PreferredSize(
             preferredSize: const Size.fromHeight(100),
             child: BaseAppBar2(widget.title,
-                onDeconnexion: (value) => setState(() {
-                      _count += value;
-                    }))),
+                onDeconnexion: (value) => setState(() {}))),
         body: FutureBuilder(
-            future: moi(),
+            future: getMe(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 User me = snapshot.data;
 
                 if (me.isAuthorized()) {
-                  return const HomepageAuthentifiedContent(title: "test");
+                  return HomepageAuthentifiedContent(title: "test", user: me);
                 }
 
                 return Center(
@@ -168,20 +163,6 @@ class _HomePageState extends State<HomePage> {
                 );
               }
             }));
-  }
-
-  void navigateToBeneficiairesPage() async {
-    SchedulerBinding.instance.addPostFrameCallback(
-      (_) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const HomepageAuthentifiedContent(
-              title: 'Mes chantiers',
-            ),
-          ),
-        );
-      },
-    );
   }
 
   String? validateEmail(String? value) {

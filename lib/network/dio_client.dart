@@ -43,7 +43,7 @@ class DioClient {
       // je le traite comme d'hab
       if (e.response?.statusCode == 401) {
         try {
-          String msg = e.response?.data['error'];
+          String msg = e.response?.data['msg'];
           print(msg);
         } catch (er2) {
           return handler.next(e);

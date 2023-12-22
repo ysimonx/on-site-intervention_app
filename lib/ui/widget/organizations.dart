@@ -18,7 +18,9 @@ Widget getOrganizationsWidgets({required List<Organization> organizations}) {
   return ListView(padding: const EdgeInsets.all(15), children: res);
 }
 
-Widget getOrganizationsWidgets2({required List<Organization> organizations}) {
+Widget getOrganizationsWidgets2(
+    {required BuildContext context,
+    required List<Organization> organizations}) {
   return ListTileTheme(
     contentPadding: const EdgeInsets.all(15),
     iconColor: Colors.green,
@@ -38,11 +40,39 @@ Widget getOrganizationsWidgets2({required List<Organization> organizations}) {
             children: [
               IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
               IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.add_box)),
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SecondRoute()));
+                  },
+                  icon: const Icon(Icons.add_box)),
             ],
           ),
         ),
       ),
     ),
   );
+}
+
+class SecondRoute extends StatelessWidget {
+  const SecondRoute({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Second Route'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Go back!'),
+        ),
+      ),
+    );
+  }
 }

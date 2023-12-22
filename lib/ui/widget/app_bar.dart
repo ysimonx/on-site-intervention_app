@@ -2,11 +2,11 @@ import '../../network/api/login_api.dart';
 import 'package:flutter/material.dart';
 
 // cf https://stackoverflow.com/a/64147831
-class BaseAppBar2 extends StatelessWidget implements PreferredSizeWidget {
+class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Function(int) onDeconnexion;
 
-  const BaseAppBar2(this.title, {super.key, required this.onDeconnexion});
+  const BaseAppBar(this.title, {super.key, required this.onDeconnexion});
 
   @override
   Widget build(BuildContext context) {

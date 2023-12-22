@@ -17,15 +17,13 @@ import './utils/context.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'widget/app_bar2.dart';
+import 'widget/app_bar.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
-
-  final String title;
 }
 
 class _HomePageState extends State<HomePage> {
@@ -35,6 +33,8 @@ class _HomePageState extends State<HomePage> {
   bool alreadyStartBeneficiairePage = false;
   LoginApi loginApi = LoginApi();
   UserApi userAPI = UserApi();
+
+  String _title = 'Accueil';
 
   Widget submit() {
     return MaterialButton(
@@ -107,7 +107,6 @@ class _HomePageState extends State<HomePage> {
 
     if (ok) {
       User userMe = await userAPI.me();
-      // print(userMe.toJSON());
       return userMe;
     }
     User userNull = User(id: "", firstname: "", lastname: "");
@@ -119,18 +118,16 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         appBar: PreferredSize(
             preferredSize: const Size.fromHeight(100),
-            child: BaseAppBar2(widget.title,
-                onDeconnexion: (value) => setState(() {}))),
+            child:
+                BaseAppBar(_title, onDeconnexion: (value) => setState(() {}))),
         body: FutureBuilder(
             future: getMe(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 User me = snapshot.data;
-
                 if (me.isAuthorized()) {
-                  return HomepageAuthentifiedContent(title: "test", user: me);
+                  return HomepageAuthentifiedContent(user: me);
                 }
-
                 return Center(
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.8,

@@ -17,7 +17,7 @@ class _HomepageAuthentifiedContentState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: getOrganizationsWidgets2(
+      body: getOrganizationsWidget(
           context: context, organizations: widget.user.organizations),
     );
     // This trailing comma makes auto-formatting nicer for build methods.

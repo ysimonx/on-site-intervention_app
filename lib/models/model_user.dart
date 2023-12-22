@@ -9,10 +9,16 @@ class User {
   User({required this.id, required this.firstname, required this.lastname});
 
   Map<String, dynamic> toJSON() {
+    var resorg = [];
+    for (var i = 0; i < organizations.length; i++) {
+      resorg.add(organizations[i].toJSON());
+    }
+
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['firstname'] = firstname;
     data['lastname'] = lastname;
+    data['organizations'] = resorg;
     return data;
   }
 

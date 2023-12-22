@@ -1,24 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_organization.dart';
 
-Widget getOrganizationsWidgets({required List<Organization> organizations}) {
-  List<Widget> res = [];
+import '../organization.dart';
 
-  for (var i = 0; i < organizations.length; i++) {
-    Organization organization = organizations[i];
-    Widget item = ListTile(
-      title: Text(organization.name),
-      subtitle: Text('subtitle'),
-      trailing: Icon(Icons.star),
-      leading:
-          CircleAvatar(backgroundColor: Colors.amber, child: Text("${i + 1}")),
-    );
-    res.add(item);
-  }
-  return ListView(padding: const EdgeInsets.all(15), children: res);
-}
-
-Widget getOrganizationsWidgets2(
+Widget getOrganizationsWidget(
     {required BuildContext context,
     required List<Organization> organizations}) {
   return ListTileTheme(
@@ -45,7 +30,10 @@ Widget getOrganizationsWidgets2(
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const SecondRoute()));
+                            builder: (context) => SecondRoute(
+                                organization: Organization(
+                                    id: organizations[index].id,
+                                    name: organizations[index].name))));
                   },
                   icon: const Icon(Icons.add_box)),
             ],
@@ -54,25 +42,4 @@ Widget getOrganizationsWidgets2(
       ),
     ),
   );
-}
-
-class SecondRoute extends StatelessWidget {
-  const SecondRoute({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Second Route'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('Go back!'),
-        ),
-      ),
-    );
-  }
 }

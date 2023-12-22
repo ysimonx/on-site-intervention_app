@@ -107,6 +107,7 @@ class _HomePageState extends State<HomePage> {
 
     if (ok) {
       User userMe = await userAPI.me();
+      print(userMe.toJSON());
       return userMe;
     }
     User userNull = User(id: "", firstname: "", lastname: "");

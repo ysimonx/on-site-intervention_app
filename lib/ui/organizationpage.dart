@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../models/model_organization.dart';
 
-class SecondRoute extends StatelessWidget {
-  const SecondRoute({super.key, required this.organization});
+class OrganizationPage extends StatelessWidget {
+  const OrganizationPage({super.key, required this.organization});
 
   final Organization organization;
 
@@ -11,7 +11,7 @@ class SecondRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Second Route'),
+        title: Text(organization.name.toUpperCase()),
       ),
       body: Center(
         child: ElevatedButton(

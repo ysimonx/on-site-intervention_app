@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_organization.dart';
 
-import '../organization.dart';
+import '../organizationpage.dart';
 
 Widget getOrganizationsWidget(
     {required BuildContext context,
@@ -30,7 +30,7 @@ Widget getOrganizationsWidget(
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => SecondRoute(
+                            builder: (context) => OrganizationPage(
                                 organization: Organization(
                                     id: organizations[index].id,
                                     name: organizations[index].name))));

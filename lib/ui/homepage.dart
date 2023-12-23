@@ -1,9 +1,7 @@
 // ignore_for_file: unnecessary_brace_in_string_interps, avoid_print, unnecessary_import, unused_import
 
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
-
 import '../models/model_user.dart';
 import '../network/api/login_api.dart';
 import '../network/api/user_api.dart';
@@ -11,12 +9,9 @@ import '../network/dio_client.dart';
 import 'widget/_homepage_authentifier_content.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/scheduler.dart';
-
 import './utils/context.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'widget/app_bar.dart';
 
 class HomePage extends StatefulWidget {

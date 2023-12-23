@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_user.dart';
+
 import 'organizations.dart';
 
 class HomepageAuthentifiedContent extends StatefulWidget {

@@ -14,41 +14,28 @@ class InterventionApi {
 
   DioClient dioClient = DioClient(Dio());
 
-  Future<Response> login(
-      {required String email, required String password}) async {
+  Future<List<Intervention>> getList(
+      {required Organization organization}) async {
     try {
-      var formData = {
-        "email": email,
-        "password": password,
-        "tenant_id": "fidwork"
-      };
-      String json = jsonEncode(formData);
+      Map<String, String> qParams = {'organization_id': organization.id};
 
-      final Response response = await dioClient.post(
-        Endpoints.login,
-        options: Options(headers: {
-          HttpHeaders.contentTypeHeader: "application/json",
-        }),
-        data: json,
-      );
+      final Response response = await dioClient.get(Endpoints.interventionsList,
+          queryParameters: qParams);
 
-      if (response.statusCode == 200) {}
-
-      return response;
+      if (response.statusCode == 200) {
+        List<Intervention> list = [];
+        return list;
+      }
     } on DioException catch (e) {
       if (e.response != null) {
         print(e.response!.statusCode);
         if (e.response!.statusCode == 401) {
-          return e.response!;
+          return [];
         }
       }
       rethrow;
     }
-  }
 
-  Future<List<Intervention>> getList(
-      {required Organization organization}) async {
-    List<Intervention> list = [];
-    return list;
+    return [];
   }
 }

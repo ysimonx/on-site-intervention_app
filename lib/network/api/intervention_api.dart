@@ -36,24 +36,43 @@ class InterventionApi {
         }
       }
     }
-    // return data already downloaded, even in mobile-first Mode
+
+    // returns data already downloaded, even in mobile-first Mode
     dynamic content = await readInterventionsList(organization: organization);
     List<dynamic> arrayJson = jsonDecode(content);
-
     List<Intervention> list = [];
+
+    List<FileSystemEntity> l = await getLocalSavedInterventionsList();
+
     for (var i = 0; i < arrayJson.length; i++) {
       Map<String, dynamic> itemJson = arrayJson[i];
 
       Intervention intervention = Intervention.fromJson(itemJson);
+
+      // au cas où une intervention est sauvegardée en local
+      // elle doit écraser celle qui a été téléchargée du web
       if (await localExists(intervention: intervention)) {
         intervention = await localRead(intervention: intervention);
+        for (var j = 0; j < l.length; j++) {
+          FileSystemEntity f = l[j];
+          if (f.path.endsWith("${intervention.id}.json")) {
+            l.removeAt(j); // the only items remaining will be new ones
+          }
+        }
       }
-
-      //id: itemJson["id"], name: itemJson["name"]);
       list.add(intervention);
     }
-    // User me = User.fromJson(contentJson);
-    // return me;
+
+    // add local interventions not uploaded yet : these are the new ones
+    for (var j = 0; j < l.length; j++) {
+      FileSystemEntity f = l[j];
+      if (f is File) {
+        String contents = (f).readAsStringSync();
+        Map<String, dynamic> contentJson = jsonDecode(contents);
+        Intervention intervention = Intervention.fromJson(contentJson);
+        list.add(intervention);
+      }
+    }
 
     return list;
   }

@@ -44,7 +44,9 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                   LoginApi loginApi = LoginApi();
                   await loginApi.deleteTokens();
 
-                  Navigator.popUntil(context, (route) => route.isFirst);
+                  if (context.mounted) {
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                  }
                   onDeconnexion(1);
                 }
               })

@@ -1,3 +1,5 @@
+// ignore_for_file: empty_statements
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -26,13 +28,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    this.interventionAPI = InterventionApi();
-  }
-
-  void refreshList() {
-    setState() {}
-
-    ;
+    interventionAPI = InterventionApi();
   }
 
   @override
@@ -47,7 +43,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 List<Intervention> list = snapshot.data;
-                if (list.length > 0) {
+                if (list.isNotEmpty) {
                   return ListTileTheme(
                     contentPadding: const EdgeInsets.all(15),
                     iconColor: Colors.green,
@@ -61,7 +57,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
                         margin: const EdgeInsets.all(10),
                         child: ListTile(
                           title: Text(list[index].name.toUpperCase()),
-                          subtitle: Text('subtitle'),
+                          subtitle: const Text('subtitle'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -81,7 +77,6 @@ class _OrganizationPageState extends State<OrganizationPage> {
                                                         intervention:
                                                             list[index])))
                                         .then((value) => setState(() {}));
-                                    ;
                                   },
                                   icon: const Icon(Icons.add_box)),
                             ],
@@ -96,7 +91,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text('Empty List, go back'),
+                      child: const Text('Empty List, go back'),
                     ),
                   );
                 }
@@ -130,7 +125,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
                 .then((value) => setState(() {}));
             ;
           },
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
         ));
   }
 
@@ -166,7 +161,7 @@ Widget getInterventionsWidget({
         margin: const EdgeInsets.all(10),
         child: ListTile(
           title: Text(interventions[index].name.toUpperCase()),
-          subtitle: Text('subtitle'),
+          subtitle: const Text('subtitle'),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

@@ -71,7 +71,8 @@ class InterventionApi {
 
   Future<File> getlocalFile({required Intervention intervention}) async {
     final path = await _localPath;
-    String pathfile = '$path/intervention_${intervention.id}.json';
+    String pathfile =
+        '$path/interventions/intervention_${intervention.id}.json';
     return File(pathfile);
   }
 
@@ -81,11 +82,22 @@ class InterventionApi {
 
     if (!await file.exists()) {
       // read the file from assets first and create the local file with its contents
-      await file.create();
+      await file.create(recursive: true);
+      ;
     }
 
     // Write the file
     return file.writeAsString(data);
+  }
+
+  //
+  Future<List<FileSystemEntity>> getLocalSavedInterventionsList() async {
+    String directory = (await getApplicationDocumentsDirectory()).path;
+
+    List<FileSystemEntity> list =
+        Directory("$directory/interventions/").listSync();
+    // .listSync(); //use your folder name insted of resume.
+    return list;
   }
 
   Future<String> readInterventionsList(
@@ -118,6 +130,12 @@ class InterventionApi {
   Future<bool> localExists({required Intervention intervention}) async {
     final file = await getlocalFile(intervention: intervention);
     if (await file.exists()) {
+      var s = file.lengthSync();
+      print(s);
+      if (s == 0) {
+        file.deleteSync();
+        return false;
+      }
       return true;
     }
     return false;

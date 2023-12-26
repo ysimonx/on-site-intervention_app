@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:on_site_intervention_app/ui/interventionpage.dart';
 
 import '../models/model_intervention.dart';
 import '../models/model_organization.dart';
 import '../network/api/intervention_api.dart';
 import '../network/api/login_api.dart';
+import 'utils/uuid.dart';
 
 class OrganizationPage extends StatefulWidget {
   const OrganizationPage({super.key, required this.organization});
@@ -20,8 +22,6 @@ class _OrganizationPageState extends State<OrganizationPage> {
   LoginApi loginApi = LoginApi();
   late InterventionApi interventionAPI;
 
-  int _counter = 0;
-
   @override
   void initState() {
     // TODO: implement initState
@@ -30,10 +30,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
   }
 
   void refreshList() {
-    _counter = _counter + 1;
-    setState() {
-      _counter = _counter + 1;
-    }
+    setState() {}
 
     ;
   }
@@ -46,8 +43,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
           title: Text(widget.organization.name.toUpperCase()),
         ),
         body: FutureBuilder(
-            future: getInterventions(
-                organization: widget.organization, toto: _counter),
+            future: getInterventions(organization: widget.organization),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 List<Intervention> list = snapshot.data;
@@ -100,7 +96,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text('Empty List, go back, ${_counter}'),
+                      child: Text('Empty List, go back'),
                     ),
                   );
                 }
@@ -122,15 +118,25 @@ class _OrganizationPageState extends State<OrganizationPage> {
               // ignore: avoid_print
               print("onPressed");
             }
+            Intervention newIntervention = Intervention(
+                id: "new_${generateUUID()}",
+                name: "nouvelle",
+                intervention_on_site_uuid: generateUUID());
+            Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            InterventionPage(intervention: newIntervention)))
+                .then((value) => setState(() {}));
+            ;
           },
           child: Icon(Icons.add),
         ));
   }
 
   Future<List<Intervention>> getInterventions(
-      {required Organization organization, required int toto}) async {
+      {required Organization organization}) async {
     print(widget.organization.id);
-    print(toto);
 
     List<Intervention> list =
         await interventionAPI.getList(organization: organization);

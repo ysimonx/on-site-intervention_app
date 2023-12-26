@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/model_intervention.dart';
@@ -16,7 +17,14 @@ class OrganizationPage extends StatefulWidget {
 
 class _OrganizationPageState extends State<OrganizationPage> {
   LoginApi loginApi = LoginApi();
-  InterventionApi interventionAPI = InterventionApi();
+  late InterventionApi interventionAPI;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    this.interventionAPI = InterventionApi(organization: widget.organization);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +53,24 @@ class _OrganizationPageState extends State<OrganizationPage> {
                   child: CircularProgressIndicator(),
                 );
               }
-            }));
+            }),
+        floatingActionButton: FloatingActionButton(
+          // onPressed: {},
+          tooltip: 'Increment',
+          onPressed: () {
+            if (kDebugMode) {
+              // ignore: avoid_print
+              print("onPressed");
+            }
+          },
+          child: Icon(Icons.add),
+        ));
   }
 
   Future<List<Intervention>> getInterventions() async {
     print(widget.organization.id);
 
-    List<Intervention> list =
-        await interventionAPI.getList(organization: widget.organization);
+    List<Intervention> list = await interventionAPI.getList();
 
     return list;
   }

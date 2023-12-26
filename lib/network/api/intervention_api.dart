@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print, unnecessary_brace_in_string_interps
 
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:on_site_intervention_app/models/model_organization.dart';
@@ -25,8 +26,7 @@ class InterventionApi {
           queryParameters: qParams);
 
       if (response.statusCode == 200) {
-        List<Intervention> list = [];
-        return list;
+        await writeInterventionsList(jsonEncode(response.data));
       }
     } on DioException catch (e) {
       if (e.response != null) {
@@ -35,10 +35,22 @@ class InterventionApi {
           return [];
         }
       }
-      rethrow;
     }
+    // return data already downloaded, even in mobile-first Mode
+    dynamic content = await readInterventionsList();
+    List<dynamic> arrayJson = jsonDecode(content);
 
-    return [];
+    List<Intervention> list = [];
+    for (var i = 0; i < arrayJson.length; i++) {
+      Map<String, dynamic> itemJson = arrayJson[i];
+      Intervention intervention = Intervention.fromJson(itemJson);
+      //id: itemJson["id"], name: itemJson["name"]);
+      list.add(intervention);
+    }
+    // User me = User.fromJson(contentJson);
+    // return me;
+
+    return list;
   }
 
   Future<String> get _localPath async {
@@ -52,6 +64,32 @@ class InterventionApi {
   }
 
   Future<String> readUserMe() async {
+    try {
+      final file = await _localFile;
+
+      // Read the file
+      String contents = await file.readAsString();
+
+      return contents;
+    } catch (e) {
+      // If encountering an error, return ""
+      return "";
+    }
+  }
+
+  Future<File> writeInterventionsList(String data) async {
+    final file = await _localFile;
+
+    if (!await file.exists()) {
+      // read the file from assets first and create the local file with its contents
+      await file.create();
+    }
+
+    // Write the file
+    return file.writeAsString(data);
+  }
+
+  Future<String> readInterventionsList() async {
     try {
       final file = await _localFile;
 

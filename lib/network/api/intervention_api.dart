@@ -12,13 +12,12 @@ import '../dio_client.dart';
 import 'constants.dart';
 
 class InterventionApi {
-  InterventionApi({required this.organization});
+  InterventionApi();
 
   DioClient dioClient = DioClient(Dio());
 
-  final Organization organization;
-
-  Future<List<Intervention>> getList() async {
+  Future<List<Intervention>> getList(
+      {required Organization organization}) async {
     try {
       Map<String, String> qParams = {'organization_id': organization.id};
 
@@ -26,7 +25,8 @@ class InterventionApi {
           queryParameters: qParams);
 
       if (response.statusCode == 200) {
-        await writeInterventionsList(jsonEncode(response.data));
+        await writeInterventionsList(
+            organization: organization, jsonEncode(response.data));
       }
     } on DioException catch (e) {
       if (e.response != null) {
@@ -37,13 +37,18 @@ class InterventionApi {
       }
     }
     // return data already downloaded, even in mobile-first Mode
-    dynamic content = await readInterventionsList();
+    dynamic content = await readInterventionsList(organization: organization);
     List<dynamic> arrayJson = jsonDecode(content);
 
     List<Intervention> list = [];
     for (var i = 0; i < arrayJson.length; i++) {
       Map<String, dynamic> itemJson = arrayJson[i];
+
       Intervention intervention = Intervention.fromJson(itemJson);
+      if (await localExists(intervention: intervention)) {
+        intervention = await localRead(intervention: intervention);
+      }
+
       //id: itemJson["id"], name: itemJson["name"]);
       list.add(intervention);
     }
@@ -58,27 +63,21 @@ class InterventionApi {
     return directory.path;
   }
 
-  Future<File> get _localFile async {
+  Future<File> getlocalFileList({required Organization organization}) async {
     final path = await _localPath;
-    return File('$path/organization_.json');
+    String pathfile = '$path/interventions_${organization.name}.json';
+    return File(pathfile);
   }
 
-  Future<String> readUserMe() async {
-    try {
-      final file = await _localFile;
-
-      // Read the file
-      String contents = await file.readAsString();
-
-      return contents;
-    } catch (e) {
-      // If encountering an error, return ""
-      return "";
-    }
+  Future<File> getlocalFile({required Intervention intervention}) async {
+    final path = await _localPath;
+    String pathfile = '$path/intervention_${intervention.id}.json';
+    return File(pathfile);
   }
 
-  Future<File> writeInterventionsList(String data) async {
-    final file = await _localFile;
+  Future<File> writeInterventionsList(String data,
+      {required Organization organization}) async {
+    final file = await getlocalFileList(organization: organization);
 
     if (!await file.exists()) {
       // read the file from assets first and create the local file with its contents
@@ -89,9 +88,10 @@ class InterventionApi {
     return file.writeAsString(data);
   }
 
-  Future<String> readInterventionsList() async {
+  Future<String> readInterventionsList(
+      {required Organization organization}) async {
     try {
-      final file = await _localFile;
+      final file = await getlocalFileList(organization: organization);
 
       // Read the file
       String contents = await file.readAsString();
@@ -100,6 +100,41 @@ class InterventionApi {
     } catch (e) {
       // If encountering an error, return ""
       return "";
+    }
+  }
+
+  Future<void> localSave({required Intervention intervention}) async {
+    try {
+      final file = await getlocalFile(intervention: intervention);
+      String data = jsonEncode(intervention.toJSON());
+      file.writeAsString(data);
+      return;
+    } catch (e) {
+      // If encountering an error, return ""
+      return;
+    }
+  }
+
+  Future<bool> localExists({required Intervention intervention}) async {
+    final file = await getlocalFile(intervention: intervention);
+    if (await file.exists()) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<Intervention> localRead({required Intervention intervention}) async {
+    try {
+      final file = await getlocalFile(intervention: intervention);
+      // Read the file
+      String contents = await file.readAsString();
+
+      Map<String, dynamic> contentJson = jsonDecode(contents);
+      Intervention i = Intervention.fromJson(contentJson);
+
+      return i;
+    } catch (e) {
+      rethrow;
     }
   }
 }

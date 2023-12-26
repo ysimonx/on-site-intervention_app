@@ -39,13 +39,14 @@ class InterventionApi {
 
     // returns data already downloaded, even in mobile-first Mode
     dynamic content = await readInterventionsList(organization: organization);
-    List<dynamic> arrayJson = jsonDecode(content);
-    List<Intervention> list = [];
+    List<dynamic> arrayLastDownloadedListJson = jsonDecode(content);
+    List<Intervention> listInterventions = [];
 
-    List<FileSystemEntity> l = await getLocalSavedInterventionsList();
+    List<FileSystemEntity> listLocalFiles =
+        await getLocalSavedInterventionsList();
 
-    for (var i = 0; i < arrayJson.length; i++) {
-      Map<String, dynamic> itemJson = arrayJson[i];
+    for (var i = 0; i < arrayLastDownloadedListJson.length; i++) {
+      Map<String, dynamic> itemJson = arrayLastDownloadedListJson[i];
 
       Intervention intervention = Intervention.fromJson(itemJson);
 
@@ -53,28 +54,21 @@ class InterventionApi {
       // elle doit écraser celle qui a été téléchargée du web
       if (await localExists(intervention: intervention)) {
         intervention = await localRead(intervention: intervention);
-        for (var j = 0; j < l.length; j++) {
-          FileSystemEntity f = l[j];
+        for (var j = 0; j < listLocalFiles.length; j++) {
+          FileSystemEntity f = listLocalFiles[j];
           if (f.path.endsWith("${intervention.id}.json")) {
-            l.removeAt(j); // the only items remaining will be new ones
+            listLocalFiles
+                .removeAt(j); // the only items remaining will be new ones
           }
         }
       }
-      list.add(intervention);
+      listInterventions.add(intervention);
     }
 
-    // add local interventions not uploaded yet : these are the new ones
-    for (var j = 0; j < l.length; j++) {
-      FileSystemEntity f = l[j];
-      if (f is File) {
-        String contents = (f).readAsStringSync();
-        Map<String, dynamic> contentJson = jsonDecode(contents);
-        Intervention intervention = Intervention.fromJson(contentJson);
-        list.add(intervention);
-      }
-    }
+    listInterventions = completeListWithNewOnes(
+        list: listInterventions, localFiles: listLocalFiles);
 
-    return list;
+    return listInterventions;
   }
 
   Future<String> get _localPath async {
@@ -173,5 +167,21 @@ class InterventionApi {
     } catch (e) {
       rethrow;
     }
+  }
+
+  List<Intervention> completeListWithNewOnes(
+      {required List<Intervention> list,
+      required List<FileSystemEntity> localFiles}) {
+    // add local interventions not uploaded yet : these are the new ones
+    for (var j = 0; j < localFiles.length; j++) {
+      FileSystemEntity f = localFiles[j];
+      if (f is File) {
+        String contents = (f).readAsStringSync();
+        Map<String, dynamic> contentJson = jsonDecode(contents);
+        Intervention intervention = Intervention.fromJson(contentJson);
+        list.add(intervention);
+      }
+    }
+    return list;
   }
 }

@@ -36,14 +36,20 @@ class _OrganizationPageState extends State<OrganizationPage> {
             future: getInterventions(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                return Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Go back!'),
-                  ),
-                );
+                List<Intervention> list = snapshot.data;
+                if (list.length > 0) {
+                  return getInterventionsWidget(
+                      context: context, interventions: list);
+                } else {
+                  return Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Empty List, go back'),
+                    ),
+                  );
+                }
               } else if (snapshot.hasError) {
                 return const Text("error");
               } else {
@@ -77,4 +83,58 @@ class _OrganizationPageState extends State<OrganizationPage> {
 
   /* 
   */
+}
+
+Widget getInterventionsWidgetOld(
+    {required BuildContext context,
+    required List<Intervention> interventions}) {
+  return Center(
+    child: ElevatedButton(
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      child: const Text('Go back 1!'),
+    ),
+  );
+}
+
+Widget getInterventionsWidget(
+    {required BuildContext context,
+    required List<Intervention> interventions}) {
+  return ListTileTheme(
+    contentPadding: const EdgeInsets.all(15),
+    iconColor: Colors.green,
+    textColor: Colors.black54,
+    tileColor: Colors.yellow[10],
+    style: ListTileStyle.list,
+    dense: true,
+    child: ListView.builder(
+      itemCount: interventions.length,
+      itemBuilder: (_, index) => Card(
+        margin: const EdgeInsets.all(10),
+        child: ListTile(
+          title: Text(interventions[index].name.toUpperCase()),
+          subtitle: Text('subtitle'),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
+              IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => OrganizationPage(
+                                organization: Organization(
+                                    id: interventions[index].id,
+                                    name: interventions[index].name))));
+                  },
+                  icon: const Icon(Icons.add_box)),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }

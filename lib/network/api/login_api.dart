@@ -12,8 +12,8 @@ class LoginApi {
   static const String keyAccessToken = "accessToken";
   static const String keyRefreshToken = "refreshToken";
 
-  var accessToken;
-  var refreshToken;
+  late String accessToken;
+  late String refreshToken;
 
   late FlutterSecureStorage _storage;
 

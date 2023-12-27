@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   LoginApi loginApi = LoginApi();
   UserApi userAPI = UserApi();
 
-  String _title = 'Accueil';
+  final String _title = 'Accueil';
 
   Widget submit() {
     return MaterialButton(

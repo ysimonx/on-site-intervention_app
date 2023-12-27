@@ -26,7 +26,6 @@ class _OrganizationPageState extends State<OrganizationPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     interventionAPI = InterventionApi();
   }
@@ -131,8 +130,6 @@ class _OrganizationPageState extends State<OrganizationPage> {
 
   Future<List<Intervention>> getInterventions(
       {required Organization organization}) async {
-    print(widget.organization.id);
-
     List<Intervention> list =
         await interventionAPI.getList(organization: organization);
 

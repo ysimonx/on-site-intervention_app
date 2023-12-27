@@ -34,7 +34,6 @@ class User {
     for (var i = 0; i < organizations.length; i++) {
       Organization org = Organization.fromJson(organizations[i]);
       res.add(org);
-      print(organizations[i]);
     }
 
     user.organizations = res;

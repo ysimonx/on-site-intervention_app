@@ -19,7 +19,7 @@ Widget getOrganizationsWidget(
         margin: const EdgeInsets.all(10),
         child: ListTile(
           title: Text(organizations[index].name.toUpperCase()),
-          subtitle: Text('subtitle'),
+          subtitle: const Text('subtitle'),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

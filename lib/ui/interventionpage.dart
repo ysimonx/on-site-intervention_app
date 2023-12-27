@@ -196,7 +196,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                       );
 
                       InterventionApi interventionApi = InterventionApi();
-                      await interventionApi.localSave(
+                      await interventionApi.localUpdatedFileSave(
                           intervention: widget.intervention);
                     }
                   },

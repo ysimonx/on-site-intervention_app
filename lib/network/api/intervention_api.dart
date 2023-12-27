@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, unnecessary_brace_in_string_interps
+// ignore_for_file: avoid_print, unnecessary_brace_in_string_interps, empty_statements
 
 import 'dart:io';
 import 'dart:convert';
@@ -10,6 +10,8 @@ import 'package:path_provider/path_provider.dart';
 import '../../models/model_intervention.dart';
 import '../dio_client.dart';
 import 'constants.dart';
+
+const String dir_intervention_updated = "interventions_updated";
 
 class InterventionApi {
   InterventionApi();
@@ -42,8 +44,7 @@ class InterventionApi {
     List<dynamic> arrayLastDownloadedListJson = jsonDecode(content);
     List<Intervention> listInterventions = [];
 
-    List<FileSystemEntity> listLocalFiles =
-        await getLocalSavedInterventionsList();
+    List<FileSystemEntity> listLocalUpdatedFiles = await getLocalUpdatedFiles();
 
     for (var i = 0; i < arrayLastDownloadedListJson.length; i++) {
       Map<String, dynamic> itemJson = arrayLastDownloadedListJson[i];
@@ -52,12 +53,19 @@ class InterventionApi {
 
       // au cas où une intervention est sauvegardée en local
       // elle doit écraser celle qui a été téléchargée du web
-      if (await localExists(intervention: intervention)) {
-        intervention = await localRead(intervention: intervention);
-        for (var j = 0; j < listLocalFiles.length; j++) {
-          FileSystemEntity f = listLocalFiles[j];
-          if (f.path.endsWith("${intervention.id}.json")) {
-            listLocalFiles
+      if (await localUpdatedFileExists(intervention: intervention)) {
+        intervention = await localUpdatedFileRead(intervention: intervention);
+
+        // TODO : si c'est la meme version, je peux supprimer le fichier en local
+
+        // et je supprime l'entrée dans listLocalFiles
+        // pour ne garder que les interventions qui ont été créées
+        // en local seulement
+        for (var j = 0; j < listLocalUpdatedFiles.length; j++) {
+          FileSystemEntity f = listLocalUpdatedFiles[j];
+          if (f.path
+              .endsWith("${intervention.intervention_on_site_uuid}.json")) {
+            listLocalUpdatedFiles
                 .removeAt(j); // the only items remaining will be new ones
           }
         }
@@ -65,8 +73,8 @@ class InterventionApi {
       listInterventions.add(intervention);
     }
 
-    listInterventions = completeListWithNewOnes(
-        list: listInterventions, localFiles: listLocalFiles);
+    listInterventions = completeListWithLocalUpdatedFiles(
+        list: listInterventions, localFiles: listLocalUpdatedFiles);
 
     return listInterventions;
   }
@@ -82,13 +90,6 @@ class InterventionApi {
     return File(pathfile);
   }
 
-  Future<File> getlocalFile({required Intervention intervention}) async {
-    final path = await _localPath;
-    String pathfile =
-        '$path/interventions/intervention_${intervention.id}.json';
-    return File(pathfile);
-  }
-
   Future<File> writeInterventionsList(String data,
       {required Organization organization}) async {
     final file = await getlocalFileList(organization: organization);
@@ -96,21 +97,9 @@ class InterventionApi {
     if (!await file.exists()) {
       // read the file from assets first and create the local file with its contents
       await file.create(recursive: true);
-      ;
     }
-
     // Write the file
     return file.writeAsString(data);
-  }
-
-  //
-  Future<List<FileSystemEntity>> getLocalSavedInterventionsList() async {
-    String directory = (await getApplicationDocumentsDirectory()).path;
-
-    List<FileSystemEntity> list =
-        Directory("$directory/interventions/").listSync();
-    // .listSync(); //use your folder name insted of resume.
-    return list;
   }
 
   Future<String> readInterventionsList(
@@ -128,10 +117,37 @@ class InterventionApi {
     }
   }
 
-  Future<void> localSave({required Intervention intervention}) async {
+  Future<File> getlocalUpdatedFile({required Intervention intervention}) async {
+    final path = await _localPath;
+    String pathfile =
+        '$path/$dir_intervention_updated/intervention_${intervention.intervention_on_site_uuid}.json';
+    return File(pathfile);
+  }
+
+  //
+  Future<List<FileSystemEntity>> getLocalUpdatedFiles() async {
+    String directory = (await getApplicationDocumentsDirectory()).path;
+
     try {
-      final file = await getlocalFile(intervention: intervention);
+      Directory d = Directory("$directory/$dir_intervention_updated/");
+
+      List<FileSystemEntity> list = Directory(d.path).listSync();
+      return list;
+    } on Exception catch (_) {
+      List<FileSystemEntity> list = [];
+      return list;
+    }
+  }
+
+  Future<void> localUpdatedFileSave(
+      {required Intervention intervention}) async {
+    try {
+      final file = await getlocalUpdatedFile(intervention: intervention);
       String data = jsonEncode(intervention.toJSON());
+      if (!await file.exists()) {
+        // read the file from assets first and create the local file with its contents
+        await file.create(recursive: true);
+      }
       file.writeAsString(data);
       return;
     } catch (e) {
@@ -140,11 +156,11 @@ class InterventionApi {
     }
   }
 
-  Future<bool> localExists({required Intervention intervention}) async {
-    final file = await getlocalFile(intervention: intervention);
+  Future<bool> localUpdatedFileExists(
+      {required Intervention intervention}) async {
+    final file = await getlocalUpdatedFile(intervention: intervention);
     if (await file.exists()) {
       var s = file.lengthSync();
-      print(s);
       if (s == 0) {
         file.deleteSync();
         return false;
@@ -154,9 +170,10 @@ class InterventionApi {
     return false;
   }
 
-  Future<Intervention> localRead({required Intervention intervention}) async {
+  Future<Intervention> localUpdatedFileRead(
+      {required Intervention intervention}) async {
     try {
-      final file = await getlocalFile(intervention: intervention);
+      final file = await getlocalUpdatedFile(intervention: intervention);
       // Read the file
       String contents = await file.readAsString();
 
@@ -169,7 +186,7 @@ class InterventionApi {
     }
   }
 
-  List<Intervention> completeListWithNewOnes(
+  List<Intervention> completeListWithLocalUpdatedFiles(
       {required List<Intervention> list,
       required List<FileSystemEntity> localFiles}) {
     // add local interventions not uploaded yet : these are the new ones

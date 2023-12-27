@@ -50,7 +50,7 @@ class _InterventionState extends State<InterventionPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.intervention.name),
+        title: Text(widget.intervention.intervention_name),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -118,7 +118,8 @@ class MyCustomFormState extends State<MyCustomForm> {
   @override
   void initState() {
     super.initState();
-    myController = TextEditingController(text: widget.intervention.name);
+    myController =
+        TextEditingController(text: widget.intervention.intervention_name);
   }
 
   void _showBackDialog() {
@@ -189,15 +190,20 @@ class MyCustomFormState extends State<MyCustomForm> {
                   onPressed: () async {
                     // Validate returns true if the form is valid, or false otherwise.
                     if (_formKey.currentState!.validate()) {
-                      widget.intervention.name = myController.text;
+                      widget.intervention.intervention_name = myController.text;
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Processing Data')),
                       );
 
                       InterventionApi interventionApi = InterventionApi();
+                      /* widget.intervention.version =
+                          widget.intervention.version + 1; */
+
                       await interventionApi.localUpdatedFileSave(
                           intervention: widget.intervention);
+
+                      await interventionApi.syncLocalUpdatedFiles();
                     }
                   },
                   child: const Text('Submit'),

@@ -23,7 +23,7 @@ class InterventionApi {
     try {
       Map<String, String> qParams = {'organization_id': organization.id};
 
-      final Response response = await dioClient.get(Endpoints.interventionsList,
+      final Response response = await dioClient.get(Endpoints.listInterventions,
           queryParameters: qParams);
 
       if (response.statusCode == 200) {
@@ -54,9 +54,20 @@ class InterventionApi {
       // au cas où une intervention est sauvegardée en local
       // elle doit écraser celle qui a été téléchargée du web
       if (await localUpdatedFileExists(intervention: intervention)) {
-        intervention = await localUpdatedFileRead(intervention: intervention);
+        Intervention intervention_new =
+            await localUpdatedFileRead(intervention: intervention);
 
         // TODO : si c'est la meme version, je peux supprimer le fichier en local
+        print("${intervention.version} vs ${intervention_new.version}");
+        if (intervention.version > intervention_new.version) {
+          // l'intervention en local est plus ancienne que celle du serveur
+          // je peux supprimer l'intervention enregistrée en local
+          await localUpdatedFileDelete(intervention: intervention);
+        } else {
+          // l'intervention en local est plus récente que celle du serveur
+          // je peux écraser celle du serveur par celle en local
+          intervention = intervention_new;
+        }
 
         // et je supprime l'entrée dans listLocalFiles
         // pour ne garder que les interventions qui ont été créées
@@ -77,6 +88,33 @@ class InterventionApi {
         list: listInterventions, localFiles: listLocalUpdatedFiles);
 
     return listInterventions;
+  }
+
+  Future<Response?> postIntervention(Intervention intervention) async {
+    Map<String, dynamic> data = intervention.toJSON();
+    String json = jsonEncode(data);
+    print(json);
+
+    try {
+      final Response response = await dioClient.post(
+        Endpoints.postIntervention,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: json,
+      );
+      print(response.statusCode);
+      return response;
+    } on DioException catch (e) {
+      print(e.response?.statusCode);
+
+      /* if (e.response?.statusCode == 400) {
+        if (e.response?.data.contains("photo already uploaded")) {
+          return e.response;
+        }
+      }*/
+      rethrow;
+    }
   }
 
   Future<String> get _localPath async {
@@ -200,5 +238,29 @@ class InterventionApi {
       }
     }
     return list;
+  }
+
+  syncLocalUpdatedFiles() async {
+    List<FileSystemEntity> listLocalUpdatedFiles = await getLocalUpdatedFiles();
+
+    for (var j = 0; j < listLocalUpdatedFiles.length; j++) {
+      FileSystemEntity f = listLocalUpdatedFiles[j];
+
+      // Read the file
+      if (f is File) {
+        String contents = await f.readAsString();
+        Map<String, dynamic> contentJson = jsonDecode(contents);
+        Intervention i = Intervention.fromJson(contentJson);
+        var r = await postIntervention(i);
+        print(r.toString());
+      }
+    }
+  }
+
+  localUpdatedFileDelete({required Intervention intervention}) async {
+    final file = await getlocalUpdatedFile(intervention: intervention);
+    if (await file.exists()) {
+      file.deleteSync();
+    }
   }
 }

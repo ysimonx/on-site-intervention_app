@@ -26,6 +26,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     interventionAPI = InterventionApi();
   }
@@ -55,7 +56,8 @@ class _OrganizationPageState extends State<OrganizationPage> {
                       itemBuilder: (_, index) => Card(
                         margin: const EdgeInsets.all(10),
                         child: ListTile(
-                          title: Text(list[index].name.toUpperCase()),
+                          title:
+                              Text(list[index].intervention_name.toUpperCase()),
                           subtitle: const Text('subtitle'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -114,7 +116,8 @@ class _OrganizationPageState extends State<OrganizationPage> {
             }
             Intervention newIntervention = Intervention(
                 id: "new_${generateUUID()}",
-                name: "nouvelle",
+                intervention_name: "nouvelle",
+                organization_id: widget.organization.id,
                 intervention_on_site_uuid: generateUUID());
             Navigator.push(
                     context,
@@ -157,7 +160,7 @@ Widget getInterventionsWidget({
       itemBuilder: (_, index) => Card(
         margin: const EdgeInsets.all(10),
         child: ListTile(
-          title: Text(interventions[index].name.toUpperCase()),
+          title: Text(interventions[index].intervention_name.toUpperCase()),
           subtitle: const Text('subtitle'),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,

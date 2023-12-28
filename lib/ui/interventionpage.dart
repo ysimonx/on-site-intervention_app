@@ -137,6 +137,8 @@ class MyCustomFormState extends State<MyCustomForm> {
     );
   }
 
+// cf https://docs.flutter.dev/cookbook/lists/mixed-list
+
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
@@ -152,50 +154,56 @@ class MyCustomFormState extends State<MyCustomForm> {
             Navigator.pop(context);
           }
         },
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: myController,
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
+        child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    controller: myController,
+                    // The validator receives the text that the user has entered.
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        // Validate returns true if the form is valid, or false otherwise.
+                        if (_formKey.currentState!.validate()) {
+                          await saveIntervention(context);
+                        }
+                      },
+                      child: const Text('Sauvegarder'),
+                    ),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    // Validate returns true if the form is valid, or false otherwise.
-                    if (_formKey.currentState!.validate()) {
-                      widget.intervention.intervention_name = myController.text;
+            )));
+  }
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Processing Data')),
-                      );
+  Future<void> saveIntervention(BuildContext context) async {
+    widget.intervention.intervention_name = myController.text;
 
-                      InterventionApi interventionApi = InterventionApi();
-                      /* widget.intervention.version =
-                          widget.intervention.version + 1; */
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Processing Data')),
+    );
 
-                      await interventionApi.localUpdatedFileSave(
-                          intervention: widget.intervention);
+    InterventionApi interventionApi = InterventionApi();
+    /* widget.intervention.version =
+        widget.intervention.version + 1; */
 
-                      await interventionApi.syncLocalUpdatedFiles();
+    await interventionApi.localUpdatedFileSave(
+        intervention: widget.intervention);
 
-                      _needSave = false;
-                    }
-                  },
-                  child: const Text('Sauvegarder'),
-                ),
-              ),
-            ],
-          ),
-        ));
+    await interventionApi.syncLocalUpdatedFiles();
+
+    _needSave = false;
   }
 }

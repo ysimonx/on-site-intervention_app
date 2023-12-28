@@ -118,7 +118,8 @@ class _OrganizationPageState extends State<OrganizationPage> {
                 id: "new_${generateUUID()}",
                 intervention_name: "nouvelle",
                 organization_id: widget.organization.id,
-                intervention_on_site_uuid: generateUUID());
+                intervention_on_site_uuid: generateUUID(),
+                type_intervention: "scaffolding request");
             Navigator.push(
                     context,
                     MaterialPageRoute(

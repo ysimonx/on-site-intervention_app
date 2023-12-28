@@ -5,14 +5,15 @@ class Intervention {
   String intervention_name;
   String intervention_on_site_uuid;
   String organization_id;
+  String type_intervention;
   int version = 1;
 
-  Intervention({
-    required this.id,
-    required this.intervention_name,
-    required this.organization_id,
-    required this.intervention_on_site_uuid,
-  });
+  Intervention(
+      {required this.id,
+      required this.intervention_name,
+      required this.organization_id,
+      required this.intervention_on_site_uuid,
+      required this.type_intervention});
 
   Map<String, dynamic> toJSON() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -21,6 +22,7 @@ class Intervention {
     data['organization_id'] = organization_id;
     data['intervention_on_site_uuid'] = intervention_on_site_uuid;
     data['version'] = version;
+    data['type_intervention'] = type_intervention;
     return data;
   }
 
@@ -36,5 +38,9 @@ class Intervention {
         intervention_on_site_uuid =
             json.containsKey('intervention_on_site_uuid')
                 ? json['intervention_on_site_uuid']
-                : generateUUID();
+                : generateUUID(),
+        // type_intervention = "scaffolding_request";
+        type_intervention = json.containsKey('type_intervention')
+            ? json['type_intervention']
+            : "scaffolding_request";
 }

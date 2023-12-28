@@ -85,7 +85,9 @@ class InterventionApi {
     }
 
     listInterventions = completeListWithLocalUpdatedFiles(
-        list: listInterventions, localFiles: listLocalUpdatedFiles);
+        list: listInterventions,
+        localFiles: listLocalUpdatedFiles,
+        organization: organization);
 
     return listInterventions;
   }
@@ -220,15 +222,22 @@ class InterventionApi {
 
   List<Intervention> completeListWithLocalUpdatedFiles(
       {required List<Intervention> list,
-      required List<FileSystemEntity> localFiles}) {
-    // add local interventions not uploaded yet : these are the new ones
+      required List<FileSystemEntity> localFiles,
+      required Organization organization}) {
+    // add local interventions to list
+    // that are not uploaded yet :
+    //
+    // if they match the "organization", these are new ones
+
     for (var j = 0; j < localFiles.length; j++) {
       FileSystemEntity f = localFiles[j];
       if (f is File) {
         String contents = (f).readAsStringSync();
         Map<String, dynamic> contentJson = jsonDecode(contents);
         Intervention intervention = Intervention.fromJson(contentJson);
-        list.add(intervention);
+        if (intervention.organization_id == organization.id) {
+          list.add(intervention);
+        }
       }
     }
     return list;

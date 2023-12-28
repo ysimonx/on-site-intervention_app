@@ -39,8 +39,7 @@ class Intervention {
             json.containsKey('intervention_on_site_uuid')
                 ? json['intervention_on_site_uuid']
                 : generateUUID(),
-        // type_intervention = "scaffolding_request";
         type_intervention = json.containsKey('type_intervention')
             ? json['type_intervention']
-            : "scaffolding_request";
+            : "scaffolding request";
 }

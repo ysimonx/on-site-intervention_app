@@ -58,7 +58,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
                         child: ListTile(
                           title:
                               Text(list[index].intervention_name.toUpperCase()),
-                          subtitle: const Text('subtitle'),
+                          subtitle: Text(list[index].type_intervention),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [

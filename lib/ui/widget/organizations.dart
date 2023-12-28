@@ -23,8 +23,8 @@ Widget getOrganizationsWidget(
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
+              // IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
+              // IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
               IconButton(
                   onPressed: () {
                     Navigator.push(
@@ -35,7 +35,7 @@ Widget getOrganizationsWidget(
                                     id: organizations[index].id,
                                     name: organizations[index].name))));
                   },
-                  icon: const Icon(Icons.add_box)),
+                  icon: const Icon(Icons.arrow_forward)),
             ],
           ),
         ),

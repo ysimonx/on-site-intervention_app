@@ -107,16 +107,16 @@ class MyCustomFormState extends State<MyCustomForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Are you sure?'),
+          title: const Text('Etes vous sûr ?'),
           content: const Text(
-            'Are you sure you want to leave this page?',
+            'Souhaitez vous quitter ce formulaire sans avoir sauvegardé vos modifications ?',
           ),
           actions: <Widget>[
             TextButton(
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text('Nevermind'),
+              child: const Text('Annuler'),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -125,7 +125,7 @@ class MyCustomFormState extends State<MyCustomForm> {
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text('Leave'),
+              child: const Text('Quitter'),
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
@@ -191,7 +191,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                       _needSave = false;
                     }
                   },
-                  child: const Text('Submit'),
+                  child: const Text('Sauvegarder'),
                 ),
               ),
             ],

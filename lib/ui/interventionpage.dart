@@ -84,11 +84,21 @@ class MyCustomFormState extends State<MyCustomForm> {
 
   late TextEditingController myController;
 
+  bool _needSave = false;
+
+  void _printLatestValue() {
+    final text = myController.text;
+    print('Second text field: $text (${text.characters.length})');
+    _needSave = true;
+  }
+
   @override
   void initState() {
     super.initState();
     myController =
         TextEditingController(text: widget.intervention.intervention_name);
+    // Start listening to changes.
+    myController.addListener(_printLatestValue);
   }
 
   void _showBackDialog() {
@@ -136,7 +146,11 @@ class MyCustomFormState extends State<MyCustomForm> {
           if (didPop) {
             return;
           }
-          _showBackDialog();
+          if (_needSave) {
+            _showBackDialog();
+          } else {
+            Navigator.pop(context);
+          }
         },
         child: Form(
           key: _formKey,
@@ -173,6 +187,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                           intervention: widget.intervention);
 
                       await interventionApi.syncLocalUpdatedFiles();
+
+                      _needSave = false;
                     }
                   },
                   child: const Text('Submit'),

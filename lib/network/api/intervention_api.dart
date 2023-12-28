@@ -90,7 +90,7 @@ class InterventionApi {
     return listInterventions;
   }
 
-  Future<Response?> postIntervention(Intervention intervention) async {
+  Future<Response?> postInterventionOnServer(Intervention intervention) async {
     Map<String, dynamic> data = intervention.toJSON();
     String json = jsonEncode(data);
     print(json);
@@ -107,12 +107,6 @@ class InterventionApi {
       return response;
     } on DioException catch (e) {
       print(e.response?.statusCode);
-
-      /* if (e.response?.statusCode == 400) {
-        if (e.response?.data.contains("photo already uploaded")) {
-          return e.response;
-        }
-      }*/
       rethrow;
     }
   }
@@ -251,7 +245,7 @@ class InterventionApi {
         String contents = await f.readAsString();
         Map<String, dynamic> contentJson = jsonDecode(contents);
         Intervention i = Intervention.fromJson(contentJson);
-        var r = await postIntervention(i);
+        var r = await postInterventionOnServer(i);
         print(r.toString());
       }
     }

@@ -7,8 +7,10 @@ import 'package:on_site_intervention_app/ui/interventionpage.dart';
 
 import '../models/model_intervention.dart';
 import '../models/model_organization.dart';
+import '../models/model_user.dart';
 import '../network/api/intervention_api.dart';
 import '../network/api/login_api.dart';
+import '../network/api/user_api.dart';
 import 'utils/uuid.dart';
 
 class OrganizationPage extends StatefulWidget {
@@ -109,17 +111,26 @@ class _OrganizationPageState extends State<OrganizationPage> {
         floatingActionButton: FloatingActionButton(
           // onPressed: {},
           tooltip: 'Increment',
-          onPressed: () {
+          onPressed: () async {
             if (kDebugMode) {
               // ignore: avoid_print
               print("onPressed");
             }
+            String type_formulaire = "scaffolding request";
+
+            UserApi userAPI = UserApi();
+            Map<String, dynamic> template_form =
+                await userAPI.getInterventionTemplate(
+                    organization: widget.organization.name,
+                    type_formulaire: type_formulaire);
+
             Intervention newIntervention = Intervention(
                 id: "new_${generateUUID()}",
                 intervention_name: "nouvelle",
                 organization_id: widget.organization.id,
                 intervention_on_site_uuid: generateUUID(),
-                type_intervention: "scaffolding request");
+                type_intervention: type_formulaire,
+                forms: template_form);
             Navigator.push(
                     context,
                     MaterialPageRoute(

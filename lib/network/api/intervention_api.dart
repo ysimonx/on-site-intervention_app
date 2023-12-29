@@ -232,6 +232,7 @@ class InterventionApi {
     for (var j = 0; j < localFiles.length; j++) {
       FileSystemEntity f = localFiles[j];
       if (f is File) {
+        // f.deleteSync();
         String contents = (f).readAsStringSync();
         Map<String, dynamic> contentJson = jsonDecode(contents);
         Intervention intervention = Intervention.fromJson(contentJson);

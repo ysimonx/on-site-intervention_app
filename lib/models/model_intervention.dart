@@ -7,13 +7,15 @@ class Intervention {
   String organization_id;
   String type_intervention;
   int version = 1;
+  Map<String, dynamic> forms;
 
   Intervention(
       {required this.id,
       required this.intervention_name,
       required this.organization_id,
       required this.intervention_on_site_uuid,
-      required this.type_intervention});
+      required this.type_intervention,
+      required this.forms});
 
   Map<String, dynamic> toJSON() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -23,6 +25,7 @@ class Intervention {
     data['intervention_on_site_uuid'] = intervention_on_site_uuid;
     data['version'] = version;
     data['type_intervention'] = type_intervention;
+    data['forms'] = forms;
     return data;
   }
 
@@ -41,5 +44,8 @@ class Intervention {
                 : generateUUID(),
         type_intervention = json.containsKey('type_intervention')
             ? json['type_intervention']
-            : "scaffolding request";
+            : "scaffolding request",
+        forms = json['forms'] is Map ? json['forms'] : {};
+
+  // forms = json.containsKey('forms') ? json['forms'] : {};
 }

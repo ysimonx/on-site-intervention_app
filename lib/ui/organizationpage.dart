@@ -119,10 +119,14 @@ class _OrganizationPageState extends State<OrganizationPage> {
             String type_formulaire = "scaffolding request";
 
             UserApi userAPI = UserApi();
-            Map<String, dynamic> template_form =
+            Map<String, dynamic> template_forms =
                 await userAPI.getInterventionTemplate(
                     organization: widget.organization.name,
                     type_formulaire: type_formulaire);
+
+            template_forms.forEach((key, value) {
+              template_forms[key]["form_on_site_uuid"] = generateUUID();
+            });
 
             Intervention newIntervention = Intervention(
                 id: "new_${generateUUID()}",
@@ -130,7 +134,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
                 organization_id: widget.organization.id,
                 intervention_on_site_uuid: generateUUID(),
                 type_intervention: type_formulaire,
-                forms: template_form);
+                forms: template_forms);
             Navigator.push(
                     context,
                     MaterialPageRoute(

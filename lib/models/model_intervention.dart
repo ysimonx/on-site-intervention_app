@@ -1,4 +1,5 @@
 import '../ui/utils/uuid.dart';
+import 'model_formulaire.dart';
 
 class Intervention {
   String id;
@@ -7,7 +8,7 @@ class Intervention {
   String organization_id;
   String type_intervention;
   int version = 1;
-  Map<String, dynamic> forms;
+  Map<String, Formulaire> forms = {};
 
   Intervention(
       {required this.id,
@@ -25,7 +26,7 @@ class Intervention {
     data['intervention_on_site_uuid'] = intervention_on_site_uuid;
     data['version'] = version;
     data['type_intervention'] = type_intervention;
-    data['forms'] = forms;
+    data['forms'] = ConvertListFormulairesToJson(forms);
     return data;
   }
 
@@ -45,7 +46,33 @@ class Intervention {
         type_intervention = json.containsKey('type_intervention')
             ? json['type_intervention']
             : "scaffolding request",
-        forms = json['forms'] is Map ? json['forms'] : {};
+        forms = ConvertJsonToMapFormulaires(json['forms']);
+  // forms2 = {};
+}
 
-  // forms = json.containsKey('forms') ? json['forms'] : {};
+Map<String, Formulaire> ConvertJsonToMapFormulaires(map) {
+  Map<String, Formulaire> res = {};
+
+  map.forEach((key, value) {
+    Formulaire f = Formulaire(
+        form_name: value["form_name"],
+        form_on_site_uuid: value.containsKey('form_on_site_uuid')
+            ? value["form_on_site_uuid"]
+            : generateUUID());
+
+    res[key] = f;
+  });
+  // }
+  return res;
+}
+
+Map<String, dynamic> ConvertListFormulairesToJson(Map<String, Formulaire> map) {
+  Map<String, dynamic> res = {};
+
+  map.forEach((key, value) {
+    dynamic json = value.toJSON();
+    res[key] = json;
+  });
+  // }
+  return res;
 }

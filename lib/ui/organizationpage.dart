@@ -1,10 +1,11 @@
-// ignore_for_file: empty_statements
+// ignore_for_file: empty_statements, unused_import
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:on_site_intervention_app/ui/interventionpage.dart';
 
+import '../models/model_formulaire.dart';
 import '../models/model_intervention.dart';
 import '../models/model_organization.dart';
 import '../models/model_user.dart';
@@ -44,8 +45,8 @@ class _OrganizationPageState extends State<OrganizationPage> {
             future: getInterventions(organization: widget.organization),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                List<Intervention> list = snapshot.data;
-                if (list.isNotEmpty) {
+                List<Intervention> listInterventions = snapshot.data;
+                if (listInterventions.isNotEmpty) {
                   return ListTileTheme(
                     contentPadding: const EdgeInsets.all(15),
                     iconColor: Colors.green,
@@ -54,13 +55,15 @@ class _OrganizationPageState extends State<OrganizationPage> {
                     style: ListTileStyle.list,
                     dense: true,
                     child: ListView.builder(
-                      itemCount: list.length,
+                      itemCount: listInterventions.length,
                       itemBuilder: (_, index) => Card(
                         margin: const EdgeInsets.all(10),
                         child: ListTile(
-                          title:
-                              Text(list[index].intervention_name.toUpperCase()),
-                          subtitle: Text(list[index].type_intervention),
+                          title: Text(listInterventions[index]
+                              .intervention_name
+                              .toUpperCase()),
+                          subtitle:
+                              Text(listInterventions[index].type_intervention),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -78,7 +81,8 @@ class _OrganizationPageState extends State<OrganizationPage> {
                                                 builder: (context) =>
                                                     InterventionPage(
                                                         intervention:
-                                                            list[index])))
+                                                            listInterventions[
+                                                                index])))
                                         .then((value) => setState(() {}));
                                   },
                                   icon: const Icon(Icons.arrow_forward)),
@@ -119,13 +123,17 @@ class _OrganizationPageState extends State<OrganizationPage> {
             String type_formulaire = "scaffolding request";
 
             UserApi userAPI = UserApi();
+
             Map<String, dynamic> template_forms =
                 await userAPI.getInterventionTemplate(
                     organization: widget.organization.name,
                     type_formulaire: type_formulaire);
 
+            Map<String, Formulaire> forms = {};
+
             template_forms.forEach((key, value) {
-              template_forms[key]["form_on_site_uuid"] = generateUUID();
+              Formulaire form = Formulaire.fromJson(template_forms[key]);
+              forms[key] = form;
             });
 
             Intervention newIntervention = Intervention(
@@ -134,7 +142,8 @@ class _OrganizationPageState extends State<OrganizationPage> {
                 organization_id: widget.organization.id,
                 intervention_on_site_uuid: generateUUID(),
                 type_intervention: type_formulaire,
-                forms: template_forms);
+                forms: forms);
+
             Navigator.push(
                     context,
                     MaterialPageRoute(

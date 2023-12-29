@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 
+import '../../models/model_config.dart';
 import '../../models/model_user.dart';
 import '../dio_client.dart';
 import 'constants.dart';
@@ -31,6 +32,9 @@ class UserApi {
     dynamic content = await readUserMe();
     Map<String, dynamic> contentJson = jsonDecode(content);
     User me = User.fromJson(contentJson);
+    Config config = Config.fromJson(contentJson);
+    me.setConfig(config: config);
+
     return me;
   }
 

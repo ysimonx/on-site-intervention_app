@@ -1,3 +1,5 @@
+import 'package:on_site_intervention_app/models/model_config.dart';
+
 import 'model_organization.dart';
 
 class User {
@@ -5,6 +7,7 @@ class User {
   String firstname;
   String lastname;
   late List<Organization> organizations;
+  late Config myconfig;
 
   User({required this.id, required this.firstname, required this.lastname});
 
@@ -50,5 +53,9 @@ class User {
   List<Organization> organizationsFromJson(Map<String, dynamic> json) {
     List<Organization> res = [];
     return res;
+  }
+
+  void setConfig({required Config config}) {
+    this.myconfig = config;
   }
 }

@@ -1,8 +1,10 @@
 import '../ui/utils/uuid.dart';
+import 'model_section.dart';
 
 class Formulaire {
   String form_on_site_uuid;
   String form_name;
+  Map<String, Section> sections = {};
 
   Formulaire({required this.form_on_site_uuid, required this.form_name});
 

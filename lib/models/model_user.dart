@@ -6,10 +6,18 @@ class User {
   String id;
   String firstname;
   String lastname;
+  String email;
+  String phone;
+
   late List<Organization> organizations;
   late Config myconfig;
 
-  User({required this.id, required this.firstname, required this.lastname});
+  User(
+      {required this.id,
+      required this.firstname,
+      required this.lastname,
+      required this.email,
+      required this.phone});
 
   Map<String, dynamic> toJSON() {
     var resorg = [];
@@ -21,6 +29,8 @@ class User {
     data['id'] = id;
     data['firstname'] = firstname;
     data['lastname'] = lastname;
+    data['email'] = email;
+    data['phone'] = phone;
     data['organizations'] = resorg;
     return data;
   }
@@ -29,7 +39,9 @@ class User {
     User user = User(
         id: json['user']['id'] as String,
         firstname: json['user']['firstname'] as String,
-        lastname: json['user']['lastname'] as String);
+        lastname: json['user']['lastname'] as String,
+        email: json['user']['email'] as String,
+        phone: json['user']['phone'] as String);
 
     var organizations = json['organizations'];
 
@@ -43,13 +55,6 @@ class User {
     return user;
   }
 
-  bool isAuthorized() {
-    if (id != "") {
-      return true;
-    }
-    return false;
-  }
-
   List<Organization> organizationsFromJson(Map<String, dynamic> json) {
     List<Organization> res = [];
     return res;
@@ -57,5 +62,17 @@ class User {
 
   void setConfig({required Config config}) {
     this.myconfig = config;
+  }
+
+  static User nobody() {
+    User user = User(id: "", firstname: "", lastname: "", email: "", phone: "");
+    return user;
+  }
+
+  bool isAuthorized() {
+    if (id != "") {
+      return true;
+    }
+    return false;
   }
 }

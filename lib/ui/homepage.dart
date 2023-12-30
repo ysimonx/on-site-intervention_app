@@ -6,6 +6,7 @@ import '../models/model_user.dart';
 import '../network/api/login_api.dart';
 import '../network/api/user_api.dart';
 import '../network/dio_client.dart';
+import 'utils/logger.dart';
 import 'widget/_homepage_authentifier_content.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/scheduler.dart';
@@ -30,6 +31,82 @@ class _HomePageState extends State<HomePage> {
   UserApi userAPI = UserApi();
 
   final String _title = 'Accueil';
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<User> getMe() async {
+    bool ok = await loginApi.hasAnAccessToken();
+    logger.d("hasAnAccessToken ${ok.toString()}");
+    if (ok) {
+      User userMe = await userAPI.me();
+      logger.d("user identified : ${userMe.email}");
+      return userMe;
+    }
+    User userNobody = User.nobody();
+    logger.d("user nobody");
+    return userNobody;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(100),
+            child:
+                BaseAppBar(_title, onDeconnexion: (value) => setState(() {}))),
+        body: FutureBuilder(
+            future: getMe(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                User me = snapshot.data;
+                if (me.isAuthorized()) {
+                  return HomepageAuthentifiedContent(user: me);
+                }
+                return LoginForm(context);
+              } else if (snapshot.hasError) {
+                return const Text("error");
+              } else {
+                return const SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: CircularProgressIndicator(),
+                );
+              }
+            }));
+  }
+
+  Widget LoginForm(BuildContext context) {
+    return Center(
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            emailForm(),
+            const SizedBox(
+              height: 10,
+            ),
+            passwordForm(),
+            const SizedBox(
+              height: 10,
+            ),
+            submit(),
+            const SizedBox(
+              height: 80,
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget submit() {
     return MaterialButton(
@@ -85,77 +162,6 @@ class _HomePageState extends State<HomePage> {
       obscureText: true,
       decoration: const InputDecoration(hintText: "Password"),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Future<User> getMe() async {
-    bool ok = await loginApi.hasAnAccessToken();
-
-    if (ok) {
-      User userMe = await userAPI.me();
-      print(userMe.toJSON());
-      return userMe;
-    }
-    User userNull = User(id: "", firstname: "", lastname: "");
-    return userNull;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(100),
-            child:
-                BaseAppBar(_title, onDeconnexion: (value) => setState(() {}))),
-        body: FutureBuilder(
-            future: getMe(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                User me = snapshot.data;
-                if (me.isAuthorized()) {
-                  return HomepageAuthentifiedContent(user: me);
-                }
-                return Center(
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        emailForm(),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        passwordForm(),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        submit(),
-                        const SizedBox(
-                          height: 80,
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                return const Text("error");
-              } else {
-                return const SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }));
   }
 
   String? validateEmail(String? value) {

@@ -8,6 +8,7 @@ import 'package:on_site_intervention_app/models/model_organization.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../models/model_intervention.dart';
+import '../../ui/utils/logger.dart';
 import '../dio_client.dart';
 import 'constants.dart';
 
@@ -32,10 +33,10 @@ class InterventionApi {
       }
     } on DioException catch (e) {
       if (e.response != null) {
-        print(e.response!.statusCode);
         if (e.response!.statusCode == 401) {
           return [];
         }
+        logger.e("getList : ${e.response!.statusCode}");
       }
     }
 
@@ -58,7 +59,7 @@ class InterventionApi {
             await localUpdatedFileRead(intervention: intervention);
 
         // TODO : si c'est la meme version, je peux supprimer le fichier en local
-        print("${intervention.version} vs ${intervention_new.version}");
+        logger.d("${intervention.version} vs ${intervention_new.version}");
         if (intervention.version > intervention_new.version) {
           // l'intervention en local est plus ancienne que celle du serveur
           // je peux supprimer l'intervention enregistrée en local
@@ -95,7 +96,7 @@ class InterventionApi {
   Future<Response?> postInterventionOnServer(Intervention intervention) async {
     Map<String, dynamic> data = intervention.toJSON();
     String json = jsonEncode(data);
-    print(json);
+    logger.d("postInterventionOnServer : ${json}");
 
     try {
       final Response response = await dioClient.post(
@@ -105,10 +106,10 @@ class InterventionApi {
         }),
         data: json,
       );
-      print(response.statusCode);
+      logger.d("postInterventionOnServer :${response.statusCode}");
       return response;
     } on DioException catch (e) {
-      print(e.response?.statusCode);
+      logger.e("postInterventionOnServer :${e.response?.statusCode}");
       rethrow;
     }
   }
@@ -256,7 +257,7 @@ class InterventionApi {
         Map<String, dynamic> contentJson = jsonDecode(contents);
         Intervention i = Intervention.fromJson(contentJson);
         var r = await postInterventionOnServer(i);
-        print(r.toString());
+        logger.d(r.toString());
       }
     }
   }

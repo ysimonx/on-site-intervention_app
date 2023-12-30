@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/model_intervention.dart';
 import '../network/api/intervention_api.dart';
+import 'utils/logger.dart';
 
 class InterventionPage extends StatefulWidget {
   const InterventionPage({super.key, required this.intervention});
@@ -88,7 +89,7 @@ class MyCustomFormState extends State<MyCustomForm> {
 
   void _printLatestValue() {
     final text = myController.text;
-    print('Second text field: $text (${text.characters.length})');
+    logger.d('Second text field: $text (${text.characters.length})');
     _needSave = true;
   }
 

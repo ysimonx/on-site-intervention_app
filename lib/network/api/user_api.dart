@@ -10,6 +10,7 @@ import 'dart:async';
 import '../../models/model_config.dart';
 import '../../models/model_formulaire.dart';
 import '../../models/model_user.dart';
+import '../../ui/utils/logger.dart';
 import '../dio_client.dart';
 import 'constants.dart';
 
@@ -26,7 +27,7 @@ class UserApi {
         await writeUserMe(jsonEncode(response.data));
       }
     } on DioException catch (e) {
-      print(e.message);
+      logger.e(e.message);
     }
 
     // return data already downloaded, even in mobile-first Mode

@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 
+import '../../ui/utils/logger.dart';
 import '../dio_client.dart';
 import 'constants.dart';
 
@@ -51,8 +52,8 @@ class LoginApi {
       if (response.statusCode == 200) {
         accessToken = response.data["access_token"];
         refreshToken = response.data["refresh_token"];
-        print(accessToken);
-        print(refreshToken);
+        logger.d("accessToken = ${accessToken}");
+        logger.d("refreshToken = ${refreshToken}");
 
         await _storage.write(key: keyAccessToken, value: accessToken);
         await _storage.write(key: keyRefreshToken, value: refreshToken);
@@ -61,7 +62,7 @@ class LoginApi {
       return response;
     } on DioException catch (e) {
       if (e.response != null) {
-        print(e.response!.statusCode);
+        logger.e(e.response!.statusCode);
         if (e.response!.statusCode == 401) {
           return e.response!;
         }

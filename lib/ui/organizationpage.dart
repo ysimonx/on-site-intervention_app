@@ -12,6 +12,7 @@ import '../models/model_user.dart';
 import '../network/api/intervention_api.dart';
 import '../network/api/login_api.dart';
 import '../network/api/user_api.dart';
+import 'utils/logger.dart';
 import 'utils/uuid.dart';
 
 class OrganizationPage extends StatefulWidget {
@@ -118,7 +119,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
           onPressed: () async {
             if (kDebugMode) {
               // ignore: avoid_print
-              print("onPressed");
+              logger.d("onPressed");
             }
 
             String typeIntervention = "scaffolding request";

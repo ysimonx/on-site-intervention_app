@@ -120,23 +120,27 @@ class _OrganizationPageState extends State<OrganizationPage> {
               // ignore: avoid_print
               print("onPressed");
             }
-            String type_formulaire = "scaffolding request";
+
+            String typeIntervention = "scaffolding request";
 
             UserApi userAPI = UserApi();
 
-            Map<String, Formulaire> template_forms =
-                await userAPI.getInterventionFormsTemplate(
+            Map<String, Formulaire> initializedForms =
+                await userAPI.getInterventionInitializedFormsFromTemplate(
                     organization: widget.organization.name,
-                    type_formulaire: type_formulaire);
+                    type_intervention: typeIntervention);
 
             Intervention newIntervention = Intervention(
                 id: "new_${generateUUID()}",
                 intervention_name: "nouvelle",
                 organization_id: widget.organization.id,
                 intervention_on_site_uuid: generateUUID(),
-                type_intervention: type_formulaire,
-                forms: template_forms);
+                type_intervention: typeIntervention,
+                forms: initializedForms);
 
+            if (!context.mounted) {
+              return;
+            }
             Navigator.push(
                     context,
                     MaterialPageRoute(

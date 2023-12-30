@@ -75,27 +75,32 @@ class UserApi {
     return file.writeAsString(data);
   }
 
-  Future<Map<String, Formulaire>> getInterventionFormsTemplate(
-      {required String organization, required String type_formulaire}) async {
+  Future<Map<String, Formulaire>> getInterventionInitializedFormsFromTemplate(
+      {required String organization, required String type_intervention}) async {
     User me = await this.me();
-    Map<String, dynamic> res = {};
 
     Map<String, Formulaire> forms = {};
 
+    // recherche des templates de formulaire pour le bon type d'intervention
+    // et pour l'organization
     for (var i = 0;
         i < me.myconfig.organizations_types_interventions.length;
         i++) {
       Map<String, dynamic> item =
           me.myconfig.organizations_types_interventions[i];
       print(item);
+
       if (item.containsKey(organization)) {
         Map<String, dynamic> item_organization = item[organization];
-        if (item_organization.containsKey(type_formulaire)) {
-          res = jsonDecode(item_organization[type_formulaire]);
+        if (item_organization.containsKey(type_intervention)) {
+          // je l'ai trouvé !
+
+          Map<String, dynamic> formsTemplates =
+              jsonDecode(item_organization[type_intervention]);
 
           Map<String, Formulaire> forms = {};
 
-          res["forms"].forEach((key, value) {
+          formsTemplates["forms"].forEach((key, value) {
             Formulaire form = Formulaire.fromJson(value);
             forms[key] = form;
           });

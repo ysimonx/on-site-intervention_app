@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 
 import '../../models/model_config.dart';
+import '../../models/model_formulaire.dart';
 import '../../models/model_user.dart';
 import '../dio_client.dart';
 import 'constants.dart';
@@ -74,10 +75,12 @@ class UserApi {
     return file.writeAsString(data);
   }
 
-  Future<Map<String, dynamic>> getInterventionTemplate(
+  Future<Map<String, Formulaire>> getInterventionFormsTemplate(
       {required String organization, required String type_formulaire}) async {
     User me = await this.me();
     Map<String, dynamic> res = {};
+
+    Map<String, Formulaire> forms = {};
 
     for (var i = 0;
         i < me.myconfig.organizations_types_interventions.length;
@@ -89,10 +92,19 @@ class UserApi {
         Map<String, dynamic> item_organization = item[organization];
         if (item_organization.containsKey(type_formulaire)) {
           res = jsonDecode(item_organization[type_formulaire]);
-          return res["forms"];
+
+          Map<String, Formulaire> forms = {};
+
+          res["forms"].forEach((key, value) {
+            Formulaire form = Formulaire.fromJson(value);
+            forms[key] = form;
+          });
+
+          return forms;
         }
       }
     }
-    return res;
+
+    return forms;
   }
 }

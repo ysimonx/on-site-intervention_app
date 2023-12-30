@@ -124,17 +124,10 @@ class _OrganizationPageState extends State<OrganizationPage> {
 
             UserApi userAPI = UserApi();
 
-            Map<String, dynamic> template_forms =
-                await userAPI.getInterventionTemplate(
+            Map<String, Formulaire> template_forms =
+                await userAPI.getInterventionFormsTemplate(
                     organization: widget.organization.name,
                     type_formulaire: type_formulaire);
-
-            Map<String, Formulaire> forms = {};
-
-            template_forms.forEach((key, value) {
-              Formulaire form = Formulaire.fromJson(template_forms[key]);
-              forms[key] = form;
-            });
 
             Intervention newIntervention = Intervention(
                 id: "new_${generateUUID()}",
@@ -142,7 +135,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
                 organization_id: widget.organization.id,
                 intervention_on_site_uuid: generateUUID(),
                 type_intervention: type_formulaire,
-                forms: forms);
+                forms: template_forms);
 
             Navigator.push(
                     context,

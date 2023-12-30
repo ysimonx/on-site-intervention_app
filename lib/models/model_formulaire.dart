@@ -6,7 +6,10 @@ class Formulaire {
   String form_name;
   Map<String, Section> sections = {};
 
-  Formulaire({required this.form_on_site_uuid, required this.form_name});
+  Formulaire(
+      {required this.form_on_site_uuid,
+      required this.form_name,
+      Map? sections});
 
   Map<String, dynamic> toJSON() {
     final Map<String, dynamic> data = <String, dynamic>{};

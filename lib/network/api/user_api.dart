@@ -88,7 +88,6 @@ class UserApi {
         i++) {
       Map<String, dynamic> item =
           me.myconfig.organizations_types_interventions[i];
-      print(item);
 
       if (item.containsKey(organization)) {
         Map<String, dynamic> item_organization = item[organization];

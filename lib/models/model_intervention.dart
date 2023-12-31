@@ -26,7 +26,7 @@ class Intervention {
     data['intervention_on_site_uuid'] = intervention_on_site_uuid;
     data['version'] = version;
     data['type_intervention'] = type_intervention;
-    data['forms'] = ConvertListFormulairesToJson(forms);
+    data['forms'] = ConvertMapFormulairesToJson(forms);
     return data;
   }
 
@@ -54,11 +54,13 @@ Map<String, Formulaire> ConvertJsonToMapFormulaires(map) {
   Map<String, Formulaire> res = {};
 
   map.forEach((key, value) {
-    Formulaire f = Formulaire(
+    /*Formulaire f = Formulaire(
         form_name: value["form_name"],
         form_on_site_uuid: value.containsKey('form_on_site_uuid')
             ? value["form_on_site_uuid"]
             : generateUUID());
+    */
+    Formulaire f = Formulaire.fromJson(value);
 
     res[key] = f;
   });
@@ -66,12 +68,12 @@ Map<String, Formulaire> ConvertJsonToMapFormulaires(map) {
   return res;
 }
 
-Map<String, dynamic> ConvertListFormulairesToJson(Map<String, Formulaire> map) {
+Map<String, dynamic> ConvertMapFormulairesToJson(Map<String, Formulaire> map) {
   Map<String, dynamic> res = {};
 
-  map.forEach((key, value) {
-    dynamic json = value.toJSON();
-    res[key] = json;
+  map.forEach((String index, Formulaire f) {
+    dynamic json = f.toJSON();
+    res[index] = json;
   });
   // }
   return res;

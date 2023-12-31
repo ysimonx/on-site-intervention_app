@@ -15,7 +15,7 @@ class Formulaire {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['form_on_site_uuid'] = form_on_site_uuid;
     data['form_name'] = form_name;
-    data['section'] = ConvertListSectionsToJson(sections);
+    data['sections'] = ConvertMapSectionsToJson(sections);
     return data;
   }
 
@@ -24,27 +24,30 @@ class Formulaire {
             ? json['form_on_site_uuid']
             : generateUUID(),
         form_name = json['form_name'] as String,
-        sections = ConvertJsonToMapSections(json['sections']);
+        sections = json.containsKey('sections')
+            ? ConvertJsonToMapSections(json['sections'])
+            : {};
 }
 
 Map<String, Section> ConvertJsonToMapSections(map) {
   Map<String, Section> res = {};
 
   map.forEach((key, value) {
-    Section s = Section(
+    /* Section s = Section(
         section_name: value["section_name"],
         section_type: value["section_type"],
         section_on_site_uuid: value.containsKey('section_on_site_uuid')
             ? value["section_on_site_uuid"]
             : generateUUID());
-
+    */
+    Section s = Section.fromJson(value);
     res[key] = s;
   });
   // }
   return res;
 }
 
-Map<String, dynamic> ConvertListSectionsToJson(Map<String, Section> map) {
+Map<String, dynamic> ConvertMapSectionsToJson(Map<String, Section> map) {
   Map<String, dynamic> res = {};
 
   map.forEach((key, value) {

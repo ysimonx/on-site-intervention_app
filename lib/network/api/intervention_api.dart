@@ -25,8 +25,8 @@ class InterventionApi {
     try {
       Map<String, String> qParams = {'organization_id': organization.id};
 
-      final Response response = await dioClient.get(Endpoints.listInterventions,
-          queryParameters: qParams);
+      final Response response = await dioClient
+          .get(Endpoints.listInterventionsValues, queryParameters: qParams);
 
       if (response.statusCode == 200) {
         await writeInterventionsList(
@@ -42,14 +42,19 @@ class InterventionApi {
     }
 
     // returns data already downloaded, even in mobile-first Mode
-    dynamic content = await readInterventionsList(organization: organization);
-    List<dynamic> arrayLastDownloadedListJson = jsonDecode(content);
-    List<Intervention> listInterventions = [];
+    dynamic content =
+        await readListInterventionValues(organization: organization);
+    List<dynamic> arrayJsonLastDownloadedListInterventionValues =
+        jsonDecode(content);
+    List<Intervention> listInterventionValues = [];
 
     List<FileSystemEntity> listLocalUpdatedFiles = await getLocalUpdatedFiles();
 
-    for (var i = 0; i < arrayLastDownloadedListJson.length; i++) {
-      Map<String, dynamic> itemJson = arrayLastDownloadedListJson[i];
+    for (var i = 0;
+        i < arrayJsonLastDownloadedListInterventionValues.length;
+        i++) {
+      Map<String, dynamic> itemJson =
+          arrayJsonLastDownloadedListInterventionValues[i];
 
       Intervention intervention = Intervention.fromJson(itemJson);
 
@@ -76,22 +81,22 @@ class InterventionApi {
         // en local seulement
         for (var j = 0; j < listLocalUpdatedFiles.length; j++) {
           FileSystemEntity f = listLocalUpdatedFiles[j];
-          if (f.path
-              .endsWith("${intervention.intervention_on_site_uuid}.json")) {
+          if (f.path.endsWith(
+              "${intervention.intervention_values_on_site_uuid}.json")) {
             listLocalUpdatedFiles
                 .removeAt(j); // the only items remaining will be new ones
           }
         }
       }
-      listInterventions.add(intervention);
+      listInterventionValues.add(intervention);
     }
 
-    listInterventions = completeListWithLocalUpdatedFiles(
-        list: listInterventions,
+    listInterventionValues = completeListWithLocalUpdatedFiles(
+        list: listInterventionValues,
         localFiles: listLocalUpdatedFiles,
         organization: organization);
 
-    return listInterventions;
+    return listInterventionValues;
   }
 
   Future<Response?> postInterventionOnServer(Intervention intervention) async {
@@ -102,7 +107,7 @@ class InterventionApi {
 
     try {
       final Response response = await dioClient.post(
-        Endpoints.postIntervention,
+        Endpoints.postInterventionValues,
         options: Options(headers: {
           HttpHeaders.contentTypeHeader: "application/json",
         }),
@@ -139,7 +144,7 @@ class InterventionApi {
     return file.writeAsString(data);
   }
 
-  Future<String> readInterventionsList(
+  Future<String> readListInterventionValues(
       {required Organization organization}) async {
     try {
       final file = await getlocalFileList(organization: organization);
@@ -157,7 +162,7 @@ class InterventionApi {
   Future<File> getlocalUpdatedFile({required Intervention intervention}) async {
     final path = await _localPath;
     String pathfile =
-        '$path/$dir_intervention_updated/intervention_${intervention.intervention_on_site_uuid}.json';
+        '$path/$dir_intervention_updated/intervention_${intervention.intervention_values_on_site_uuid}.json';
     return File(pathfile);
   }
 
@@ -169,7 +174,15 @@ class InterventionApi {
       Directory d = Directory("$directory/$dir_intervention_updated/");
 
       List<FileSystemEntity> list = Directory(d.path).listSync();
+      for (var i = 0; i < list.length; i++) {
+        FileSystemEntity f = list[i];
+        if (f is File) {
+          // f.deleteSync();
+          // list.remove(f);
+        }
+      }
       return list;
+      // return [];
     } on Exception catch (_) {
       List<FileSystemEntity> list = [];
       return list;
@@ -240,7 +253,7 @@ class InterventionApi {
         Map<String, dynamic> contentJson = jsonDecode(contents);
         Intervention intervention = Intervention.fromJson(contentJson);
         if (intervention.organization_id == organization.id) {
-          list.add(intervention);
+          //list.add(intervention);
         }
       }
     }

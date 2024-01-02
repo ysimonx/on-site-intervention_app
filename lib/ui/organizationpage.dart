@@ -8,6 +8,7 @@ import 'package:on_site_intervention_app/ui/interventionpage.dart';
 import '../models/model_formulaire.dart';
 import '../models/model_intervention.dart';
 import '../models/model_organization.dart';
+import '../models/model_place.dart';
 import '../models/model_user.dart';
 import '../network/api/intervention_api.dart';
 import '../network/api/login_api.dart';
@@ -63,8 +64,8 @@ class _OrganizationPageState extends State<OrganizationPage> {
                           title: Text(listInterventions[index]
                               .intervention_name
                               .toUpperCase()),
-                          subtitle:
-                              Text(listInterventions[index].type_intervention),
+                          subtitle: Text(
+                              listInterventions[index].type_intervention_id),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -123,6 +124,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
             }
 
             String typeIntervention = "scaffolding request";
+            String typeInterventionId = "aec24222-6893-4f46-b1e0-1439b0a9a165";
 
             UserApi userAPI = UserApi();
 
@@ -131,13 +133,18 @@ class _OrganizationPageState extends State<OrganizationPage> {
                     organization: widget.organization.name,
                     type_intervention: typeIntervention);
 
+            Place nowhere =
+                Place.nowhere(organization_id: widget.organization.id);
+
             Intervention newIntervention = Intervention(
-                id: "new_${generateUUID()}",
-                intervention_name: "nouvelle",
-                organization_id: widget.organization.id,
-                intervention_on_site_uuid: generateUUID(),
-                type_intervention: typeIntervention,
-                forms: initializedForms);
+              id: "new_${generateUUID()}",
+              intervention_name: "nouvelle",
+              organization_id: widget.organization.id,
+              intervention_values_on_site_uuid: generateUUID(),
+              type_intervention_id: typeInterventionId,
+              forms: initializedForms,
+              place: nowhere,
+            );
 
             if (!context.mounted) {
               return;

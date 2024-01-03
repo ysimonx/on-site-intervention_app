@@ -81,9 +81,46 @@ class _InterventionState extends State<InterventionPage> {
                 margin: const EdgeInsets.all(10),
                 child: ListTile(
                   title: Text("${f?.form_name}"),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            print("yes");
+                          },
+                          icon: const Icon(Icons.arrow_forward)),
+                    ],
+                  ),
                 ),
               );
             }));
+  }
+
+  Widget InterventionForms2({required Intervention intervention}) {
+    // return Text("tests");
+
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // number of items in each row
+        mainAxisSpacing: 8.0, // spacing between rows
+        crossAxisSpacing: 8.0, // spacing between columns
+      ),
+      padding: EdgeInsets.all(8.0), // padding around the grid
+      itemCount: intervention.forms.length, // total number of items
+      itemBuilder: (context, index) {
+        int indicemap = index + 1;
+        Formulaire? f = intervention.forms[indicemap.toString()];
+        return Container(
+          color: Colors.blue, // color of grid items
+          child: Center(
+            child: Text(
+              f!.form_name,
+              style: TextStyle(fontSize: 18.0, color: Colors.white),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 

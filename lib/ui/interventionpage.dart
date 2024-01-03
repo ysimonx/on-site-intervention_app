@@ -22,26 +22,7 @@ class _InterventionState extends State<InterventionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.intervention.intervention_name),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            InterventionValuesForm(intervention: widget.intervention),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+    return InterventionValuesForm(intervention: widget.intervention);
   }
 }
 
@@ -127,51 +108,74 @@ class InterventionValuesFormState extends State<InterventionValuesForm> {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return PopScope(
-        canPop: false,
-        onPopInvoked: (bool didPop) {
-          if (didPop) {
-            return;
-          }
-          if (_needSave) {
-            _showBackDialog();
-          } else {
-            Navigator.pop(context);
-          }
-        },
-        child: Wrap(children: [
-          Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextFormField(
-                  controller: myController,
-                  // The validator receives the text that the user has entered.
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      // Validate returns true if the form is valid, or false otherwise.
-                      if (_formKey.currentState!.validate()) {
-                        await saveIntervention(context);
-                      }
-                    },
-                    child: const Text('Sauvegarder'),
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.intervention.intervention_name),
+        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            PopScope(
+                canPop: false,
+                onPopInvoked: (bool didPop) {
+                  if (didPop) {
+                    return;
+                  }
+                  if (_needSave) {
+                    _showBackDialog();
+                  } else {
+                    Navigator.pop(context);
+                  }
+                },
+                child: Wrap(children: [
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextFormField(
+                          controller: myController,
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              // Validate returns true if the form is valid, or false otherwise.
+                              if (_formKey.currentState!.validate()) {
+                                await saveIntervention(context);
+                              }
+                            },
+                            child: const Text('Sauvegarder'),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(child: InterventionForms(intervention: widget.intervention))
-        ]));
+                  Expanded(
+                      child:
+                          InterventionForms(intervention: widget.intervention))
+                ]))
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            // Validate returns true if the form is valid, or false otherwise.
+            if (_formKey.currentState!.validate()) {
+              await saveIntervention(context);
+            }
+          },
+          tooltip: 'Save',
+          child: const Icon(Icons.save),
+        ));
   }
 
   Future<void> saveIntervention(BuildContext context) async {

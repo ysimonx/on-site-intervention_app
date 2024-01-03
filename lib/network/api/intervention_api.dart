@@ -99,7 +99,8 @@ class InterventionApi {
     return listInterventionValues;
   }
 
-  Future<Response?> postInterventionOnServer(Intervention intervention) async {
+  Future<Response?> postInterventionValuesOnServer(
+      Intervention intervention) async {
     Map<String, dynamic> data = intervention.toJSON();
     String json = jsonEncode(data);
 
@@ -194,6 +195,7 @@ class InterventionApi {
     try {
       final file = await getlocalUpdatedFile(intervention: intervention);
       String data = jsonEncode(intervention.toJSON());
+      logger.d(data);
       if (!await file.exists()) {
         // read the file from assets first and create the local file with its contents
         await file.create(recursive: true);
@@ -271,7 +273,7 @@ class InterventionApi {
         String contents = await f.readAsString();
         Map<String, dynamic> contentJson = jsonDecode(contents);
         Intervention i = Intervention.fromJson(contentJson);
-        var r = await postInterventionOnServer(i);
+        var r = await postInterventionValuesOnServer(i);
         logger.d(r.toString());
       }
     }

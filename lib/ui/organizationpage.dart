@@ -76,16 +76,29 @@ class _OrganizationPageState extends State<OrganizationPage> {
                                   onPressed: () {},
                                   icon: const Icon(Icons.delete)),*/
                               IconButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    InterventionPage(
-                                                        intervention:
-                                                            listInterventions[
-                                                                index])))
-                                        .then((value) => setState(() {}));
+                                  onPressed: () async {
+                                    Intervention i = listInterventions[index];
+
+                                    UserApi userAPI = UserApi();
+
+                                    Map<String, Formulaire> initializedForms =
+                                        await userAPI
+                                            .getInterventionInitializedFormsFromTemplate(
+                                                organization:
+                                                    widget.organization.name,
+                                                type_intervention:
+                                                    i.type_intervention_name);
+
+                                    Place nowhere = Place.nowhere(
+                                        organization_id:
+                                            widget.organization.id);
+
+                                    i.forms = initializedForms;
+
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return InterventionPage(intervention: i);
+                                    })).then((value) => setState(() {}));
                                   },
                                   icon: const Icon(Icons.arrow_forward)),
                             ],
@@ -123,7 +136,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
               logger.d("onPressed");
             }
 
-            String typeIntervention = "scaffolding request";
+            String typeInterventionName = "scaffolding request";
             String typeInterventionId = "aec24222-6893-4f46-b1e0-1439b0a9a165";
 
             UserApi userAPI = UserApi();
@@ -131,7 +144,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
             Map<String, Formulaire> initializedForms =
                 await userAPI.getInterventionInitializedFormsFromTemplate(
                     organization: widget.organization.name,
-                    type_intervention: typeIntervention);
+                    type_intervention: typeInterventionName);
 
             Place nowhere =
                 Place.nowhere(organization_id: widget.organization.id);
@@ -142,6 +155,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
               organization_id: widget.organization.id,
               intervention_values_on_site_uuid: generateUUID(),
               type_intervention_id: typeInterventionId,
+              type_intervention_name: typeInterventionName,
               forms: initializedForms,
               place: nowhere,
             );

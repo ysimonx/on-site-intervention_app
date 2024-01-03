@@ -8,6 +8,7 @@ class Intervention {
   String intervention_values_on_site_uuid;
   String organization_id;
   String type_intervention_id;
+  String type_intervention_name;
   int version = 1;
   Map<String, Formulaire> forms = {};
   Place place;
@@ -18,6 +19,7 @@ class Intervention {
       required this.organization_id,
       required this.intervention_values_on_site_uuid,
       required this.type_intervention_id,
+      required this.type_intervention_name,
       required this.forms,
       required this.place});
 
@@ -29,7 +31,7 @@ class Intervention {
     data['intervention_values_on_site_uuid'] = intervention_values_on_site_uuid;
     data['version'] = version;
     data['type_intervention_id'] = type_intervention_id;
-    // data['forms'] = ConvertMapFormulairesToJson(forms);
+    data['forms'] = ConvertMapFormulairesToJson(forms);
     data['place_id'] = place.id;
     data['place_name'] = place.name;
     data['place_on_site_uuid'] = place.place_on_site_uuid;
@@ -52,6 +54,9 @@ class Intervention {
         type_intervention_id = json.containsKey('type_intervention_id')
             ? json['type_intervention_id'] as String
             : "scaffolding request",
+        type_intervention_name = json.containsKey('type_intervention_name')
+            ? json['type_intervention_name'] as String
+            : "scaffolding request",
         forms = json.containsKey('forms')
             ? ConvertJsonToMapFormulaires(json['forms'])
             : {},
@@ -69,14 +74,7 @@ Map<String, Formulaire> ConvertJsonToMapFormulaires(map) {
   Map<String, Formulaire> res = {};
 
   map.forEach((key, value) {
-    /*Formulaire f = Formulaire(
-        form_name: value["form_name"],
-        form_on_site_uuid: value.containsKey('form_on_site_uuid')
-            ? value["form_on_site_uuid"]
-            : generateUUID());
-    */
     Formulaire f = Formulaire.fromJson(value);
-
     res[key] = f;
   });
   // }

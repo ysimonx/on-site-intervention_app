@@ -14,14 +14,6 @@ class InterventionPage extends StatefulWidget {
 }
 
 class _InterventionState extends State<InterventionPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   initState() {
     super.initState();
@@ -31,6 +23,7 @@ class _InterventionState extends State<InterventionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.intervention.intervention_name),
@@ -40,86 +33,14 @@ class _InterventionState extends State<InterventionPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             InterventionValuesForm(intervention: widget.intervention),
-            Expanded(
-                child: InterventionForms(intervention: widget.intervention)),
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {},
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-
-  Widget InterventionForms({required Intervention intervention}) {
-    // return Text("tests");
-
-    return ListTileTheme(
-        contentPadding: const EdgeInsets.all(15),
-        iconColor: Colors.green,
-        textColor: Colors.black54,
-        tileColor: Colors.yellow[10],
-        style: ListTileStyle.list,
-        dense: true,
-        child: ListView.builder(
-            itemCount: intervention.forms.length,
-            itemBuilder: (_, index) {
-              int indicemap = index + 1;
-              Formulaire? f = intervention.forms[indicemap.toString()];
-              print(f?.form_name);
-
-              return Card(
-                margin: const EdgeInsets.all(10),
-                child: ListTile(
-                  title: Text("${f?.form_name}"),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            print("yes");
-                          },
-                          icon: const Icon(Icons.arrow_forward)),
-                    ],
-                  ),
-                ),
-              );
-            }));
-  }
-
-  Widget InterventionForms2({required Intervention intervention}) {
-    // return Text("tests");
-
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // number of items in each row
-        mainAxisSpacing: 8.0, // spacing between rows
-        crossAxisSpacing: 8.0, // spacing between columns
-      ),
-      padding: EdgeInsets.all(8.0), // padding around the grid
-      itemCount: intervention.forms.length, // total number of items
-      itemBuilder: (context, index) {
-        int indicemap = index + 1;
-        Formulaire? f = intervention.forms[indicemap.toString()];
-        return Container(
-          color: Colors.blue, // color of grid items
-          child: Center(
-            child: Text(
-              f!.form_name,
-              style: TextStyle(fontSize: 18.0, color: Colors.white),
-            ),
-          ),
-        );
-      },
     );
   }
 }
@@ -218,38 +139,39 @@ class InterventionValuesFormState extends State<InterventionValuesForm> {
             Navigator.pop(context);
           }
         },
-        child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    controller: myController,
-                    // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
+        child: Wrap(children: [
+          Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFormField(
+                  controller: myController,
+                  // The validator receives the text that the user has entered.
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      // Validate returns true if the form is valid, or false otherwise.
+                      if (_formKey.currentState!.validate()) {
+                        await saveIntervention(context);
                       }
-                      return null;
                     },
+                    child: const Text('Sauvegarder'),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        // Validate returns true if the form is valid, or false otherwise.
-                        if (_formKey.currentState!.validate()) {
-                          await saveIntervention(context);
-                        }
-                      },
-                      child: const Text('Sauvegarder'),
-                    ),
-                  ),
-                ],
-              ),
-            )));
+                ),
+              ],
+            ),
+          ),
+          Expanded(child: InterventionForms(intervention: widget.intervention))
+        ]));
   }
 
   Future<void> saveIntervention(BuildContext context) async {
@@ -269,5 +191,42 @@ class InterventionValuesFormState extends State<InterventionValuesForm> {
     await interventionApi.syncLocalUpdatedFiles();
 
     _needSave = false;
+  }
+
+  Widget InterventionForms({required Intervention intervention}) {
+    // return Text("tests");
+
+    return ListTileTheme(
+        contentPadding: const EdgeInsets.all(15),
+        iconColor: Colors.green,
+        textColor: Colors.black54,
+        tileColor: Colors.yellow[10],
+        style: ListTileStyle.list,
+        dense: true,
+        child: ListView.builder(
+            itemCount: intervention.forms.length,
+            shrinkWrap: true,
+            itemBuilder: (_, index) {
+              int indicemap = index + 1;
+              Formulaire? f = intervention.forms[indicemap.toString()];
+              print(f?.form_name);
+
+              return Card(
+                margin: const EdgeInsets.all(10),
+                child: ListTile(
+                  title: Text("${f?.form_name}"),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            print("yes");
+                          },
+                          icon: const Icon(Icons.arrow_forward)),
+                    ],
+                  ),
+                ),
+              );
+            }));
   }
 }

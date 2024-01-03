@@ -253,7 +253,7 @@ class InterventionApi {
         Map<String, dynamic> contentJson = jsonDecode(contents);
         Intervention intervention = Intervention.fromJson(contentJson);
         if (intervention.organization_id == organization.id) {
-          //list.add(intervention);
+          list.add(intervention);
         }
       }
     }

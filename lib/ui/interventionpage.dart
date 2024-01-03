@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/model_formulaire.dart';
 import '../models/model_intervention.dart';
 import '../network/api/intervention_api.dart';
 import 'utils/logger.dart';
@@ -38,7 +39,9 @@ class _InterventionState extends State<InterventionPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            MyCustomForm(intervention: widget.intervention),
+            InterventionValuesForm(intervention: widget.intervention),
+            Expanded(
+                child: InterventionForms(intervention: widget.intervention)),
             const Text(
               'You have pushed the button this many times:',
             ),
@@ -56,23 +59,49 @@ class _InterventionState extends State<InterventionPage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+
+  Widget InterventionForms({required Intervention intervention}) {
+    // return Text("tests");
+
+    return ListTileTheme(
+        contentPadding: const EdgeInsets.all(15),
+        iconColor: Colors.green,
+        textColor: Colors.black54,
+        tileColor: Colors.yellow[10],
+        style: ListTileStyle.list,
+        dense: true,
+        child: ListView.builder(
+            itemCount: intervention.forms.length,
+            itemBuilder: (_, index) {
+              int indicemap = index + 1;
+              Formulaire? f = intervention.forms[indicemap.toString()];
+              print(f?.form_name);
+
+              return Card(
+                margin: const EdgeInsets.all(10),
+                child: ListTile(
+                  title: Text("${f?.form_name}"),
+                ),
+              );
+            }));
+  }
 }
 
 // Create a Form widget.
-class MyCustomForm extends StatefulWidget {
-  const MyCustomForm({super.key, required this.intervention});
+class InterventionValuesForm extends StatefulWidget {
+  const InterventionValuesForm({super.key, required this.intervention});
 
   final Intervention intervention;
 
   @override
-  MyCustomFormState createState() {
-    return MyCustomFormState();
+  InterventionValuesFormState createState() {
+    return InterventionValuesFormState();
   }
 }
 
 // Create a corresponding State class.
 // This class holds data related to the form.
-class MyCustomFormState extends State<MyCustomForm> {
+class InterventionValuesFormState extends State<InterventionValuesForm> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   //

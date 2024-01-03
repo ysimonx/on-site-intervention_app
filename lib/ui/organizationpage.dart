@@ -65,7 +65,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
                               .intervention_name
                               .toUpperCase()),
                           subtitle: Text(
-                              listInterventions[index].type_intervention_id),
+                              listInterventions[index].type_intervention_name),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [

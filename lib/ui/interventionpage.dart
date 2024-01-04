@@ -117,8 +117,7 @@ class InterventionPageState extends State<InterventionPage> {
           ],
         ),
       ),
-      Expanded(
-          child: widgetBodyFormFormulaires(intervention: widget.intervention))
+      widgetBodyFormFormulaires(intervention: widget.intervention)
     ]);
   }
 

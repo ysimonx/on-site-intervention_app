@@ -35,36 +35,38 @@ class User {
     return data;
   }
 
-  static User fromJson(Map<String, dynamic> json) {
+  static User fromConfigJson(Map<String, dynamic> json) {
+    Map<String, dynamic> jsonUser = json['user'];
+
     User user = User(
-        id: json['user']['id'] as String,
-        firstname: json['user']['firstname'] as String,
-        lastname: json['user']['lastname'] as String,
-        email: json['user']['email'] as String,
-        phone: json['user']['phone'] as String);
+        id: jsonUser['id'] as String,
+        firstname: jsonUser['firstname'] as String,
+        lastname: jsonUser['lastname'] as String,
+        email: jsonUser['email'] as String,
+        phone: jsonUser['phone'] as String);
+
+    if (json.containsKey('config_organization_type_intervention')) {
+      user.myconfig = Config.fromJson(json);
+    }
 
     List<Organization> res = [];
 
     if (json.containsKey('organizations')) {
-      var organizations = json['organizations'];
-
+      List organizations = json['organizations'];
       for (var i = 0; i < organizations.length; i++) {
         Organization org =
             Organization.fromJson(organizations[i]["organization"]);
         res.add(org);
       }
     }
+
     user.organizations = res;
+
     return user;
   }
 
-  List<Organization> organizationsFromJson(Map<String, dynamic> json) {
-    List<Organization> res = [];
-    return res;
-  }
-
   void setConfig({required Config config}) {
-    this.myconfig = config;
+    myconfig = config;
   }
 
   static User nobody() {

@@ -20,7 +20,7 @@ class UserApi {
 
   DioClient dioClient = DioClient(Dio());
 
-  Future<User> me({bool tryRealTime = true}) async {
+  Future<User> myConfig({bool tryRealTime = true}) async {
     // attempt to retrieve my profile from server
     if (tryRealTime) {
       try {
@@ -32,13 +32,12 @@ class UserApi {
         logger.e(e.message);
       }
     }
+
     // return data already downloaded, even in mobile-first Mode
     dynamic content = await readUserMe();
     Map<String, dynamic> contentJson = jsonDecode(content);
-    User me = User.fromJson(contentJson);
-    Config config = Config.fromJson(contentJson);
-    me.setConfig(config: config);
 
+    User me = User.fromConfigJson(contentJson);
     return me;
   }
 
@@ -80,7 +79,7 @@ class UserApi {
 
   Future<Map<String, Formulaire>> getInterventionInitializedFormsFromTemplate(
       {required String organization, required String type_intervention}) async {
-    User me = await this.me(tryRealTime: false);
+    User me = await this.myConfig(tryRealTime: false);
 
     Map<String, Formulaire> forms = {};
 
@@ -117,7 +116,7 @@ class UserApi {
 
   Future<List<User>> getSupervisorsList(
       {required Organization organization}) async {
-    User me = await this.me(tryRealTime: false);
+    User me = await this.myConfig(tryRealTime: false);
 
     List<User> res = [];
 
@@ -132,7 +131,7 @@ class UserApi {
             List<dynamic> listUsers = mapRole["users"];
             for (var k = 0; k < listUsers.length; k++) {
               dynamic itemUser = listUsers[k];
-              User u = User.fromJson(itemUser);
+              User u = User.fromConfigJson(itemUser);
               res.add(u);
             }
           }

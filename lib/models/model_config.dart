@@ -2,6 +2,7 @@ import 'dart:convert';
 
 class Config {
   late List<dynamic> organizations_types_interventions;
+
   Config();
 
   Map<String, dynamic> toJSON() {

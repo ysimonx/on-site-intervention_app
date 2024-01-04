@@ -77,7 +77,7 @@ class InterventionPageState extends State<InterventionPage> {
             Navigator.pop(context);
           }
         },
-        child: widgetBodyForm(context));
+        child: SingleChildScrollView(child: widgetBodyForm(context)));
   }
 
   Widget widgetBodyForm(BuildContext context) {
@@ -141,6 +141,7 @@ class InterventionPageState extends State<InterventionPage> {
         style: ListTileStyle.list,
         dense: true,
         child: ListView.separated(
+          physics: NeverScrollableScrollPhysics(),
           itemCount: intervention.forms.length,
           shrinkWrap: true,
           padding: EdgeInsets.all(2.0),

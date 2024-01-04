@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
     bool ok = await loginApi.hasAnAccessToken();
     logger.d("hasAnAccessToken ${ok.toString()}");
     if (ok) {
-      User userMe = await userAPI.me();
+      User userMe = await userAPI.me(tryRealTime: true);
       logger.d("user identified : ${userMe.email}");
       return userMe;
     }

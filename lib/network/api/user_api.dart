@@ -19,17 +19,18 @@ class UserApi {
 
   DioClient dioClient = DioClient(Dio());
 
-  Future<User> me() async {
+  Future<User> me({bool tryRealTime = true}) async {
     // attempt to retrieve my profile from server
-    try {
-      final Response response = await dioClient.get(Endpoints.userMe);
-      if (response.statusCode == 200) {
-        await writeUserMe(jsonEncode(response.data));
+    if (tryRealTime) {
+      try {
+        final Response response = await dioClient.get(Endpoints.userMe);
+        if (response.statusCode == 200) {
+          await writeUserMe(jsonEncode(response.data));
+        }
+      } on DioException catch (e) {
+        logger.e(e.message);
       }
-    } on DioException catch (e) {
-      logger.e(e.message);
     }
-
     // return data already downloaded, even in mobile-first Mode
     dynamic content = await readUserMe();
     Map<String, dynamic> contentJson = jsonDecode(content);
@@ -78,7 +79,7 @@ class UserApi {
 
   Future<Map<String, Formulaire>> getInterventionInitializedFormsFromTemplate(
       {required String organization, required String type_intervention}) async {
-    User me = await this.me();
+    User me = await this.me(tryRealTime: false);
 
     Map<String, Formulaire> forms = {};
 

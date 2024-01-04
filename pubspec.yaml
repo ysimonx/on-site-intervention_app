@@ -77,25 +77,7 @@ flutter:
 
   assets:
     - assets/icons/logo_fidwork.png
-    - assets/icons/Logo-2023-renovadmin-170x170.png
-    - assets/images_guides/ancienne-chaudiere.png
-    - assets/images_guides/calorifuge-circuit-eau-chaude.png
-    - assets/images_guides/ancienne-chaudiere.png
-    - assets/images_guides/calorifuge-circuit-eau-chaude.png
-    - assets/images_guides/calorifuge-circuit-frigorigene.png
-    - assets/images_guides/dispositifs-reglage-equilibrage-reseau.png
-    - assets/images_guides/facade-maison.png
-    - assets/images_guides/fixation-unite-exterieure.png
-    - assets/images_guides/fixation-unite-interieure.png
-    - assets/images_guides/piece-identite.png
-    - assets/images_guides/plaque-signaletique-ancienne-chaudiere.png
-    - assets/images_guides/plaque-signaletique-unite-exterieure.png
-    - assets/images_guides/plaque-signaletique-unite-interieure.png
-    - assets/images_guides/radiateur.png
-    - assets/images_guides/unite-exterieure-aeration.png
-    - assets/images_guides/vue-d-ensemble-unite-exterieure.png
-    - assets/images_guides/vue-d-ensemble-unite-interieure.png
-
+   
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

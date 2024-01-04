@@ -9,6 +9,7 @@ import 'dart:async';
 
 import '../../models/model_config.dart';
 import '../../models/model_formulaire.dart';
+import '../../models/model_organization.dart';
 import '../../models/model_user.dart';
 import '../../ui/utils/logger.dart';
 import '../dio_client.dart';
@@ -112,5 +113,62 @@ class UserApi {
     }
 
     return forms;
+  }
+
+  Future<List<User>> getSupervisorsList(
+      {required Organization organization}) async {
+    User me = await this.me(tryRealTime: false);
+
+    List<User> res = [];
+
+    for (var i = 0; i < me.organizations.length; i++) {
+      Organization o = me.organizations[i];
+      if (o.id == organization.id) {
+        for (var j = 0; j < o.roles.length; j++) {
+          Map<String, dynamic> mapRoles = o.roles[j];
+          if (mapRoles.containsKey("supervisor")) {
+            print("gotcha");
+            Map<String, dynamic> mapRole = mapRoles["supervisor"];
+            List<dynamic> listUsers = mapRole["users"];
+            for (var k = 0; k < listUsers.length; k++) {
+              dynamic itemUser = listUsers[k];
+              User u = User.fromJson(itemUser);
+              res.add(u);
+            }
+          }
+        }
+      }
+    }
+    // recherche des templates de formulaire pour le bon type d'intervention
+    // et pour l'organization
+
+    /* for (var i = 0;
+        i < me.myconfig.organizations_types_interventions.length;
+        i++) {
+      Map<String, dynamic> item =
+          me.myconfig.organizations_types_interventions[i];
+
+      if (item.containsKey(organization)) {
+        Map<String, dynamic> item_organization = item[organization];
+        if (item_organization.containsKey(type_intervention)) {
+          // je l'ai trouvé !
+
+          Map<String, dynamic> formsTemplates =
+              jsonDecode(item_organization[type_intervention]);
+
+          Map<String, Formulaire> forms = {};
+
+          formsTemplates["forms"].forEach((key, value) {
+            Formulaire form = Formulaire.fromJson(value);
+            forms[key] = form;
+          });
+
+          return forms;
+        }
+      }
+    }
+    */
+
+    return res;
   }
 }

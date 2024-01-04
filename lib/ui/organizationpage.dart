@@ -26,14 +26,14 @@ class OrganizationPage extends StatefulWidget {
 }
 
 class _OrganizationPageState extends State<OrganizationPage> {
-  LoginApi loginApi = LoginApi();
+  late UserApi userAPI;
   late InterventionApi interventionAPI;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     interventionAPI = InterventionApi();
+    userAPI = UserApi();
   }
 
   @override
@@ -180,6 +180,8 @@ class _OrganizationPageState extends State<OrganizationPage> {
     List<Intervention> list =
         await interventionAPI.getList(organization: organization);
 
+    List<User> userSupervisors =
+        await userAPI.getSupervisorsList(organization: organization);
     return list;
   }
 

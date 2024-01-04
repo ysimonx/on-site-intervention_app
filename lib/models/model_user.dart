@@ -43,14 +43,16 @@ class User {
         email: json['user']['email'] as String,
         phone: json['user']['phone'] as String);
 
-    var organizations = json['organizations'];
-
     List<Organization> res = [];
-    for (var i = 0; i < organizations.length; i++) {
-      Organization org = Organization.fromJson(organizations[i]);
-      res.add(org);
-    }
 
+    if (json.containsKey('organizations')) {
+      var organizations = json['organizations'];
+
+      for (var i = 0; i < organizations.length; i++) {
+        Organization org = Organization.fromJson(organizations[i]);
+        res.add(org);
+      }
+    }
     user.organizations = res;
     return user;
   }

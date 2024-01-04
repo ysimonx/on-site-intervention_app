@@ -35,7 +35,7 @@ Widget getOrganizationsWidget(
                                     id: organizations[index].id,
                                     name: organizations[index].name))));
                   },
-                  icon: const Icon(Icons.arrow_forward)),
+                  icon: const Icon(Icons.navigate_next)),
             ],
           ),
         ),

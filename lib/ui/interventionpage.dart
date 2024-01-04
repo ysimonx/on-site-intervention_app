@@ -65,24 +65,19 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Widget widgetBody(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        PopScope(
-            canPop: false,
-            onPopInvoked: (bool didPop) {
-              if (didPop) {
-                return;
-              }
-              if (_needSave) {
-                _showBackDialog();
-              } else {
-                Navigator.pop(context);
-              }
-            },
-            child: widgetBodyForm(context))
-      ],
-    );
+    return PopScope(
+        canPop: false,
+        onPopInvoked: (bool didPop) {
+          if (didPop) {
+            return;
+          }
+          if (_needSave) {
+            _showBackDialog();
+          } else {
+            Navigator.pop(context);
+          }
+        },
+        child: widgetBodyForm(context));
   }
 
   Widget widgetBodyForm(BuildContext context) {
@@ -92,28 +87,11 @@ class InterventionPageState extends State<InterventionPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextFormField(
-              controller: controllerInterventionName,
-              // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
+            widgetBodyFormLocation(),
+            widgetBodyFormInterventionName(),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: ElevatedButton(
-                onPressed: () async {
-                  // Validate returns true if the form is valid, or false otherwise.
-                  if (_formKey.currentState!.validate()) {
-                    await saveIntervention(context);
-                  }
-                },
-                child: const Text('Sauvegarder'),
-              ),
-            ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: const Text(' '))
           ],
         ),
       ),
@@ -121,39 +99,88 @@ class InterventionPageState extends State<InterventionPage> {
     ]);
   }
 
+  Padding widgetBodyFormInterventionName() {
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        child: TextFormField(
+          controller: controllerInterventionName,
+          // The validator receives the text that the user has entered.
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter some text';
+            }
+            return null;
+          },
+        ));
+  }
+
+  Padding widgetBodyFormLocation() {
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Container(
+            height: 100,
+            width: double.infinity,
+            child: Card(
+              child: ListTile(
+                  leading: Icon(Icons.room),
+                  subtitle: Text(widget.intervention.place.name),
+                  title: Text("Emplacement"),
+                  trailing: Icon(Icons.travel_explore)),
+              elevation: 10,
+              shadowColor: Colors.black,
+              color: const Color.fromARGB(255, 247, 251, 248),
+            )));
+  }
+
   Widget widgetBodyFormFormulaires({required Intervention intervention}) {
     return ListTileTheme(
-        contentPadding: const EdgeInsets.all(15),
+        contentPadding: const EdgeInsets.all(2),
         iconColor: Colors.green,
         textColor: Colors.black54,
         tileColor: Colors.yellow[10],
         style: ListTileStyle.list,
         dense: true,
-        child: ListView.builder(
-            itemCount: intervention.forms.length,
-            shrinkWrap: true,
-            itemBuilder: (_, index) {
-              int indicemap = index + 1;
-              Formulaire? f = intervention.forms[indicemap.toString()];
-              print(f?.form_name);
+        child: ListView.separated(
+          itemCount: intervention.forms.length,
+          shrinkWrap: true,
+          padding: EdgeInsets.all(2.0),
+          itemBuilder: (_, index) {
+            int indicemap = index + 1;
+            Formulaire? f = intervention.forms[indicemap.toString()];
+            print(f?.form_name);
 
-              return Card(
-                margin: const EdgeInsets.all(10),
-                child: ListTile(
-                  title: Text("${f?.form_name}"),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            print("yes");
-                          },
-                          icon: const Icon(Icons.arrow_forward)),
-                    ],
-                  ),
-                ),
-              );
-            }));
+            return widgetBodyFormFormulairesItem(indicemap, f);
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return SizedBox(
+              height: 10,
+            );
+          },
+        ));
+  }
+
+  ListTile widgetBodyFormFormulairesItem(int indicemap, Formulaire? f) {
+    return ListTile(
+      shape: RoundedRectangleBorder(
+        //<-- SEE HERE
+        side: BorderSide(width: 1, color: Colors.green.shade100),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      leading: CircleAvatar(
+          backgroundColor: Color.fromARGB(255, 139, 250, 166),
+          child: Text("$indicemap")), // Text("$indicemap"),
+      title: Text("${f?.form_name}"),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+              onPressed: () {
+                print("yes");
+              },
+              icon: const Icon(Icons.navigate_next)),
+        ],
+      ),
+    );
   }
 
   Future<void> saveIntervention(BuildContext context) async {

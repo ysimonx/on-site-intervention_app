@@ -21,11 +21,11 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
       // the App.build method, and use it to set our appbar title.
       title: Column(children: [
         Image.asset(
-          'assets/icons/Logo-2023-renovadmin-170x170.png',
+          'assets/icons/logo_fidwork.png',
           fit: BoxFit.contain,
-          height: 50,
+          height: 40,
         ),
-        Text(title)
+        Text(title.toUpperCase())
       ]),
       actions: [
         (title != "Login")

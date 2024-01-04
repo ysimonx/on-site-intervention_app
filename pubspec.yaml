@@ -76,6 +76,7 @@ flutter:
 
 
   assets:
+    - assets/icons/logo_fidwork.png
     - assets/icons/Logo-2023-renovadmin-170x170.png
     - assets/images_guides/ancienne-chaudiere.png
     - assets/images_guides/calorifuge-circuit-eau-chaude.png

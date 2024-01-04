@@ -100,7 +100,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
                                       return InterventionPage(intervention: i);
                                     })).then((value) => setState(() {}));
                                   },
-                                  icon: const Icon(Icons.arrow_forward)),
+                                  icon: const Icon(Icons.navigate_next)),
                             ],
                           ),
                         ),

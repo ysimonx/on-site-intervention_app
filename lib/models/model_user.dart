@@ -49,7 +49,8 @@ class User {
       var organizations = json['organizations'];
 
       for (var i = 0; i < organizations.length; i++) {
-        Organization org = Organization.fromJson(organizations[i]);
+        Organization org =
+            Organization.fromJson(organizations[i]["organization"]);
         res.add(org);
       }
     }

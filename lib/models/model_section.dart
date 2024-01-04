@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import '../ui/utils/uuid.dart';
 import 'model_field.dart';
 
@@ -18,7 +20,7 @@ class Section {
     data['section_name'] = section_name;
     data['section_type'] = section_type;
     data['fields'] = ConvertMapFieldsToJson(fields);
-    ;
+
     return data;
   }
 

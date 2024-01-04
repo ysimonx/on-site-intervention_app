@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                 if (me.isAuthorized()) {
                   return HomepageAuthentifiedContent(user: me);
                 }
-                return LoginForm(context);
+                return widgetLoginForm(context);
               } else if (snapshot.hasError) {
                 return const Text("error");
               } else {
@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
             }));
   }
 
-  Widget LoginForm(BuildContext context) {
+  Widget widgetLoginForm(BuildContext context) {
     return Center(
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,

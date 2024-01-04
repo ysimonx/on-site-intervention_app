@@ -89,9 +89,8 @@ class InterventionPageState extends State<InterventionPage> {
           children: [
             widgetBodyFormLocation(),
             widgetBodyFormInterventionName(),
-            Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: const Text(' '))
+            const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16), child: Text(' '))
           ],
         ),
       ),
@@ -117,18 +116,18 @@ class InterventionPageState extends State<InterventionPage> {
   Padding widgetBodyFormLocation() {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Container(
+        child: SizedBox(
             height: 100,
             width: double.infinity,
             child: Card(
-              child: ListTile(
-                  leading: Icon(Icons.room),
-                  subtitle: Text(widget.intervention.place.name),
-                  title: Text("Emplacement"),
-                  trailing: Icon(Icons.travel_explore)),
               elevation: 10,
               shadowColor: Colors.black,
               color: const Color.fromARGB(255, 247, 251, 248),
+              child: ListTile(
+                  leading: const Icon(Icons.room),
+                  subtitle: Text(widget.intervention.place.name),
+                  title: const Text("Emplacement"),
+                  trailing: const Icon(Icons.travel_explore)),
             )));
   }
 
@@ -141,19 +140,19 @@ class InterventionPageState extends State<InterventionPage> {
         style: ListTileStyle.list,
         dense: true,
         child: ListView.separated(
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: intervention.forms.length,
           shrinkWrap: true,
-          padding: EdgeInsets.all(2.0),
+          padding: const EdgeInsets.all(2.0),
           itemBuilder: (_, index) {
             int indicemap = index + 1;
             Formulaire? f = intervention.forms[indicemap.toString()];
-            print(f?.form_name);
+            logger.d(f?.form_name);
 
             return widgetBodyFormFormulairesItem(indicemap, f);
           },
           separatorBuilder: (BuildContext context, int index) {
-            return SizedBox(
+            return const SizedBox(
               height: 10,
             );
           },
@@ -168,7 +167,7 @@ class InterventionPageState extends State<InterventionPage> {
         borderRadius: BorderRadius.circular(5),
       ),
       leading: CircleAvatar(
-          backgroundColor: Color.fromARGB(255, 139, 250, 166),
+          backgroundColor: const Color.fromARGB(255, 139, 250, 166),
           child: Text("$indicemap")), // Text("$indicemap"),
       title: Text("${f?.form_name}"),
       trailing: Row(
@@ -176,7 +175,7 @@ class InterventionPageState extends State<InterventionPage> {
         children: [
           IconButton(
               onPressed: () {
-                print("yes");
+                logger.d("yes");
               },
               icon: const Icon(Icons.navigate_next)),
         ],

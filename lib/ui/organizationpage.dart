@@ -89,12 +89,15 @@ class _OrganizationPageState extends State<OrganizationPage> {
                                                 type_intervention:
                                                     i.type_intervention_name);
 
-                                    Place nowhere = Place.nowhere(
+                                    /* Place nowhere = Place.nowhere(
                                         organization_id:
                                             widget.organization.id);
-
+                                    */
                                     i.forms = initializedForms;
 
+                                    if (!context.mounted) {
+                                      return;
+                                    }
                                     Navigator.push(context,
                                         MaterialPageRoute(builder: (context) {
                                       return InterventionPage(intervention: i);
@@ -180,8 +183,6 @@ class _OrganizationPageState extends State<OrganizationPage> {
     List<Intervention> list =
         await interventionAPI.getList(organization: organization);
 
-    List<User> userSupervisors =
-        await userAPI.getSupervisorsList(organization: organization);
     return list;
   }
 

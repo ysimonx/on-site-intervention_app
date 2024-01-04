@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, unnecessary_brace_in_string_interps, empty_statements
+// ignore_for_file: avoid_print, unnecessary_brace_in_string_interps, empty_statements, unused_import
 
 import 'dart:io';
 import 'dart:convert';
@@ -13,7 +13,7 @@ import '../../ui/utils/logger.dart';
 import '../dio_client.dart';
 import 'constants.dart';
 
-const String dir_intervention_updated = "interventions_updated";
+const String DIR_INTERVENTION_UPDATED = "interventions_updated";
 
 class InterventionApi {
   InterventionApi();
@@ -61,19 +61,19 @@ class InterventionApi {
       // au cas où une intervention est sauvegardée en local
       // elle doit écraser celle qui a été téléchargée du web
       if (await localUpdatedFileExists(intervention: intervention)) {
-        Intervention intervention_new =
+        Intervention interventionNew =
             await localUpdatedFileRead(intervention: intervention);
 
-        // TODO : si c'est la meme version, je peux supprimer le fichier en local
-        logger.d("${intervention.version} vs ${intervention_new.version}");
-        if (intervention.version > intervention_new.version) {
+        // si c'est la meme version, je peux supprimer le fichier en local
+        logger.d("${intervention.version} vs ${interventionNew.version}");
+        if (intervention.version > interventionNew.version) {
           // l'intervention en local est plus ancienne que celle du serveur
           // je peux supprimer l'intervention enregistrée en local
           await localUpdatedFileDelete(intervention: intervention);
         } else {
           // l'intervention en local est plus récente que celle du serveur
           // je peux écraser celle du serveur par celle en local
-          intervention = intervention_new;
+          intervention = interventionNew;
         }
 
         // et je supprime l'entrée dans listLocalFiles
@@ -163,7 +163,7 @@ class InterventionApi {
   Future<File> getlocalUpdatedFile({required Intervention intervention}) async {
     final path = await _localPath;
     String pathfile =
-        '$path/$dir_intervention_updated/intervention_${intervention.intervention_values_on_site_uuid}.json';
+        '$path/$DIR_INTERVENTION_UPDATED/intervention_${intervention.intervention_values_on_site_uuid}.json';
     return File(pathfile);
   }
 
@@ -172,7 +172,7 @@ class InterventionApi {
     String directory = (await getApplicationDocumentsDirectory()).path;
 
     try {
-      Directory d = Directory("$directory/$dir_intervention_updated/");
+      Directory d = Directory("$directory/$DIR_INTERVENTION_UPDATED/");
 
       List<FileSystemEntity> list = Directory(d.path).listSync();
       for (var i = 0; i < list.length; i++) {

@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, unnecessary_brace_in_string_interps
+// ignore_for_file: avoid_print, unnecessary_brace_in_string_interps, unused_import, non_constant_identifier_names
 
 import 'dart:io';
 import 'dart:convert';
@@ -79,7 +79,7 @@ class UserApi {
 
   Future<Map<String, Formulaire>> getInterventionInitializedFormsFromTemplate(
       {required String organization, required String type_intervention}) async {
-    User me = await this.myConfig(tryRealTime: false);
+    User me = await myConfig(tryRealTime: false);
 
     Map<String, Formulaire> forms = {};
 
@@ -116,7 +116,7 @@ class UserApi {
 
   Future<List<User>> getSupervisorsList(
       {required Organization organization}) async {
-    User me = await this.myConfig(tryRealTime: false);
+    User me = await myConfig(tryRealTime: false);
 
     List<User> res = [];
 

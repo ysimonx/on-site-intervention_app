@@ -6,6 +6,8 @@ import '../models/model_formulaire.dart';
 import '../models/model_intervention.dart';
 import '../network/api/intervention_api.dart';
 import 'utils/logger.dart';
+import 'widget/scaffold.dart';
+import 'widget/scaffold_user.dart';
 
 // Create a Form widget.
 class InterventionPage extends StatefulWidget {
@@ -90,6 +92,9 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Widget widgetBodyForm(BuildContext context) {
+    var scaffold = CardSettingsSectionScaffold();
+    var scaffoldUser = CardSettingsSectionScaffoldUser();
+
     return Wrap(children: [
       Form(
           key: _formKey,
@@ -100,173 +105,15 @@ class InterventionPageState extends State<InterventionPage> {
             const Padding(
                 padding: EdgeInsets.symmetric(vertical: 16), child: Text(' ')),
             CardSettings(
+              labelWidth: 200.0,
               children: <CardSettingsSection>[
-                cardSettingsSectionUser(),
-                cardSettingsSectionScaffold(),
+                scaffoldUser.render(),
+                scaffold.render(),
               ],
             )
           ])),
       widgetBodyFormFormulaires(intervention: widget.intervention)
     ]);
-  }
-
-  CardSettingsSection cardSettingsSectionScaffold() {
-    return CardSettingsSection(
-        header: CardSettingsHeader(
-          label: 'Scaffold',
-        ),
-        children: <CardSettingsWidget>[
-          CardSettingsDatePicker(
-            labelWidth: 200.0, //
-            dateFormat: DateFormat('dd/MM/yyyy'),
-            label: '1st Util',
-            initialValue: DateTime.now().add(const Duration(days: 15)),
-            validator: (value) {
-              if (value == null) return 'Date 1st Util is required.';
-              return null;
-            },
-            onSaved: (value) => date1stutil = value!,
-          ),
-          CardSettingsInt(
-            initialValue: 10,
-            labelWidth: 200.0, //
-            label: 'Duration (days)',
-            validator: (value) {
-              if (value == null) return 'Duration is required.';
-              return null;
-            },
-            onSaved: (value) => duration_days = value!,
-          ),
-          CardSettingsListPicker(
-              label: 'Action',
-              labelWidth: 200.0, //
-              items: const [
-                "Montage échafaudage",
-                "Modification échafaudage",
-                "Montage échafaudage roulant",
-                "Modification échafaudage roulant",
-                "Montage protection collective",
-                "Modification protection collective",
-                "Autres structures",
-                "Erecting Scaffolding for",
-                "Modification Scaffolding for",
-                "Erecting Mobile Scaffolding",
-                "Modification Mobile scaffolding",
-                "Erecting personal protection",
-                "Modification personal protection",
-                "Other Structure"
-              ]),
-          CardSettingsListPicker(
-              label: 'Usage',
-              labelWidth: 200.0, //
-              items: const [
-                "Acces sécurisé",
-                "Travaux de peinture",
-                "Travaux de métallurgie",
-                "Travaux de montage tuyauterie",
-                "Travaux d'isolation",
-                "Travaux électrique",
-                "Travaux de génie civil",
-                "Travaux d'inspection",
-                "Travaux d'instrumentation",
-                "Access",
-                "Blasting and Painting",
-                "Busbar",
-                "Cleaning",
-                "Commissioning Test",
-                "Installation Cables Tray or Cables ",
-                "Insulation Pipe or Valve",
-                "Lifting Point",
-                "Mechanical Assembly",
-                "Metrology",
-                "Not concerned",
-                "Opening back/in filling",
-                "Passerelle",
-                "Piping Installation",
-                "Piping or Support",
-                "Protection floor",
-                "Safety",
-                "Tarpaulin installation",
-                "TSM Pipeline",
-                "Valve Installation",
-                "Visual Inspection",
-                "Welding",
-                "X-Ray"
-              ]),
-          CardSettingsListPicker(
-              label: 'P mat',
-              labelWidth: 200.0, //
-              items: const ["< 100kg", "> 100kg", "not concerned"]),
-          CardSettingsListPicker(
-              label: '# workers on scaffold',
-              labelWidth: 200.0,
-              initialItem: "1",
-              items: const [
-                "0",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "10",
-                "11",
-                "12",
-                "13",
-                "14",
-                "15",
-                "16",
-                "17",
-                "18",
-                "19",
-                "20",
-                "not concerned"
-              ])
-        ]);
-  }
-
-  CardSettingsSection cardSettingsSectionUser() {
-    return CardSettingsSection(
-      header: CardSettingsHeader(
-        label: 'User',
-      ),
-      children: <CardSettingsWidget>[
-        CardSettingsText(
-          labelWidth: 200.0,
-          label: 'Name',
-          initialValue: "Roberto Mignonne",
-          validator: (value) {
-            if (value == null || value.isEmpty) return 'Name is required.';
-            return null;
-          },
-          onSaved: (value) => title = value!,
-        ),
-        CardSettingsPhone(
-          labelWidth: 200.0,
-          label: 'Phone',
-          initialValue: 0651556170,
-          validator: (value) {
-            if (value == null) return 'Phone is required.';
-            return null;
-          },
-          onSaved: (value) => phone = value!,
-        ),
-        CardSettingsEmail(
-          label: 'E-mail',
-          labelWidth: 200.0,
-          initialValue: "roberto@iter.org",
-          validator: (value) {
-            // if (!value!.startsWith('http:'))
-            //  return 'Must be a valid website.';
-            return null;
-          },
-          onSaved: (value) => email = value!,
-        ),
-      ],
-    );
   }
 
   Padding widgetBodyFormInterventionName() {

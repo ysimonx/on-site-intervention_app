@@ -7,7 +7,7 @@ class CardSettingsSectionScaffold {
   late DateTime date1stutil;
   late int duration_days;
 
-  CardSettingsSection render() {
+  CardSettingsSection render({required GlobalKey<FormState> key}) {
     return CardSettingsSection(
         header: CardSettingsHeader(
           label: 'Scaffold',
@@ -87,7 +87,6 @@ class CardSettingsSectionScaffold {
               items: const ["< 100kg", "> 100kg", "not concerned"]),
           CardSettingsListPicker(
               label: '# workers on scaffold',
-              labelWidth: 200.0,
               initialItem: "1",
               items: const [
                 "0",

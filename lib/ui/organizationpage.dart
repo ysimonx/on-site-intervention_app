@@ -100,7 +100,9 @@ class _OrganizationPageState extends State<OrganizationPage> {
                                     }
                                     Navigator.push(context,
                                         MaterialPageRoute(builder: (context) {
-                                      return InterventionPage(intervention: i);
+                                      return InterventionPage(
+                                          intervention: i,
+                                          organization: widget.organization);
                                     })).then((value) => setState(() {}));
                                   },
                                   icon: const Icon(Icons.navigate_next)),
@@ -169,8 +171,9 @@ class _OrganizationPageState extends State<OrganizationPage> {
             Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            InterventionPage(intervention: newIntervention)))
+                        builder: (context) => InterventionPage(
+                            intervention: newIntervention,
+                            organization: widget.organization)))
                 .then((value) => setState(() {}));
             ;
           },

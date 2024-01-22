@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:card_settings/card_settings.dart';
 import 'package:intl/intl.dart';
+import 'package:on_site_intervention_app/models/model_organization.dart';
 
 import '../models/model_formulaire.dart';
 import '../models/model_intervention.dart';
+import '../models/model_user.dart';
 import '../network/api/intervention_api.dart';
+import '../network/api/user_api.dart';
 import 'utils/logger.dart';
 import 'widget/scaffold.dart';
 import 'widget/scaffold_supervisor.dart';
@@ -12,9 +15,11 @@ import 'widget/scaffold_user.dart';
 
 // Create a Form widget.
 class InterventionPage extends StatefulWidget {
-  const InterventionPage({super.key, required this.intervention});
+  const InterventionPage(
+      {super.key, required this.intervention, required this.organization});
 
   final Intervention intervention;
+  final Organization organization;
 
   @override
   InterventionPageState createState() {
@@ -39,6 +44,10 @@ class InterventionPageState extends State<InterventionPage> {
 
   bool _needSave = false;
 
+  late List<User> usersSupervisors;
+
+  UserApi userAPI = UserApi();
+
   void _onChangedText() {
     final text = controllerInterventionName.text;
     logger.d(" new size of : '$text' (${text.characters.length})");
@@ -54,26 +63,43 @@ class InterventionPageState extends State<InterventionPage> {
     controllerInterventionName.addListener(_onChangedText);
   }
 
+  Future<List<User>> getMyConfig() async {
+    usersSupervisors =
+        await userAPI.getSupervisorsList(organization: widget.organization);
+    return usersSupervisors;
+  }
+
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.intervention.intervention_name),
-        ),
-        body: widgetBody(context),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            // Validate returns true if the form is valid, or false otherwise.
-            if (_formKey.currentState!.validate()) {
-              await saveIntervention(context);
-            }
-          },
-          tooltip: 'Save',
-          child: const Icon(Icons.save),
-        ));
+    return FutureBuilder(
+        future: getMyConfig(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return Scaffold(
+                resizeToAvoidBottomInset: false,
+                appBar: AppBar(
+                  backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                  title: Text(widget.intervention.intervention_name),
+                ),
+                body: widgetBody(context),
+                floatingActionButton: FloatingActionButton(
+                  onPressed: () async {
+                    // Validate returns true if the form is valid, or false otherwise.
+                    if (_formKey.currentState!.validate()) {
+                      await saveIntervention(context);
+                    }
+                  },
+                  tooltip: 'Save',
+                  child: const Icon(Icons.save),
+                ));
+          }
+          return const SizedBox(
+            width: 60,
+            height: 60,
+            child: CircularProgressIndicator(),
+          );
+        });
   }
 
   Widget widgetBody(BuildContext context) {
@@ -109,9 +135,10 @@ class InterventionPageState extends State<InterventionPage> {
             CardSettings(
               labelWidth: 200.0,
               children: <CardSettingsSection>[
-                scaffoldSupervisor.render(),
-                scaffoldUser.render(),
-                scaffold.render(),
+                scaffoldSupervisor.render(
+                    key: _formKey, supervisors: usersSupervisors),
+                scaffoldUser.render(key: _formKey),
+                scaffold.render(key: _formKey),
               ],
             )
           ])),

@@ -8,7 +8,7 @@ class CardSettingsSectionScaffoldUser {
   late String title;
   late String email;
 
-  CardSettingsSection render() {
+  CardSettingsSection render({required GlobalKey<FormState> key}) {
     return CardSettingsSection(
       header: CardSettingsHeader(
         label: 'User',

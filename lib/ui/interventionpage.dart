@@ -7,6 +7,7 @@ import '../models/model_intervention.dart';
 import '../network/api/intervention_api.dart';
 import 'utils/logger.dart';
 import 'widget/scaffold.dart';
+import 'widget/scaffold_supervisor.dart';
 import 'widget/scaffold_user.dart';
 
 // Create a Form widget.
@@ -93,6 +94,7 @@ class InterventionPageState extends State<InterventionPage> {
 
   Widget widgetBodyForm(BuildContext context) {
     var scaffold = CardSettingsSectionScaffold();
+    var scaffoldSupervisor = CardSettingsSectionSupervisor();
     var scaffoldUser = CardSettingsSectionScaffoldUser();
 
     return Wrap(children: [
@@ -107,6 +109,7 @@ class InterventionPageState extends State<InterventionPage> {
             CardSettings(
               labelWidth: 200.0,
               children: <CardSettingsSection>[
+                scaffoldSupervisor.render(),
                 scaffoldUser.render(),
                 scaffold.render(),
               ],

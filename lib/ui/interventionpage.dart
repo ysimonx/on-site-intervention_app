@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:card_settings/card_settings.dart';
+import 'package:intl/intl.dart';
 
 import '../models/model_formulaire.dart';
 import '../models/model_intervention.dart';
@@ -24,6 +26,12 @@ class InterventionPageState extends State<InterventionPage> {
   final _formKey = GlobalKey<FormState>();
 
   late TextEditingController controllerInterventionName;
+
+  late String title = "";
+  late String url = "";
+  late String email = "";
+  late int phone;
+  late DateTime date1stutil;
 
   bool _needSave = false;
 
@@ -83,19 +91,129 @@ class InterventionPageState extends State<InterventionPage> {
   Widget widgetBodyForm(BuildContext context) {
     return Wrap(children: [
       Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          key: _formKey,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             widgetBodyFormLocation(),
             widgetBodyFormInterventionName(),
             const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16), child: Text(' '))
-          ],
-        ),
-      ),
+                padding: EdgeInsets.symmetric(vertical: 16), child: Text(' ')),
+            CardSettings(
+              children: <CardSettingsSection>[
+                CardSettingsSectionScaffold(),
+                CardSettingsSectionUser(),
+              ],
+            )
+          ])),
       widgetBodyFormFormulaires(intervention: widget.intervention)
     ]);
+  }
+
+  CardSettingsSection CardSettingsSectionScaffold() {
+    return CardSettingsSection(
+        header: CardSettingsHeader(
+          label: 'Scaffold',
+        ),
+        children: <CardSettingsWidget>[
+          CardSettingsDatePicker(
+            dateFormat: DateFormat('dd/MM/yyyy'),
+            label: '1st Util',
+            initialValue: DateTime.now().add(const Duration(days: 15)),
+            validator: (value) {
+              if (value == null) return 'Date 1st Util is required.';
+              return null;
+            },
+            onSaved: (value) => date1stutil = value!,
+          ),
+          CardSettingsListPicker(label: 'Action', items: const [
+            "Montage échafaudage",
+            "Modification échafaudage",
+            "Montage échafaudage roulant",
+            "Modification échafaudage roulant",
+            "Montage protection collective",
+            "Modification protection collective",
+            "Autres structures",
+            "Erecting Scaffolding for",
+            "Modification Scaffolding for",
+            "Erecting Mobile Scaffolding",
+            "Modification Mobile scaffolding",
+            "Erecting personal protection",
+            "Modification personal protection",
+            "Other Structure"
+          ]),
+          CardSettingsListPicker(label: 'Usage', items: const [
+            "Acces sécurisé",
+            "Travaux de peinture",
+            "Travaux de métallurgie",
+            "Travaux de montage tuyauterie",
+            "Travaux d'isolation",
+            "Travaux électrique",
+            "Travaux de génie civil",
+            "Travaux d'inspection",
+            "Travaux d'instrumentation",
+            "Access",
+            "Blasting and Painting",
+            "Busbar",
+            "Cleaning",
+            "Commissioning Test",
+            "Installation Cables Tray or Cables ",
+            "Insulation Pipe or Valve",
+            "Lifting Point",
+            "Mechanical Assembly",
+            "Metrology",
+            "Not concerned",
+            "Opening back/in filling",
+            "Passerelle",
+            "Piping Installation",
+            "Piping or Support",
+            "Protection floor",
+            "Safety",
+            "Tarpaulin installation",
+            "TSM Pipeline",
+            "Valve Installation",
+            "Visual Inspection",
+            "Welding",
+            "X-Ray"
+          ])
+        ]);
+  }
+
+  CardSettingsSection CardSettingsSectionUser() {
+    return CardSettingsSection(
+      header: CardSettingsHeader(
+        label: 'User',
+      ),
+      children: <CardSettingsWidget>[
+        CardSettingsText(
+          label: 'Name',
+          initialValue: "Roberto Mignonne",
+          validator: (value) {
+            if (value == null || value.isEmpty) return 'Name is required.';
+            return null;
+          },
+          onSaved: (value) => title = value!,
+        ),
+        CardSettingsPhone(
+          label: 'Phone',
+          initialValue: 0651556170,
+          validator: (value) {
+            if (value == null) return 'Phone is required.';
+            return null;
+          },
+          onSaved: (value) => phone = value!,
+        ),
+        CardSettingsEmail(
+          label: 'E-mail',
+          initialValue: "roberto@iter.org",
+          validator: (value) {
+            // if (!value!.startsWith('http:'))
+            //  return 'Must be a valid website.';
+            return null;
+          },
+          onSaved: (value) => email = value!,
+        ),
+      ],
+    );
   }
 
   Padding widgetBodyFormInterventionName() {

@@ -81,19 +81,20 @@ class _OrganizationPageState extends State<OrganizationPage> {
 
                                     UserApi userAPI = UserApi();
 
-                                    Map<String, Formulaire> initializedForms =
+                                    /* Map<String, Formulaire> initializedForms =
                                         await userAPI
                                             .getInterventionInitializedFormsFromTemplate(
                                                 organization:
                                                     widget.organization.name,
                                                 type_intervention:
                                                     i.type_intervention_name);
+                                    */
 
                                     /* Place nowhere = Place.nowhere(
                                         organization_id:
                                             widget.organization.id);
                                     */
-                                    i.forms = initializedForms;
+                                    /* i.forms = initializedForms; */
 
                                     if (!context.mounted) {
                                       return;

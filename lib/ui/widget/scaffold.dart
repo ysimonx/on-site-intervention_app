@@ -111,7 +111,8 @@ class CardSettingsSectionScaffold {
                 "19",
                 "20",
                 "not concerned"
-              ])
+              ]),
+          CardSettingsParagraph(label: "description")
         ]);
   }
 }

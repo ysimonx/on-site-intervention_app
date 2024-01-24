@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 class Config {
-  late List<dynamic> organizations_types_interventions;
+  late Map<String, dynamic> organizations_types_interventions;
 
   Config();
 

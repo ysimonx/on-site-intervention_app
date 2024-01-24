@@ -45,6 +45,7 @@ class InterventionPageState extends State<InterventionPage> {
   bool _needSave = false;
 
   late List<User> usersSupervisors;
+  late Map<String, dynamic> jsonTemplateForms;
 
   UserApi userAPI = UserApi();
 
@@ -66,6 +67,9 @@ class InterventionPageState extends State<InterventionPage> {
   Future<List<User>> getMyConfig() async {
     usersSupervisors =
         await userAPI.getSupervisorsList(organization: widget.organization);
+    jsonTemplateForms = await userAPI.getTemplate(
+        organisation: widget.organization, intervention: widget.intervention);
+
     return usersSupervisors;
   }
 
@@ -131,9 +135,12 @@ class InterventionPageState extends State<InterventionPage> {
             widgetBodyFormLocation(),
             widgetBodyFormInterventionName(),
             const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16), child: Text(' ')),
+                padding: EdgeInsets.symmetric(vertical: 2), child: Text(' ')),
+            widgetBodyFormFormulaires(intervention: widget.intervention),
             CardSettings(
               labelWidth: 200.0,
+              showMaterialonIOS: true, // default is false
+              cardless: true, // default is fals
               children: <CardSettingsSection>[
                 scaffoldSupervisor.render(
                     key: _formKey, supervisors: usersSupervisors),
@@ -142,7 +149,6 @@ class InterventionPageState extends State<InterventionPage> {
               ],
             )
           ])),
-      widgetBodyFormFormulaires(intervention: widget.intervention)
     ]);
   }
 
@@ -180,31 +186,13 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Widget widgetBodyFormFormulaires({required Intervention intervention}) {
-    return ListTileTheme(
-        contentPadding: const EdgeInsets.all(2),
-        iconColor: Colors.green,
-        textColor: Colors.black54,
-        tileColor: Colors.yellow[10],
-        style: ListTileStyle.list,
-        dense: true,
-        child: ListView.separated(
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: intervention.forms.length,
-          shrinkWrap: true,
-          padding: const EdgeInsets.all(2.0),
-          itemBuilder: (_, index) {
-            int indicemap = index + 1;
-            Formulaire? f = intervention.forms[indicemap.toString()];
-            logger.d(f?.form_name);
-
-            return widgetBodyFormFormulairesItem(indicemap, f);
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return const SizedBox(
-              height: 10,
-            );
-          },
-        ));
+    List<Tab> tabs = [];
+    Map<String, dynamic> formsTemplate = jsonTemplateForms["forms"];
+    formsTemplate.forEach((k, v) => tabs.add(Tab(child: Text(v["form_name"]))));
+    return DefaultTabController(
+        length: formsTemplate.length,
+        child: TabBar(
+            isScrollable: false, onTap: (selectedTabIndex) {}, tabs: tabs));
   }
 
   ListTile widgetBodyFormFormulairesItem(int indicemap, Formulaire? f) {

@@ -11,7 +11,6 @@ class CardSettingsSectionSupervisor {
 
   CardSettingsSection render(
       {required GlobalKey<FormState> key, required List<User> supervisors}) {
-    print(supervisors.length);
     List<String> listSupervisorString = [];
     // et pour l'organization
     for (var i = 0; i < supervisors.length; i++) {
@@ -24,7 +23,7 @@ class CardSettingsSectionSupervisor {
         label: 'Supervisor',
       ),
       children: <CardSettingsWidget>[
-        CardSettingsListPicker(label: 'Action', items: listSupervisorString)
+        CardSettingsListPicker(label: "Full Name", items: listSupervisorString),
       ],
     );
   }

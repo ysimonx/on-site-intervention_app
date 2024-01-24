@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:on_site_intervention_app/models/model_intervention.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 
@@ -169,5 +170,13 @@ class UserApi {
     */
 
     return res;
+  }
+
+  Future<Map<String, dynamic>> getTemplate(
+      {required Organization organisation,
+      required Intervention intervention}) async {
+    User me = await myConfig(tryRealTime: false);
+    return me.myconfig.organizations_types_interventions[organisation.name]
+        [intervention.type_intervention_name];
   }
 }

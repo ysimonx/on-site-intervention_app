@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class CardSettingsSectionScaffoldUser {
-  late int phone;
+  late String phone;
   late String title;
   late String email;
 
@@ -23,7 +23,19 @@ class CardSettingsSectionScaffoldUser {
           },
           onSaved: (value) => title = value!,
         ),
-        CardSettingsPhone(
+        CardSettingsText(
+          label: 'Phone',
+          initialValue: "06-34-56-78-90",
+          inputMask: "00-00-00-00-00",
+          validator: (value) {
+            if (value == null || value.isEmpty) return 'Phone is required.';
+            return null;
+          },
+          onSaved: (value) => phone = value!,
+        ),
+
+        /* CardSettingsPhone(
+          
           label: 'Phone',
           initialValue: 0651556170,
           validator: (value) {
@@ -31,7 +43,8 @@ class CardSettingsSectionScaffoldUser {
             return null;
           },
           onSaved: (value) => phone = value!,
-        ),
+        ),*/
+
         CardSettingsEmail(
           label: 'E-mail',
           initialValue: "roberto@iter.org",

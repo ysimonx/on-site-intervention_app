@@ -5,6 +5,7 @@ import 'package:on_site_intervention_app/models/model_organization.dart';
 
 import '../models/model_formulaire.dart';
 import '../models/model_intervention.dart';
+import '../models/model_section.dart';
 import '../models/model_user.dart';
 import '../network/api/intervention_api.dart';
 import '../network/api/user_api.dart';
@@ -80,8 +81,7 @@ class InterventionPageState extends State<InterventionPage> {
         organization_name: widget.organization.name,
         type_intervention_name: widget.intervention.type_intervention_name);
 
-    String s = (dummy + 1).toString();
-
+    String s = (_initialIndex + 1).toString();
     currentFormulaire = mapFormulaires[s] as Formulaire;
 
     return usersSupervisors;
@@ -219,6 +219,8 @@ class InterventionPageState extends State<InterventionPage> {
             onTap: (selectedTabIndex) {
               setState(() {
                 _initialIndex = selectedTabIndex;
+                String s = (_initialIndex + 1).toString();
+                currentFormulaire = mapFormulaires[s] as Formulaire;
               });
             },
             tabs: tabs));
@@ -278,6 +280,21 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Widget widgetBodyFormulaireNG(int initialIndex) {
-    return Text("test");
+    print(currentFormulaire.form_name);
+    Map<String, Section> sections = currentFormulaire.sections;
+    List<CardSettingsSection> lCardSettingsSection = [];
+
+    sections.forEach((k, s) => lCardSettingsSection.add(CardSettingsSection(
+        header: CardSettingsHeader(
+          label: s.section_name,
+        ),
+        children: <CardSettingsWidget>[])));
+
+    return CardSettings(
+      labelWidth: 200.0,
+      showMaterialonIOS: true, // default is false
+      cardless: true, // default is fals
+      children: lCardSettingsSection,
+    );
   }
 }

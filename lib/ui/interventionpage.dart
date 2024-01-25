@@ -280,15 +280,10 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Widget widgetBodyFormulaireNG(int initialIndex) {
-    print(currentFormulaire.form_name);
     Map<String, Section> sections = currentFormulaire.sections;
     List<CardSettingsSection> lCardSettingsSection = [];
 
-    sections.forEach((k, s) => lCardSettingsSection.add(CardSettingsSection(
-        header: CardSettingsHeader(
-          label: s.section_name,
-        ),
-        children: <CardSettingsWidget>[])));
+    sections.forEach((k, s) => lCardSettingsSection.add(sectionCardSettings(s));
 
     return CardSettings(
       labelWidth: 200.0,
@@ -297,4 +292,12 @@ class InterventionPageState extends State<InterventionPage> {
       children: lCardSettingsSection,
     );
   }
+}
+
+CardSettingsSection sectionCardSettings(Section s) {
+  return CardSettingsSection(
+        header: CardSettingsHeader(
+          label: s.section_name,
+        ),
+        children: <CardSettingsWidget>[]))
 }

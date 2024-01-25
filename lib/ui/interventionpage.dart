@@ -45,9 +45,13 @@ class InterventionPageState extends State<InterventionPage> {
   bool _needSave = false;
 
   late List<User> usersSupervisors;
-  late Map<String, Formulaire> jsonTemplateForms = {};
+  late Map<String, Formulaire> mapFormulaires = {};
 
   UserApi userAPI = UserApi();
+
+  int _initialIndex = 0;
+
+  late Formulaire currentFormulaire;
 
   void _onChangedText() {
     final text = controllerInterventionName.text;
@@ -64,13 +68,21 @@ class InterventionPageState extends State<InterventionPage> {
     controllerInterventionName.addListener(_onChangedText);
   }
 
-  Future<List<User>> getMyConfig() async {
+  void test() {
+    setState(() {});
+  }
+
+  Future<List<User>> getMyConfig({required int dummy}) async {
     usersSupervisors =
         await userAPI.getSupervisorsList(organization: widget.organization);
 
-    jsonTemplateForms = await userAPI.getInterventionFormsFromTemplate(
+    mapFormulaires = await userAPI.getInterventionFormsFromTemplate(
         organization_name: widget.organization.name,
         type_intervention_name: widget.intervention.type_intervention_name);
+
+    String s = (dummy + 1).toString();
+
+    currentFormulaire = mapFormulaires[s] as Formulaire;
 
     return usersSupervisors;
   }
@@ -79,7 +91,7 @@ class InterventionPageState extends State<InterventionPage> {
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return FutureBuilder(
-        future: getMyConfig(),
+        future: getMyConfig(dummy: _initialIndex),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return Scaffold(
@@ -88,7 +100,7 @@ class InterventionPageState extends State<InterventionPage> {
                   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
                   title: Text(widget.intervention.intervention_name),
                 ),
-                body: widgetBody(context),
+                body: widgetMainBody(context),
                 floatingActionButton: FloatingActionButton(
                   onPressed: () async {
                     // Validate returns true if the form is valid, or false otherwise.
@@ -108,7 +120,7 @@ class InterventionPageState extends State<InterventionPage> {
         });
   }
 
-  Widget widgetBody(BuildContext context) {
+  Widget widgetMainBody(BuildContext context) {
     return PopScope(
         canPop: false,
         onPopInvoked: (bool didPop) {
@@ -138,20 +150,29 @@ class InterventionPageState extends State<InterventionPage> {
             widgetBodyFormInterventionName(),
             const Padding(
                 padding: EdgeInsets.symmetric(vertical: 2), child: Text(' ')),
-            widgetBodyFormFormulaires(intervention: widget.intervention),
-            CardSettings(
-              labelWidth: 200.0,
-              showMaterialonIOS: true, // default is false
-              cardless: true, // default is fals
-              children: <CardSettingsSection>[
-                scaffoldSupervisor.render(
-                    key: _formKey, supervisors: usersSupervisors),
-                scaffoldUser.render(key: _formKey),
-                scaffold.render(key: _formKey),
-              ],
-            )
+            widgetBodyTabsFormulaires(intervention: widget.intervention),
+            _initialIndex == 0
+                ? widgetBodyFormulaire(
+                    scaffoldSupervisor, scaffoldUser, scaffold)
+                : widgetBodyFormulaireNG(_initialIndex)
           ])),
     ]);
+  }
+
+  CardSettings widgetBodyFormulaire(
+      CardSettingsSectionSupervisor scaffoldSupervisor,
+      CardSettingsSectionScaffoldUser scaffoldUser,
+      CardSettingsSectionScaffold scaffold) {
+    return CardSettings(
+      labelWidth: 200.0,
+      showMaterialonIOS: true, // default is false
+      cardless: true, // default is fals
+      children: <CardSettingsSection>[
+        scaffoldSupervisor.render(key: _formKey, supervisors: usersSupervisors),
+        scaffoldUser.render(key: _formKey),
+        scaffold.render(key: _formKey),
+      ],
+    );
   }
 
   Padding widgetBodyFormInterventionName() {
@@ -187,38 +208,20 @@ class InterventionPageState extends State<InterventionPage> {
             )));
   }
 
-  Widget widgetBodyFormFormulaires({required Intervention intervention}) {
+  Widget widgetBodyTabsFormulaires({required Intervention intervention}) {
     List<Tab> tabs = [];
-    Map<String, Formulaire> formsTemplate = jsonTemplateForms;
-    formsTemplate.forEach((k, f) => tabs.add(Tab(child: Text(f.form_name))));
+    mapFormulaires.forEach((k, f) => tabs.add(Tab(child: Text(f.form_name))));
     return DefaultTabController(
-        length: formsTemplate.length,
+        initialIndex: _initialIndex,
+        length: mapFormulaires.length,
         child: TabBar(
-            isScrollable: false, onTap: (selectedTabIndex) {}, tabs: tabs));
-  }
-
-  ListTile widgetBodyFormFormulairesItem(int indicemap, Formulaire? f) {
-    return ListTile(
-      shape: RoundedRectangleBorder(
-        //<-- SEE HERE
-        side: BorderSide(width: 1, color: Colors.green.shade100),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      leading: CircleAvatar(
-          backgroundColor: const Color.fromARGB(255, 139, 250, 166),
-          child: Text("$indicemap")), // Text("$indicemap"),
-      title: Text("${f?.form_name}"),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-              onPressed: () {
-                logger.d("yes");
-              },
-              icon: const Icon(Icons.navigate_next)),
-        ],
-      ),
-    );
+            isScrollable: false,
+            onTap: (selectedTabIndex) {
+              setState(() {
+                _initialIndex = selectedTabIndex;
+              });
+            },
+            tabs: tabs));
   }
 
   Future<void> saveIntervention(BuildContext context) async {
@@ -272,5 +275,9 @@ class InterventionPageState extends State<InterventionPage> {
         );
       },
     );
+  }
+
+  Widget widgetBodyFormulaireNG(int initialIndex) {
+    return Text("test");
   }
 }

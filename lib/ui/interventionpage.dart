@@ -3,6 +3,7 @@ import 'package:card_settings/card_settings.dart';
 import 'package:intl/intl.dart';
 import 'package:on_site_intervention_app/models/model_organization.dart';
 
+import '../models/model_field.dart';
 import '../models/model_formulaire.dart';
 import '../models/model_intervention.dart';
 import '../models/model_section.dart';
@@ -283,7 +284,8 @@ class InterventionPageState extends State<InterventionPage> {
     Map<String, Section> sections = currentFormulaire.sections;
     List<CardSettingsSection> lCardSettingsSection = [];
 
-    sections.forEach((k, s) => lCardSettingsSection.add(sectionCardSettings(s));
+    sections
+        .forEach((k, s) => lCardSettingsSection.add(sectionCardSettings(s)));
 
     return CardSettings(
       labelWidth: 200.0,
@@ -295,9 +297,25 @@ class InterventionPageState extends State<InterventionPage> {
 }
 
 CardSettingsSection sectionCardSettings(Section s) {
+  List<CardSettingsWidget> lCardSettingsWidget = [];
+
+  s.fields.forEach((key, f) => lCardSettingsWidget.add(fieldCardSettings(f)));
+
   return CardSettingsSection(
-        header: CardSettingsHeader(
-          label: s.section_name,
-        ),
-        children: <CardSettingsWidget>[]))
+      header: CardSettingsHeader(
+        label: s.section_name,
+      ),
+      children: lCardSettingsWidget);
+}
+
+CardSettingsWidget fieldCardSettings(Field f) {
+  return CardSettingsInt(
+    initialValue: 10,
+    label: f.field_name,
+    validator: (value) {
+      if (value == null) return 'is required.';
+      return null;
+    },
+    onSaved: (value) {},
+  );
 }

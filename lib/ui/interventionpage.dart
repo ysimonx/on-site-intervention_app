@@ -55,6 +55,9 @@ class InterventionPageState extends State<InterventionPage> {
 
   late Formulaire currentFormulaire;
 
+  Map<String, String> fieldsValue = {};
+  Map<String, TextEditingController> fieldsController = {};
+
   void _onChangedText() {
     final text = controllerInterventionName.text;
     logger.d(" new size of : '$text' (${text.characters.length})");
@@ -105,9 +108,9 @@ class InterventionPageState extends State<InterventionPage> {
                 floatingActionButton: FloatingActionButton(
                   onPressed: () async {
                     // Validate returns true if the form is valid, or false otherwise.
-                    if (_formKey.currentState!.validate()) {
-                      await saveIntervention(context);
-                    }
+                    // if (_formKey.currentState!.validate()) {
+                    await saveIntervention(context);
+                    // }
                   },
                   tooltip: 'Save',
                   child: const Icon(Icons.save),
@@ -294,28 +297,58 @@ class InterventionPageState extends State<InterventionPage> {
       children: lCardSettingsSection,
     );
   }
-}
 
-CardSettingsSection sectionCardSettings(Section s) {
-  List<CardSettingsWidget> lCardSettingsWidget = [];
+  CardSettingsSection sectionCardSettings(Section s) {
+    List<CardSettingsWidget> lCardSettingsWidget = [];
 
-  s.fields.forEach((key, f) => lCardSettingsWidget.add(fieldCardSettings(f)));
+    s.fields.forEach((key, f) {
+      if (fieldsController.containsKey(f.field_on_site_uuid)) {
+      } else {
+        fieldsController[f.field_on_site_uuid] = TextEditingController();
+        fieldsController[f.field_on_site_uuid]?.text = "10";
+      }
+    });
 
-  return CardSettingsSection(
-      header: CardSettingsHeader(
-        label: s.section_name,
-      ),
-      children: lCardSettingsWidget);
-}
+    s.fields
+        .forEach((key, f) => lCardSettingsWidget.add(fieldCardSettings(f, s)));
 
-CardSettingsWidget fieldCardSettings(Field f) {
-  return CardSettingsInt(
-    initialValue: 10,
-    label: f.field_name,
-    validator: (value) {
-      if (value == null) return 'is required.';
-      return null;
-    },
-    onSaved: (value) {},
-  );
+    return CardSettingsSection(
+        header: CardSettingsHeader(
+          label: s.section_name,
+        ),
+        children: lCardSettingsWidget);
+  }
+
+  CardSettingsWidget fieldCardSettings(Field f, Section s) {
+    String _DefaultInitialValue = "10";
+
+    late String _initialValue;
+
+    if (f.field_on_site_uuid == '8dd3f411-6f67-43c4-9d9d-1d420cc6bc68') {
+      print("gotchao");
+    }
+    if (fieldsValue.containsKey(f.field_on_site_uuid)) {
+      _initialValue = fieldsValue[f.field_on_site_uuid] as String;
+    } else {
+      _initialValue = _DefaultInitialValue;
+    }
+
+    return CardSettingsInt(
+      initialValue: int.parse(_initialValue),
+      label: "${s.section_name}-${f.field_name}",
+      controller: fieldsController[f.field_on_site_uuid],
+      validator: (value) {
+        // if (value == null) return 'is required.';
+        String newvalue;
+        if (value == null) {
+          newvalue = "";
+        } else {
+          newvalue = value.toString();
+        }
+
+        fieldsValue[f.field_on_site_uuid] = newvalue;
+      },
+      onSaved: (value) {},
+    );
+  }
 }

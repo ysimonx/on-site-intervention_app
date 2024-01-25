@@ -148,9 +148,9 @@ class _OrganizationPageState extends State<OrganizationPage> {
             UserApi userAPI = UserApi();
 
             Map<String, Formulaire> initializedForms =
-                await userAPI.getInterventionInitializedFormsFromTemplate(
-                    organization: widget.organization.name,
-                    type_intervention: typeInterventionName);
+                await userAPI.getInterventionFormsFromTemplate(
+                    organization_name: widget.organization.name,
+                    type_intervention_name: typeInterventionName);
 
             Place nowhere =
                 Place.nowhere(organization_id: widget.organization.id);

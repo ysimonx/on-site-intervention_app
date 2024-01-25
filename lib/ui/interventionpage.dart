@@ -45,7 +45,7 @@ class InterventionPageState extends State<InterventionPage> {
   bool _needSave = false;
 
   late List<User> usersSupervisors;
-  late Map<String, dynamic> jsonTemplateForms;
+  late Map<String, Formulaire> jsonTemplateForms = {};
 
   UserApi userAPI = UserApi();
 
@@ -67,8 +67,10 @@ class InterventionPageState extends State<InterventionPage> {
   Future<List<User>> getMyConfig() async {
     usersSupervisors =
         await userAPI.getSupervisorsList(organization: widget.organization);
-    jsonTemplateForms = await userAPI.getTemplate(
-        organisation: widget.organization, intervention: widget.intervention);
+
+    jsonTemplateForms = await userAPI.getInterventionFormsFromTemplate(
+        organization_name: widget.organization.name,
+        type_intervention_name: widget.intervention.type_intervention_name);
 
     return usersSupervisors;
   }
@@ -187,8 +189,8 @@ class InterventionPageState extends State<InterventionPage> {
 
   Widget widgetBodyFormFormulaires({required Intervention intervention}) {
     List<Tab> tabs = [];
-    Map<String, dynamic> formsTemplate = jsonTemplateForms["forms"];
-    formsTemplate.forEach((k, v) => tabs.add(Tab(child: Text(v["form_name"]))));
+    Map<String, Formulaire> formsTemplate = jsonTemplateForms;
+    formsTemplate.forEach((k, f) => tabs.add(Tab(child: Text(f.form_name))));
     return DefaultTabController(
         length: formsTemplate.length,
         child: TabBar(

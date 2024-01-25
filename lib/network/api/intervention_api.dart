@@ -13,7 +13,7 @@ import '../../ui/utils/logger.dart';
 import '../dio_client.dart';
 import 'constants.dart';
 
-const String DIR_INTERVENTION_UPDATED = "interventions_updated";
+const String DIRINTERVENTIONUPDATED = "interventions_updated";
 
 class InterventionApi {
   InterventionApi();
@@ -163,7 +163,7 @@ class InterventionApi {
   Future<File> getlocalUpdatedFile({required Intervention intervention}) async {
     final path = await _localPath;
     String pathfile =
-        '$path/$DIR_INTERVENTION_UPDATED/intervention_${intervention.intervention_values_on_site_uuid}.json';
+        '$path/$DIRINTERVENTIONUPDATED/intervention_${intervention.intervention_values_on_site_uuid}.json';
     return File(pathfile);
   }
 
@@ -172,7 +172,7 @@ class InterventionApi {
     String directory = (await getApplicationDocumentsDirectory()).path;
 
     try {
-      Directory d = Directory("$directory/$DIR_INTERVENTION_UPDATED/");
+      Directory d = Directory("$directory/$DIRINTERVENTIONUPDATED/");
 
       List<FileSystemEntity> list = Directory(d.path).listSync();
       for (var i = 0; i < list.length; i++) {

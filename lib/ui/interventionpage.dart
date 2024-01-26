@@ -220,7 +220,8 @@ class InterventionPageState extends State<InterventionPage> {
         length: mapFormulaires.length,
         child: TabBar(
             isScrollable: false,
-            onTap: (selectedTabIndex) {
+            onTap: (selectedTabIndex) async {
+              await saveIntervention(context);
               setState(() {
                 _initialIndex = selectedTabIndex;
                 String s = (_initialIndex + 1).toString();

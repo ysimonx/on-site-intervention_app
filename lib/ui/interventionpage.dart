@@ -73,10 +73,6 @@ class InterventionPageState extends State<InterventionPage> {
     controllerInterventionName.addListener(_onChangedText);
   }
 
-  void test() {
-    setState(() {});
-  }
-
   Future<List<User>> getMyConfig({required int dummy}) async {
     usersSupervisors =
         await userAPI.getSupervisorsList(organization: widget.organization);
@@ -84,6 +80,28 @@ class InterventionPageState extends State<InterventionPage> {
     mapFormulaires = await userAPI.getInterventionFormsFromTemplate(
         organization_name: widget.organization.name,
         type_intervention_name: widget.intervention.type_intervention_name);
+
+    // Chargement des données initiales de chaque "Field"
+    // dans des TextEditingController
+    print(widget.intervention.intervention_name);
+    print(mapFormulaires.length);
+    mapFormulaires.forEach((key, formulaire) {
+      formulaire.sections.forEach((key, section) {
+        section.fields.forEach((key, f) {
+          if (fieldsController.containsKey(f.field_on_site_uuid)) {
+          } else {
+            fieldsController[f.field_on_site_uuid] = TextEditingController();
+          }
+          if (widget.intervention.field_on_site_uuid_values
+              .containsKey(f.field_on_site_uuid)) {
+            fieldsController[f.field_on_site_uuid]!.text = widget
+                .intervention.field_on_site_uuid_values[f.field_on_site_uuid];
+          } else {
+            fieldsController[f.field_on_site_uuid]!.text = "10";
+          }
+        });
+      });
+    });
 
     String s = (_initialIndex + 1).toString();
     currentFormulaire = mapFormulaires[s] as Formulaire;
@@ -236,7 +254,7 @@ class InterventionPageState extends State<InterventionPage> {
     widget.intervention.intervention_name = controllerInterventionName.text;
 
     // sauvegarde des valeurs textes des formulaires
-    widget.intervention.field_on_site_uuid_values = {};
+    // widget.intervention.field_on_site_uuid_values = {};
     fieldsController.forEach((key, value) {
       widget.intervention.field_on_site_uuid_values[key] = value.text;
     });
@@ -309,21 +327,6 @@ class InterventionPageState extends State<InterventionPage> {
   CardSettingsSection sectionCardSettings(Section s) {
     List<CardSettingsWidget> lCardSettingsWidget = [];
 
-    s.fields.forEach((key, f) {
-      if (fieldsController.containsKey(f.field_on_site_uuid)) {
-      } else {
-        fieldsController[f.field_on_site_uuid] = TextEditingController();
-      }
-
-      if (widget.intervention.field_on_site_uuid_values
-          .containsKey(f.field_on_site_uuid)) {
-        fieldsController[f.field_on_site_uuid]!.text =
-            widget.intervention.field_on_site_uuid_values[f.field_on_site_uuid];
-      } else {
-        fieldsController[f.field_on_site_uuid]!.text = "10";
-      }
-    });
-
     s.fields
         .forEach((key, f) => lCardSettingsWidget.add(fieldCardSettings(f, s)));
 
@@ -339,18 +342,53 @@ class InterventionPageState extends State<InterventionPage> {
 
     late String _initialValue;
 
-    if (f.field_on_site_uuid == '8dd3f411-6f67-43c4-9d9d-1d420cc6bc68') {
-      print("gotchao");
-    }
-    if (fieldsValue.containsKey(f.field_on_site_uuid)) {
-      _initialValue = fieldsValue[f.field_on_site_uuid] as String;
+    if (fieldsController.containsKey(f.field_on_site_uuid)) {
+      _initialValue = fieldsController[f.field_on_site_uuid]!.text;
     } else {
       _initialValue = _DefaultInitialValue;
     }
 
+    print(f.field_type);
+
+    if (f.field_type == "integer") {
+      return CardSettingsInt(
+        initialValue: int.parse(_initialValue),
+        label: "${s.section_name}-${f.field_label}",
+        controller: fieldsController[f.field_on_site_uuid],
+        validator: (value) {
+          String newvalue;
+          if (value == null) {
+            newvalue = "";
+          } else {
+            newvalue = value.toString();
+          }
+          fieldsValue[f.field_on_site_uuid] = newvalue;
+        },
+        onSaved: (value) {},
+      );
+    }
+
+    if (f.field_type == "list") {
+      return CardSettingsListPicker(
+          initialItem: _initialValue,
+          label: f.field_label,
+          items: f.field_possible_values,
+          // controller: fieldsController[f.field_on_site_uuid],
+          validator: (value) {
+            String newvalue;
+            if (value == null) {
+              newvalue = "";
+            } else {
+              newvalue = value;
+            }
+            fieldsController[f.field_on_site_uuid]!.text = newvalue;
+            fieldsValue[f.field_on_site_uuid] = newvalue;
+          });
+    }
+
     return CardSettingsInt(
       initialValue: int.parse(_initialValue),
-      label: "${s.section_name}-${f.field_name}",
+      label: "${s.section_name}-${f.field_label}",
       controller: fieldsController[f.field_on_site_uuid],
       validator: (value) {
         // if (value == null) return 'is required.';

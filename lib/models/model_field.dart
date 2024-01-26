@@ -7,7 +7,9 @@ class Field {
   String field_name;
   String field_type;
   String field_label;
+
   late List<dynamic> field_possible_values = [];
+  late String field_default_value = "";
 
   Field({
     required this.field_on_site_uuid,
@@ -22,6 +24,7 @@ class Field {
     data['field_name'] = field_name;
     data['field_name'] = field_label;
     data['field_type'] = field_type;
+    data['default_value'] = field_default_value;
     data['field_possible_values'] = field_possible_values;
     return data;
   }
@@ -36,5 +39,7 @@ class Field {
         field_name = json['field_name'] as String,
         field_type = json['field_type'] as String,
         field_possible_values =
-            json.containsKey('values') ? json['values'] : [];
+            json.containsKey('values') ? json['values'] : [],
+        field_default_value =
+            json.containsKey('default_value') ? json['default_value'] : "";
 }

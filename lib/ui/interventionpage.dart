@@ -386,6 +386,40 @@ class InterventionPageState extends State<InterventionPage> {
           });
     }
 
+    if (f.field_type == "date") {
+      DateTime _initialDateTimeValue = DateTime.now();
+
+      if (_initialValue == "") {
+        if (f.field_default_value == "now") {
+          _initialDateTimeValue = DateTime.now();
+        }
+        if (f.field_default_value == "j+15") {
+          _initialDateTimeValue = DateTime.now().add(const Duration(days: 15));
+        }
+      } else {
+        _initialDateTimeValue = DateTime.parse(_initialValue);
+      }
+
+      return CardSettingsDatePicker(
+        dateFormat: DateFormat('dd/MM/yyyy'),
+        label: f.field_label,
+        initialValue: _initialDateTimeValue,
+        validator: (value) {
+          String newvalue;
+          if (value == null) {
+            newvalue = "";
+          } else {
+            final DateFormat formatter = DateFormat('yyyy-MM-dd');
+
+            newvalue = formatter.format(value);
+          }
+          fieldsController[f.field_on_site_uuid]!.text = newvalue;
+          fieldsValue[f.field_on_site_uuid] = newvalue;
+        },
+        onSaved: (value) {},
+      );
+    }
+
     return CardSettingsInt(
       initialValue: int.parse(_initialValue),
       label: "${s.section_name}-${f.field_label}",

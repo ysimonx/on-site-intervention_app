@@ -13,6 +13,8 @@ class Intervention {
   String type_intervention_name;
   int version = 1;
   Map<String, Formulaire> forms = {};
+  Map<String, dynamic> field_on_site_uuid_values = {};
+
   Place place;
 
   Intervention(
@@ -29,6 +31,7 @@ class Intervention {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['intervention_name'] = intervention_name;
+    data['field_on_site_uuid_values'] = field_on_site_uuid_values;
     data['organization_id'] = organization_id;
     data['intervention_values_on_site_uuid'] = intervention_values_on_site_uuid;
     data['version'] = version;
@@ -42,6 +45,7 @@ class Intervention {
 
   Intervention.fromJson(Map<String, dynamic> json)
       : id = json['id'] as String,
+        field_on_site_uuid_values = json['field_on_site_uuid_values'],
         intervention_name = json['intervention_name'] != null
             ? json['intervention_name'] as String
             : "",

@@ -231,7 +231,14 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Future<void> saveIntervention(BuildContext context) async {
+    // sauvegarde du nom
     widget.intervention.intervention_name = controllerInterventionName.text;
+
+    // sauvegarde des valeurs textes des formulaires
+    widget.intervention.field_on_site_uuid_values = {};
+    fieldsController.forEach((key, value) {
+      widget.intervention.field_on_site_uuid_values[key] = value.text;
+    });
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Processing Data')),
@@ -305,7 +312,14 @@ class InterventionPageState extends State<InterventionPage> {
       if (fieldsController.containsKey(f.field_on_site_uuid)) {
       } else {
         fieldsController[f.field_on_site_uuid] = TextEditingController();
-        fieldsController[f.field_on_site_uuid]?.text = "10";
+      }
+
+      if (widget.intervention.field_on_site_uuid_values
+          .containsKey(f.field_on_site_uuid)) {
+        fieldsController[f.field_on_site_uuid]!.text =
+            widget.intervention.field_on_site_uuid_values[f.field_on_site_uuid];
+      } else {
+        fieldsController[f.field_on_site_uuid]!.text = "10";
       }
     });
 

@@ -97,7 +97,12 @@ class InterventionPageState extends State<InterventionPage> {
             fieldsController[f.field_on_site_uuid]!.text = widget
                 .intervention.field_on_site_uuid_values[f.field_on_site_uuid];
           } else {
-            fieldsController[f.field_on_site_uuid]!.text = "10";
+            if (f.field_type == "integer") {
+              fieldsController[f.field_on_site_uuid]!.text = "10";
+            }
+            if (f.field_type == "date") {
+              fieldsController[f.field_on_site_uuid]!.text = "";
+            }
           }
         });
       });
@@ -339,7 +344,6 @@ class InterventionPageState extends State<InterventionPage> {
 
   CardSettingsWidget fieldCardSettings(Field f, Section s) {
     String _DefaultInitialValue = "10";
-
     late String _initialValue;
 
     if (fieldsController.containsKey(f.field_on_site_uuid)) {
@@ -348,92 +352,125 @@ class InterventionPageState extends State<InterventionPage> {
       _initialValue = _DefaultInitialValue;
     }
 
-    print(f.field_type);
-
     if (f.field_type == "integer") {
-      return CardSettingsInt(
-        initialValue: int.parse(_initialValue),
-        label: "${s.section_name}-${f.field_label}",
-        controller: fieldsController[f.field_on_site_uuid],
-        validator: (value) {
-          String newvalue;
-          if (value == null) {
-            newvalue = "";
-          } else {
-            newvalue = value.toString();
-          }
-          fieldsValue[f.field_on_site_uuid] = newvalue;
-        },
-        onSaved: (value) {},
-      );
+      return genCardSettingsInt(_initialValue, s, f);
     }
 
     if (f.field_type == "list") {
-      return CardSettingsListPicker(
-          initialItem: _initialValue,
-          label: f.field_label,
-          items: f.field_possible_values,
-          // controller: fieldsController[f.field_on_site_uuid],
-          validator: (value) {
-            String newvalue;
-            if (value == null) {
-              newvalue = "";
-            } else {
-              newvalue = value;
-            }
-            fieldsController[f.field_on_site_uuid]!.text = newvalue;
-            fieldsValue[f.field_on_site_uuid] = newvalue;
-          });
+      return genCardSettingsListPicker(_initialValue, f);
     }
 
     if (f.field_type == "date") {
-      DateTime _initialDateTimeValue = DateTime.now();
+      return genCardSettingsDatePicker(_initialValue, f);
+    }
 
-      if (_initialValue == "") {
-        if (f.field_default_value == "now") {
-          _initialDateTimeValue = DateTime.now();
-        }
-        if (f.field_default_value == "j+15") {
-          _initialDateTimeValue = DateTime.now().add(const Duration(days: 15));
-        }
-      } else {
-        _initialDateTimeValue = DateTime.parse(_initialValue);
-      }
+    if (f.field_type == "switch") {
+      return genCardSettingsSwitch(_initialValue, f);
+    }
 
-      return CardSettingsDatePicker(
-        dateFormat: DateFormat('dd/MM/yyyy'),
+    return genCardSettingsInt(_initialValue, s, f);
+  }
+
+  CardSettingsListPicker<dynamic> genCardSettingsListPicker(
+      String initialValue, Field f) {
+    return CardSettingsListPicker(
+        initialItem: initialValue,
         label: f.field_label,
-        initialValue: _initialDateTimeValue,
+        items: f.field_possible_values,
+        // controller: fieldsController[f.field_on_site_uuid],
         validator: (value) {
           String newvalue;
           if (value == null) {
             newvalue = "";
           } else {
-            final DateFormat formatter = DateFormat('yyyy-MM-dd');
-
-            newvalue = formatter.format(value);
+            newvalue = value;
           }
           fieldsController[f.field_on_site_uuid]!.text = newvalue;
           fieldsValue[f.field_on_site_uuid] = newvalue;
-        },
-        onSaved: (value) {},
-      );
-    }
+        });
+  }
 
+  CardSettingsInt genCardSettingsInt(String initialValue, Section s, Field f) {
     return CardSettingsInt(
-      initialValue: int.parse(_initialValue),
+      initialValue: int.parse(initialValue),
       label: "${s.section_name}-${f.field_label}",
       controller: fieldsController[f.field_on_site_uuid],
       validator: (value) {
-        // if (value == null) return 'is required.';
         String newvalue;
         if (value == null) {
           newvalue = "";
         } else {
           newvalue = value.toString();
         }
-
         fieldsValue[f.field_on_site_uuid] = newvalue;
+      },
+      onSaved: (value) {},
+    );
+  }
+
+  CardSettingsDatePicker genCardSettingsDatePicker(
+      String initialValue, Field f) {
+    DateTime initialDateTimeValue = DateTime.now();
+
+    if (initialValue == "") {
+      initialDateTimeValue = f.getDefaultDateTimeValue();
+    } else {
+      try {
+        initialDateTimeValue = DateTime.parse(initialValue);
+      } catch (e) {
+        initialDateTimeValue = f.getDefaultDateTimeValue();
+        final DateFormat formatter = DateFormat('yyyy-MM-dd');
+        String newvalue = formatter.format(initialDateTimeValue);
+        fieldsController[f.field_on_site_uuid]!.text = newvalue;
+        fieldsValue[f.field_on_site_uuid] = newvalue;
+      }
+    }
+
+    return CardSettingsDatePicker(
+      dateFormat: DateFormat('dd/MM/yyyy'),
+      label: f.field_label,
+      initialValue: initialDateTimeValue,
+      validator: (value) {
+        String newvalue;
+        if (value == null) {
+          newvalue = "";
+        } else {
+          final DateFormat formatter = DateFormat('yyyy-MM-dd');
+          newvalue = formatter.format(value);
+        }
+        fieldsController[f.field_on_site_uuid]!.text = newvalue;
+        fieldsValue[f.field_on_site_uuid] = newvalue;
+      },
+      onSaved: (value) {},
+    );
+  }
+
+  CardSettingsSwitch genCardSettingsSwitch(String initialValue, Field f) {
+    bool _init = false;
+    if (initialValue == f.field_switch_on) {
+      _init = true;
+    }
+
+    if (initialValue == f.field_switch_off) {
+      _init = false;
+    }
+
+    return CardSettingsSwitch(
+      label: f.field_label,
+      trueLabel: f.field_switch_on,
+      falseLabel: f.field_switch_off,
+      initialValue: _init,
+      validator: (value) {
+        String newvalue;
+        if (value != null) {
+          if (value) {
+            newvalue = f.field_switch_on;
+          } else {
+            newvalue = f.field_switch_off;
+          }
+          fieldsController[f.field_on_site_uuid]!.text = newvalue;
+          fieldsValue[f.field_on_site_uuid] = newvalue;
+        }
       },
       onSaved: (value) {},
     );

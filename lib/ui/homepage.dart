@@ -60,8 +60,10 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         appBar: PreferredSize(
             preferredSize: const Size.fromHeight(100),
-            child:
-                BaseAppBar(_title, onDeconnexion: (value) => setState(() {}))),
+            child: BaseAppBar(
+                title: _title,
+                tenant: "",
+                onDeconnexion: (value) => setState(() {}))),
         body: FutureBuilder(
             future: getMe(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {

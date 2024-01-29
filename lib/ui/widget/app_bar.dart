@@ -1,14 +1,20 @@
 import '../../network/api/login_api.dart';
 import 'package:flutter/material.dart';
 
+import '../listspage.dart';
 import '../utils/i18n.dart';
 
 // cf https://stackoverflow.com/a/64147831
 class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
+  final String tenant;
   final Function(int) onDeconnexion;
 
-  const BaseAppBar(this.title, {super.key, required this.onDeconnexion});
+  const BaseAppBar(
+      {super.key,
+      required this.title,
+      required this.onDeconnexion,
+      required this.tenant});
 
   static const int valueDECONNEXION = 0;
   static const int valueLIST = 1;
@@ -63,9 +69,11 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                   await loginApi.deleteTokens();
 
                   if (context.mounted) {
-                    Navigator.popUntil(context, (route) => route.isFirst);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return ListsPage();
+                    }));
                   }
-                  onDeconnexion(1);
                 }
               })
             : const Text(''),

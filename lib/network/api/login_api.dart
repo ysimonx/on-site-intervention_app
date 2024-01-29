@@ -37,7 +37,6 @@ class LoginApi {
       var formData = {
         "email": email,
         "password": password,
-        "tenant_id": "fidwork"
       };
       String json = jsonEncode(formData);
 

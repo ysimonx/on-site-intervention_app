@@ -1,12 +1,17 @@
 import '../../network/api/login_api.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/i18n.dart';
+
 // cf https://stackoverflow.com/a/64147831
 class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Function(int) onDeconnexion;
 
   const BaseAppBar(this.title, {super.key, required this.onDeconnexion});
+
+  static const int valueDECONNEXION = 0;
+  static const int valueLIST = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +39,26 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                 // icon: Icon(Icons.book)
                 itemBuilder: (context) {
                 return [
-                  const PopupMenuItem<int>(
-                    value: 0,
-                    child: Text("Déconnexion"),
+                  PopupMenuItem<int>(
+                    value: valueLIST,
+                    child: Text(I18N("gestion des listes").toTitleCase()),
+                  ),
+                  PopupMenuItem<int>(
+                    value: valueDECONNEXION,
+                    child: Text(I18N("déconnexion").toTitleCase()),
                   ),
                 ];
               }, onSelected: (value) async {
-                if (value == 0) {
+                if (value == valueDECONNEXION) {
+                  LoginApi loginApi = LoginApi();
+                  await loginApi.deleteTokens();
+
+                  if (context.mounted) {
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                  }
+                  onDeconnexion(1);
+                }
+                if (value == valueLIST) {
                   LoginApi loginApi = LoginApi();
                   await loginApi.deleteTokens();
 

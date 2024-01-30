@@ -392,9 +392,17 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   CardSettingsInt genCardSettingsInt(String initialValue, Section s, Field f) {
+    int _initialIntValue = 0;
+
+    try {
+      _initialIntValue = int.parse(initialValue);
+    } catch (e) {
+      _initialIntValue = 0;
+    }
+
     return CardSettingsInt(
-      initialValue: int.parse(initialValue),
-      label: "${s.section_name}-${f.field_label}",
+      initialValue: _initialIntValue,
+      label: "${f.field_label}",
       controller: fieldsController[f.field_on_site_uuid],
       validator: (value) {
         String newvalue;

@@ -1,6 +1,7 @@
 import 'package:on_site_intervention_app/models/model_config.dart';
 
 import 'model_site.dart';
+import 'model_tenant.dart';
 
 class User {
   String id;
@@ -10,6 +11,8 @@ class User {
   String phone;
 
   late List<Site> sites;
+  late List<Tenant> tenants_administrator_of;
+
   late Config myconfig;
 
   User(
@@ -49,17 +52,28 @@ class User {
       user.myconfig = Config.fromJson(json);
     }
 
-    List<Site> res = [];
+    List<Site> resSites = [];
 
-    if (json.containsKey('sites')) {
-      List sites = json['sites'];
+    if (json.containsKey('site_member_of')) {
+      List sites = json['site_member_of'];
       for (var i = 0; i < sites.length; i++) {
-        Site org = Site.fromJson(sites[i]["site"]);
-        res.add(org);
+        Site site = Site.fromJson(sites[i]["site"]);
+        resSites.add(site);
       }
     }
 
-    user.sites = res;
+    user.sites = resSites;
+
+    List<Tenant> resTenants = [];
+    if (json.containsKey('tenant_administrator_of')) {
+      List tenants = json['tenant_administrator_of'];
+      for (var i = 0; i < tenants.length; i++) {
+        Tenant tenant = Tenant.fromJson(tenants[i]["tenant"]);
+        resTenants.add(tenant);
+      }
+    }
+
+    user.tenants_administrator_of = resTenants;
 
     return user;
   }

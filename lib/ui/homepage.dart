@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   UserApi userAPI = UserApi();
 
   final String _title = 'sites';
-  final String _currentTenant = 'fidwork';
+  final String _currentTenant = 'ctei';
   @override
   void dispose() {
     super.dispose();
@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  Future<User> getMe() async {
+  Future<User> getMyInformations() async {
     bool ok = await loginApi.hasAnAccessToken();
     logger.d("hasAnAccessToken ${ok.toString()}");
     if (ok) {
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: getMe(),
+        future: getMyInformations(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             User me = snapshot.data;
@@ -75,13 +75,14 @@ class _HomePageState extends State<HomePage> {
                     ? HomepageAuthentifiedContent(user: me)
                     : widgetLoginForm(context));
           } else if (snapshot.hasError) {
-            return const Text("error");
+            return const Scaffold(body: Text("error"));
           } else {
-            return const SizedBox(
+            return const Scaffold(
+                body: SizedBox(
               width: 60,
               height: 60,
               child: CircularProgressIndicator(),
-            );
+            ));
           }
         });
   }

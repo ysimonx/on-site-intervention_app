@@ -21,7 +21,7 @@ class UserApi {
 
   DioClient dioClient = DioClient(Dio());
 
-  Future<List<User>> userList({String tenant = 'fidwork'}) async {
+  Future<List<User>> userList({String tenant = 'ctei'}) async {
     List<User> res = [];
 
     Map<String, String> qParams = {'tenant_id': tenant};

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 
 import '../sitepage.dart';
+import '../utils/sizes.dart';
 
 Widget getSitesWidget(
     {required BuildContext context, required List<Site> sites}) {
@@ -17,8 +18,9 @@ Widget getSitesWidget(
       itemBuilder: (_, index) => Card(
         margin: const EdgeInsets.all(10),
         child: ListTile(
-          title: Text(sites[index].name.toUpperCase()),
-          subtitle: const Text('subtitle'),
+          title: Text("${sites[index].name.toUpperCase()}"),
+          subtitle: Text("${sites[index].tenant.name.toUpperCase()}",
+              style: TextStyle(fontSize: ThemeSize.text(xs))),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

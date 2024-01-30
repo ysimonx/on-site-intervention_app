@@ -1,7 +1,10 @@
+import 'model_tenant.dart';
+
 class Site {
   String id;
   String name;
   List<dynamic> roles = [];
+  late Tenant tenant;
 
   Site({required this.id, required this.name});
 
@@ -16,5 +19,6 @@ class Site {
   Site.fromJson(Map<String, dynamic> json)
       : id = json['id'] as String,
         name = json['name'] as String,
-        roles = json.containsKey('roles') ? json['roles'] : [];
+        roles = json.containsKey('roles') ? json['roles'] : [],
+        tenant = Tenant.fromJson(json['tenant']);
 }

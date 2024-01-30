@@ -49,39 +49,42 @@ class _OrganizationPageState extends State<OrganizationPage> {
               if (snapshot.hasData) {
                 List<Intervention> listInterventions = snapshot.data;
                 if (listInterventions.isNotEmpty) {
-                  return ListTileTheme(
-                    contentPadding: const EdgeInsets.all(15),
-                    iconColor: Colors.green,
-                    textColor: Colors.black54,
-                    tileColor: Colors.yellow[10],
-                    style: ListTileStyle.list,
-                    dense: true,
-                    child: ListView.builder(
-                      itemCount: listInterventions.length,
-                      itemBuilder: (_, index) => Card(
-                        margin: const EdgeInsets.all(10),
-                        child: ListTile(
-                          title: Text(listInterventions[index]
-                              .intervention_name
-                              .toUpperCase()),
-                          subtitle: Text(
-                              listInterventions[index].type_intervention_name),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              /* IconButton(
+                  return Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 50),
+                      child: ListTileTheme(
+                        contentPadding: const EdgeInsets.all(15),
+                        iconColor: Colors.green,
+                        textColor: Colors.black54,
+                        tileColor: Colors.yellow[10],
+                        style: ListTileStyle.list,
+                        dense: true,
+                        child: ListView.builder(
+                          itemCount: listInterventions.length,
+                          itemBuilder: (_, index) => Card(
+                            margin: const EdgeInsets.all(10),
+                            child: ListTile(
+                              title: Text(listInterventions[index]
+                                  .intervention_name
+                                  .toUpperCase()),
+                              subtitle: Text(listInterventions[index]
+                                  .type_intervention_name),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  /* IconButton(
                                   onPressed: () {},
                                   icon: const Icon(Icons.edit)),
                               IconButton(
                                   onPressed: () {},
                                   icon: const Icon(Icons.delete)),*/
-                              IconButton(
-                                  onPressed: () async {
-                                    Intervention i = listInterventions[index];
+                                  IconButton(
+                                      onPressed: () async {
+                                        Intervention i =
+                                            listInterventions[index];
 
-                                    UserApi userAPI = UserApi();
+                                        UserApi userAPI = UserApi();
 
-                                    /* Map<String, Formulaire> initializedForms =
+                                        /* Map<String, Formulaire> initializedForms =
                                         await userAPI
                                             .getInterventionInitializedFormsFromTemplate(
                                                 organization:
@@ -90,29 +93,31 @@ class _OrganizationPageState extends State<OrganizationPage> {
                                                     i.type_intervention_name);
                                     */
 
-                                    /* Place nowhere = Place.nowhere(
+                                        /* Place nowhere = Place.nowhere(
                                         organization_id:
                                             widget.organization.id);
                                     */
-                                    /* i.forms = initializedForms; */
+                                        /* i.forms = initializedForms; */
 
-                                    if (!context.mounted) {
-                                      return;
-                                    }
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) {
-                                      return InterventionPage(
-                                          intervention: i,
-                                          organization: widget.organization);
-                                    })).then((value) => setState(() {}));
-                                  },
-                                  icon: const Icon(Icons.navigate_next)),
-                            ],
+                                        if (!context.mounted) {
+                                          return;
+                                        }
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                          return InterventionPage(
+                                              intervention: i,
+                                              organization:
+                                                  widget.organization);
+                                        })).then((value) => setState(() {}));
+                                      },
+                                      icon: const Icon(Icons.navigate_next)),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
+                      ));
                 } else {
                   return Center(
                     child: ElevatedButton(

@@ -21,6 +21,31 @@ class UserApi {
 
   DioClient dioClient = DioClient(Dio());
 
+  Future<List<User>> userList({String tenant = 'fidwork'}) async {
+    List<User> res = [];
+
+    Map<String, String> qParams = {'tenant_id': tenant};
+
+    try {
+      final Response response =
+          await dioClient.get(Endpoints.userList, queryParameters: qParams);
+      if (response.statusCode == 200) {
+        // await writeUserMe(jsonEncode(response.data));
+        print(response.statusCode);
+        print(response.data);
+        List<dynamic> arrayJson = response.data;
+        for (int index = 0; index < arrayJson.length; index++) {
+          User u = User.fromJson(arrayJson[index]);
+          res.add(u);
+        }
+      }
+    } on DioException catch (e) {
+      logger.e(e.message);
+    }
+
+    return res;
+  }
+
   Future<User> myConfig({bool tryRealTime = true}) async {
     // attempt to retrieve my profile from server
     if (tryRealTime) {
@@ -123,35 +148,6 @@ class UserApi {
         }
       }
     }
-    // recherche des templates de formulaire pour le bon type d'intervention
-    // et pour l'organization
-
-    /* for (var i = 0;
-        i < me.myconfig.organizations_types_interventions.length;
-        i++) {
-      Map<String, dynamic> item =
-          me.myconfig.organizations_types_interventions[i];
-
-      if (item.containsKey(organization)) {
-        Map<String, dynamic> item_organization = item[organization];
-        if (item_organization.containsKey(type_intervention)) {
-          // je l'ai trouvé !
-
-          Map<String, dynamic> formsTemplates =
-              jsonDecode(item_organization[type_intervention]);
-
-          Map<String, Formulaire> forms = {};
-
-          formsTemplates["forms"].forEach((key, value) {
-            Formulaire form = Formulaire.fromJson(value);
-            forms[key] = form;
-          });
-
-          return forms;
-        }
-      }
-    }
-    */
 
     return res;
   }

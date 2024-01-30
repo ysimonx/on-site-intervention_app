@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   UserApi userAPI = UserApi();
 
   final String _title = 'organizations';
-
+  final String _currentTenant = 'fidwork';
   @override
   void dispose() {
     super.dispose();
@@ -57,32 +57,33 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(100),
-            child: BaseAppBar(
-                title: _title,
-                tenant: "",
-                onDeconnexion: (value) => setState(() {}))),
-        body: FutureBuilder(
-            future: getMe(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                User me = snapshot.data;
-                if (me.isAuthorized()) {
-                  return HomepageAuthentifiedContent(user: me);
-                }
-                return widgetLoginForm(context);
-              } else if (snapshot.hasError) {
-                return const Text("error");
-              } else {
-                return const SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }));
+    return FutureBuilder(
+        future: getMe(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            User me = snapshot.data;
+            return Scaffold(
+                appBar: PreferredSize(
+                    preferredSize: const Size.fromHeight(100),
+                    child: me.isAuthorized()
+                        ? AuthentifiedBaseAppBar(
+                            title: _title,
+                            tenant: _currentTenant,
+                            onDeconnexion: (value) => setState(() {}))
+                        : BaseAppBar(title: "login")),
+                body: me.isAuthorized()
+                    ? HomepageAuthentifiedContent(user: me)
+                    : widgetLoginForm(context));
+          } else if (snapshot.hasError) {
+            return const Text("error");
+          } else {
+            return const SizedBox(
+              width: 60,
+              height: 60,
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
   }
 
   Widget widgetLoginForm(BuildContext context) {

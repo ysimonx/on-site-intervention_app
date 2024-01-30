@@ -25,9 +25,8 @@ class Endpoints {
       "/api/v1/controle/filter_by_gestes";
 
   static const String userMe = '/api/v1/user/me/config';
+  static const String userList = '/api/v1/user';
 
-  // static const String listInterventions = '/api/v1/intervention';
   static const String listInterventionsValues = '/api/v1/intervention_values';
-  // static const String postIntervention = '/api/v1/intervention';
   static const String postInterventionValues = '/api/v1/intervention_values';
 }

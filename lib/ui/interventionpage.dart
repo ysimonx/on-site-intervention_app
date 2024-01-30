@@ -127,7 +127,9 @@ class InterventionPageState extends State<InterventionPage> {
                   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
                   title: Text(widget.intervention.intervention_name),
                 ),
-                body: widgetMainBody(context),
+                body: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 50),
+                    child: widgetMainBody(context)),
                 floatingActionButton: FloatingActionButton(
                   onPressed: () async {
                     // Validate returns true if the form is valid, or false otherwise.

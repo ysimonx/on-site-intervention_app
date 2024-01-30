@@ -80,4 +80,21 @@ class User {
     }
     return false;
   }
+
+  static User fromJson(Map<String, dynamic> jsonUser) {
+    User user = User(
+        id: jsonUser['id'] as String,
+        firstname: IfNull(jsonUser['firstname']),
+        lastname: IfNull(jsonUser['lastname']),
+        email: IfNull(jsonUser['email']),
+        phone: IfNull(jsonUser['phone']));
+    return user;
+  }
+}
+
+String IfNull(String? s) {
+  if (s != null) {
+    return s;
+  }
+  return "";
 }

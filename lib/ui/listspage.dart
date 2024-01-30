@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ListsPage extends StatefulWidget {
+  final String tenant;
+
+  const ListsPage({super.key, required this.tenant});
+
   @override
   State<StatefulWidget> createState() {
     return ListsPageState();
@@ -23,7 +27,7 @@ class ListsPageState extends State<ListsPage> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text("Lists"),
+          title: Text("Lists ${widget.tenant}"),
         ),
         body: ListView.builder(
             padding: const EdgeInsets.all(8),

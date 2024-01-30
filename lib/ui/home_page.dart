@@ -22,16 +22,6 @@ class _HomePageState extends State<HomePage> {
   final String _title = 'sites';
   final String _currentTenant = 'ctei';
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   Future<User> getMyInformations() async {
     bool ok = await loginApi.hasAnAccessToken();
     if (ok) {
@@ -71,7 +61,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget widgetBody(User me) {
     return me.isAuthorized()
-        ? HomepageAuthentifiedContent(user: me)
+        ? HomepageAuthentifiedContent(
+            user: me, onRefresh: (value) => setState(() {}))
         : HomepageUnAuthentifiedContent(
             context: context, onConnexion: (value) => setState(() {}));
   }

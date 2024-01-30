@@ -2,8 +2,8 @@ import '../../models/model_user.dart';
 import '../../network/api/login_api.dart';
 import 'package:flutter/material.dart';
 
-import '../listspage.dart';
-import '../userspage.dart';
+import '../lists_page.dart';
+import '../users_page.dart';
 import '../utils/i18n.dart';
 
 // cf https://stackoverflow.com/a/64147831

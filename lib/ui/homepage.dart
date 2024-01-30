@@ -1,18 +1,12 @@
-// ignore_for_file: unnecessary_brace_in_string_interps, avoid_print, unnecessary_import, unused_import
-
 import 'dart:async';
-import 'package:flutter/foundation.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+
 import '../models/model_user.dart';
 import '../network/api/login_api.dart';
 import '../network/api/user_api.dart';
-import '../network/dio_client.dart';
-import 'utils/logger.dart';
 import 'widget/_homepage_authentifier_content.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/scheduler.dart';
 import './utils/context.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'widget/app_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,12 +20,12 @@ class _HomePageState extends State<HomePage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  bool alreadyStartBeneficiairePage = false;
   LoginApi loginApi = LoginApi();
   UserApi userAPI = UserApi();
 
   final String _title = 'sites';
   final String _currentTenant = 'ctei';
+
   @override
   void dispose() {
     super.dispose();
@@ -44,15 +38,11 @@ class _HomePageState extends State<HomePage> {
 
   Future<User> getMyInformations() async {
     bool ok = await loginApi.hasAnAccessToken();
-    logger.d("hasAnAccessToken ${ok.toString()}");
     if (ok) {
       User userMe = await userAPI.myConfig(tryRealTime: true);
-      logger.d("user identified : ${userMe.email}");
       return userMe;
     }
-    User userNobody = User.nobody();
-    logger.d("user nobody");
-    return userNobody;
+    return User.nobody();
   }
 
   @override
@@ -62,29 +52,44 @@ class _HomePageState extends State<HomePage> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             User me = snapshot.data;
-            return Scaffold(
-                appBar: PreferredSize(
-                    preferredSize: const Size.fromHeight(100),
-                    child: me.isAuthorized()
-                        ? AuthentifiedBaseAppBar(
-                            title: _title,
-                            tenant: _currentTenant,
-                            onDeconnexion: (value) => setState(() {}))
-                        : BaseAppBar(title: "login")),
-                body: me.isAuthorized()
-                    ? HomepageAuthentifiedContent(user: me)
-                    : widgetLoginForm(context));
+            return Scaffold(appBar: widgetAppBar(me), body: widgetBody(me));
           } else if (snapshot.hasError) {
-            return const Scaffold(body: Text("error"));
+            return widgetError();
           } else {
-            return const Scaffold(
-                body: SizedBox(
-              width: 60,
-              height: 60,
-              child: CircularProgressIndicator(),
-            ));
+            return widgetWaiting();
           }
         });
+  }
+
+  PreferredSize widgetAppBar(User me) {
+    return PreferredSize(
+        preferredSize: const Size.fromHeight(100),
+        child: me.isAuthorized()
+            ? AuthentifiedBaseAppBar(
+                title: _title,
+                tenant: _currentTenant,
+                onDeconnexion: (value) => setState(() {}))
+            : const BaseAppBar(title: "login"));
+  }
+
+  Widget widgetBody(User me) {
+    return me.isAuthorized()
+        ? HomepageAuthentifiedContent(user: me)
+        : widgetLoginForm(context);
+  }
+
+  Scaffold widgetWaiting() {
+    return const Scaffold(
+        body: Center(
+            child: SizedBox(
+      width: 60,
+      height: 60,
+      child: CircularProgressIndicator(),
+    )));
+  }
+
+  Scaffold widgetError() {
+    return const Scaffold(body: Text("error"));
   }
 
   Widget widgetLoginForm(BuildContext context) {

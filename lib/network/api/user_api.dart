@@ -10,7 +10,7 @@ import 'dart:async';
 
 import '../../models/model_config.dart';
 import '../../models/model_formulaire.dart';
-import '../../models/model_organization.dart';
+import '../../models/model_site.dart';
 import '../../models/model_user.dart';
 import '../../ui/utils/logger.dart';
 import '../dio_client.dart';
@@ -104,13 +104,12 @@ class UserApi {
   }
 
   Future<Map<String, Formulaire>> getInterventionFormsFromTemplate(
-      {required String organization_name,
+      {required String site_name,
       required String type_intervention_name}) async {
     User me = await myConfig(tryRealTime: false);
 
-    Map<String, dynamic> formsTemplates =
-        await me.myconfig.organizations_types_interventions[organization_name]
-            [type_intervention_name];
+    Map<String, dynamic> formsTemplates = await me
+        .myconfig.sites_types_interventions[site_name][type_intervention_name];
 
     Map<String, Formulaire> forms = {};
 
@@ -124,15 +123,14 @@ class UserApi {
     return forms;
   }
 
-  Future<List<User>> getSupervisorsList(
-      {required Organization organization}) async {
+  Future<List<User>> getSupervisorsList({required Site site}) async {
     User me = await myConfig(tryRealTime: false);
 
     List<User> res = [];
 
-    for (var i = 0; i < me.organizations.length; i++) {
-      Organization o = me.organizations[i];
-      if (o.id == organization.id) {
+    for (var i = 0; i < me.sites.length; i++) {
+      Site o = me.sites[i];
+      if (o.id == site.id) {
         for (var j = 0; j < o.roles.length; j++) {
           Map<String, dynamic> mapRoles = o.roles[j];
           if (mapRoles.containsKey("supervisor")) {
@@ -153,10 +151,9 @@ class UserApi {
   }
 
   Future<Map<String, dynamic>> getTemplate(
-      {required Organization organisation,
-      required Intervention intervention}) async {
+      {required Site organisation, required Intervention intervention}) async {
     User me = await myConfig(tryRealTime: false);
-    return me.myconfig.organizations_types_interventions[organisation.name]
+    return me.myconfig.sites_types_interventions[organisation.name]
         [intervention.type_intervention_name];
   }
 }

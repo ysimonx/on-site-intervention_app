@@ -1,9 +1,9 @@
-class Organization {
+class Site {
   String id;
   String name;
   List<dynamic> roles = [];
 
-  Organization({required this.id, required this.name});
+  Site({required this.id, required this.name});
 
   Map<String, dynamic> toJSON() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -13,7 +13,7 @@ class Organization {
     return data;
   }
 
-  Organization.fromJson(Map<String, dynamic> json)
+  Site.fromJson(Map<String, dynamic> json)
       : id = json['id'] as String,
         name = json['name'] as String,
         roles = json.containsKey('roles') ? json['roles'] : [];

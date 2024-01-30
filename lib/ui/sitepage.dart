@@ -7,7 +7,7 @@ import 'package:on_site_intervention_app/ui/interventionpage.dart';
 
 import '../models/model_formulaire.dart';
 import '../models/model_intervention.dart';
-import '../models/model_organization.dart';
+import '../models/model_site.dart';
 import '../models/model_place.dart';
 import '../models/model_user.dart';
 import '../network/api/intervention_api.dart';
@@ -16,16 +16,16 @@ import '../network/api/user_api.dart';
 import 'utils/logger.dart';
 import 'utils/uuid.dart';
 
-class OrganizationPage extends StatefulWidget {
-  const OrganizationPage({super.key, required this.organization});
+class SitePage extends StatefulWidget {
+  const SitePage({super.key, required this.site});
 
-  final Organization organization;
+  final Site site;
 
   @override
-  State<OrganizationPage> createState() => _OrganizationPageState();
+  State<SitePage> createState() => _SitePageState();
 }
 
-class _OrganizationPageState extends State<OrganizationPage> {
+class _SitePageState extends State<SitePage> {
   late UserApi userAPI;
   late InterventionApi interventionAPI;
 
@@ -41,10 +41,10 @@ class _OrganizationPageState extends State<OrganizationPage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.organization.name.toUpperCase()),
+          title: Text(widget.site.name.toUpperCase()),
         ),
         body: FutureBuilder(
-            future: getInterventions(organization: widget.organization),
+            future: getInterventions(site: widget.site),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 List<Intervention> listInterventions = snapshot.data;
@@ -87,15 +87,15 @@ class _OrganizationPageState extends State<OrganizationPage> {
                                         /* Map<String, Formulaire> initializedForms =
                                         await userAPI
                                             .getInterventionInitializedFormsFromTemplate(
-                                                organization:
-                                                    widget.organization.name,
+                                                site:
+                                                    widget.site.name,
                                                 type_intervention:
                                                     i.type_intervention_name);
                                     */
 
                                         /* Place nowhere = Place.nowhere(
-                                        organization_id:
-                                            widget.organization.id);
+                                        site_id:
+                                            widget.site.id);
                                     */
                                         /* i.forms = initializedForms; */
 
@@ -107,8 +107,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
                                                 builder: (context) {
                                           return InterventionPage(
                                               intervention: i,
-                                              organization:
-                                                  widget.organization);
+                                              site: widget.site);
                                         })).then((value) => setState(() {}));
                                       },
                                       icon: const Icon(Icons.navigate_next)),
@@ -154,16 +153,15 @@ class _OrganizationPageState extends State<OrganizationPage> {
 
             Map<String, Formulaire> initializedForms =
                 await userAPI.getInterventionFormsFromTemplate(
-                    organization_name: widget.organization.name,
+                    site_name: widget.site.name,
                     type_intervention_name: typeInterventionName);
 
-            Place nowhere =
-                Place.nowhere(organization_id: widget.organization.id);
+            Place nowhere = Place.nowhere(site_id: widget.site.id);
 
             Intervention newIntervention = Intervention(
               id: "new_${generateUUID()}",
               intervention_name: "nouvelle",
-              organization_id: widget.organization.id,
+              site_id: widget.site.id,
               intervention_values_on_site_uuid: generateUUID(),
               type_intervention_id: typeInterventionId,
               type_intervention_name: typeInterventionName,
@@ -175,22 +173,19 @@ class _OrganizationPageState extends State<OrganizationPage> {
               return;
             }
             Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => InterventionPage(
-                            intervention: newIntervention,
-                            organization: widget.organization)))
-                .then((value) => setState(() {}));
+                context,
+                MaterialPageRoute(
+                    builder: (context) => InterventionPage(
+                        intervention: newIntervention,
+                        site: widget.site))).then((value) => setState(() {}));
             ;
           },
           child: const Icon(Icons.add),
         ));
   }
 
-  Future<List<Intervention>> getInterventions(
-      {required Organization organization}) async {
-    List<Intervention> list =
-        await interventionAPI.getList(organization: organization);
+  Future<List<Intervention>> getInterventions({required Site site}) async {
+    List<Intervention> list = await interventionAPI.getList(site: site);
 
     return list;
   }

@@ -12,7 +12,7 @@ class CardSettingsSectionSupervisor {
   CardSettingsSection render(
       {required GlobalKey<FormState> key, required List<User> supervisors}) {
     List<String> listSupervisorString = [];
-    // et pour l'organization
+    // et pour l'site
     for (var i = 0; i < supervisors.length; i++) {
       User u = supervisors[i];
 

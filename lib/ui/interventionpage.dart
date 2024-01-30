@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:card_settings/card_settings.dart';
 import 'package:intl/intl.dart';
-import 'package:on_site_intervention_app/models/model_organization.dart';
+import 'package:on_site_intervention_app/models/model_site.dart';
 
 import '../models/model_field.dart';
 import '../models/model_formulaire.dart';
@@ -18,10 +18,10 @@ import 'widget/scaffold_user.dart';
 // Create a Form widget.
 class InterventionPage extends StatefulWidget {
   const InterventionPage(
-      {super.key, required this.intervention, required this.organization});
+      {super.key, required this.intervention, required this.site});
 
   final Intervention intervention;
-  final Organization organization;
+  final Site site;
 
   @override
   InterventionPageState createState() {
@@ -74,11 +74,10 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Future<List<User>> getMyConfig({required int dummy}) async {
-    usersSupervisors =
-        await userAPI.getSupervisorsList(organization: widget.organization);
+    usersSupervisors = await userAPI.getSupervisorsList(site: widget.site);
 
     mapFormulaires = await userAPI.getInterventionFormsFromTemplate(
-        organization_name: widget.organization.name,
+        site_name: widget.site.name,
         type_intervention_name: widget.intervention.type_intervention_name);
 
     // Chargement des données initiales de chaque "Field"

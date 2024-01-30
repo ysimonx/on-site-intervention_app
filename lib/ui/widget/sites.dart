@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:on_site_intervention_app/models/model_organization.dart';
+import 'package:on_site_intervention_app/models/model_site.dart';
 
-import '../organizationpage.dart';
+import '../sitepage.dart';
 
-Widget getOrganizationsWidget(
-    {required BuildContext context,
-    required List<Organization> organizations}) {
+Widget getSitesWidget(
+    {required BuildContext context, required List<Site> sites}) {
   return ListTileTheme(
     contentPadding: const EdgeInsets.all(15),
     iconColor: Colors.green,
@@ -14,11 +13,11 @@ Widget getOrganizationsWidget(
     style: ListTileStyle.list,
     dense: true,
     child: ListView.builder(
-      itemCount: organizations.length,
+      itemCount: sites.length,
       itemBuilder: (_, index) => Card(
         margin: const EdgeInsets.all(10),
         child: ListTile(
-          title: Text(organizations[index].name.toUpperCase()),
+          title: Text(sites[index].name.toUpperCase()),
           subtitle: const Text('subtitle'),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -30,10 +29,10 @@ Widget getOrganizationsWidget(
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => OrganizationPage(
-                                organization: Organization(
-                                    id: organizations[index].id,
-                                    name: organizations[index].name))));
+                            builder: (context) => SitePage(
+                                site: Site(
+                                    id: sites[index].id,
+                                    name: sites[index].name))));
                   },
                   icon: const Icon(Icons.navigate_next)),
             ],

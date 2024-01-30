@@ -8,7 +8,7 @@ class Intervention {
   String id;
   String intervention_name;
   String intervention_values_on_site_uuid;
-  String organization_id;
+  String site_id;
   String type_intervention_id;
   String type_intervention_name;
   int version = 1;
@@ -20,7 +20,7 @@ class Intervention {
   Intervention(
       {required this.id,
       required this.intervention_name,
-      required this.organization_id,
+      required this.site_id,
       required this.intervention_values_on_site_uuid,
       required this.type_intervention_id,
       required this.type_intervention_name,
@@ -32,7 +32,7 @@ class Intervention {
     data['id'] = id;
     data['intervention_name'] = intervention_name;
     data['field_on_site_uuid_values'] = field_on_site_uuid_values;
-    data['organization_id'] = organization_id;
+    data['site_id'] = site_id;
     data['intervention_values_on_site_uuid'] = intervention_values_on_site_uuid;
     data['version'] = version;
     data['type_intervention_id'] = type_intervention_id;
@@ -49,8 +49,8 @@ class Intervention {
         intervention_name = json['intervention_name'] != null
             ? json['intervention_name'] as String
             : "",
-        organization_id = json.containsKey('organization_id')
-            ? json['organization_id'] as String
+        site_id = json.containsKey('site_id')
+            ? json['site_id'] as String
             : "826eaeb6-7180-443d-bce4-f1840079a54d",
         version = json.containsKey('version') ? json['version'] : 1,
         intervention_values_on_site_uuid =
@@ -69,8 +69,8 @@ class Intervention {
         place = json.containsKey('place')
             ? Place.fromJson(json['place'])
             : Place.nowhere(
-                organization_id: json.containsKey('organization_id')
-                    ? json['organization_id'] as String
+                site_id: json.containsKey('site_id')
+                    ? json['site_id'] as String
                     : "826eaeb6-7180-443d-bce4-f1840079a54d");
 
   // forms2 = {};

@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:on_site_intervention_app/models/model_organization.dart';
+import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/ui/utils/sizes.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -20,17 +20,15 @@ class InterventionApi {
 
   DioClient dioClient = DioClient(Dio());
 
-  Future<List<Intervention>> getList(
-      {required Organization organization}) async {
+  Future<List<Intervention>> getList({required Site site}) async {
     try {
-      Map<String, String> qParams = {'organization_id': organization.id};
+      Map<String, String> qParams = {'site_id': site.id};
 
       final Response response = await dioClient
           .get(Endpoints.listInterventionsValues, queryParameters: qParams);
 
       if (response.statusCode == 200) {
-        await writeInterventionsList(
-            organization: organization, jsonEncode(response.data));
+        await writeInterventionsList(site: site, jsonEncode(response.data));
       }
     } on DioException catch (e) {
       if (e.response != null) {
@@ -42,8 +40,7 @@ class InterventionApi {
     }
 
     // returns data already downloaded, even in mobile-first Mode
-    dynamic content =
-        await readListInterventionValues(organization: organization);
+    dynamic content = await readListInterventionValues(site: site);
     List<dynamic> arrayJsonLastDownloadedListInterventionValues =
         jsonDecode(content);
     List<Intervention> listInterventionValues = [];
@@ -94,7 +91,7 @@ class InterventionApi {
     listInterventionValues = completeListWithLocalUpdatedFiles(
         list: listInterventionValues,
         localFiles: listLocalUpdatedFiles,
-        organization: organization);
+        site: site);
 
     return listInterventionValues;
   }
@@ -127,15 +124,14 @@ class InterventionApi {
     return directory.path;
   }
 
-  Future<File> getlocalFileList({required Organization organization}) async {
+  Future<File> getlocalFileList({required Site site}) async {
     final path = await _localPath;
-    String pathfile = '$path/interventions_${organization.name}.json';
+    String pathfile = '$path/interventions_${site.name}.json';
     return File(pathfile);
   }
 
-  Future<File> writeInterventionsList(String data,
-      {required Organization organization}) async {
-    final file = await getlocalFileList(organization: organization);
+  Future<File> writeInterventionsList(String data, {required Site site}) async {
+    final file = await getlocalFileList(site: site);
 
     if (!await file.exists()) {
       // read the file from assets first and create the local file with its contents
@@ -145,10 +141,9 @@ class InterventionApi {
     return file.writeAsString(data);
   }
 
-  Future<String> readListInterventionValues(
-      {required Organization organization}) async {
+  Future<String> readListInterventionValues({required Site site}) async {
     try {
-      final file = await getlocalFileList(organization: organization);
+      final file = await getlocalFileList(site: site);
 
       // Read the file
       String contents = await file.readAsString();
@@ -241,11 +236,11 @@ class InterventionApi {
   List<Intervention> completeListWithLocalUpdatedFiles(
       {required List<Intervention> list,
       required List<FileSystemEntity> localFiles,
-      required Organization organization}) {
+      required Site site}) {
     // add local interventions to list
     // that are not uploaded yet :
     //
-    // if they match the "organization", these are new ones
+    // if they match the "site", these are new ones
 
     for (var j = 0; j < localFiles.length; j++) {
       FileSystemEntity f = localFiles[j];
@@ -254,7 +249,7 @@ class InterventionApi {
         String contents = (f).readAsStringSync();
         Map<String, dynamic> contentJson = jsonDecode(contents);
         Intervention intervention = Intervention.fromJson(contentJson);
-        if (intervention.organization_id == organization.id) {
+        if (intervention.site_id == site.id) {
           list.add(intervention);
         }
       }

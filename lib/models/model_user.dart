@@ -1,6 +1,6 @@
 import 'package:on_site_intervention_app/models/model_config.dart';
 
-import 'model_organization.dart';
+import 'model_site.dart';
 
 class User {
   String id;
@@ -9,7 +9,7 @@ class User {
   String email;
   String phone;
 
-  late List<Organization> organizations;
+  late List<Site> sites;
   late Config myconfig;
 
   User(
@@ -21,8 +21,8 @@ class User {
 
   Map<String, dynamic> toJSON() {
     var resorg = [];
-    for (var i = 0; i < organizations.length; i++) {
-      resorg.add(organizations[i].toJSON());
+    for (var i = 0; i < sites.length; i++) {
+      resorg.add(sites[i].toJSON());
     }
 
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -31,7 +31,7 @@ class User {
     data['lastname'] = lastname;
     data['email'] = email;
     data['phone'] = phone;
-    data['organizations'] = resorg;
+    data['sites'] = resorg;
     return data;
   }
 
@@ -45,22 +45,21 @@ class User {
         email: jsonUser['email'] as String,
         phone: jsonUser['phone'] as String);
 
-    if (json.containsKey('config_organization_type_intervention')) {
+    if (json.containsKey('config_site_type_intervention')) {
       user.myconfig = Config.fromJson(json);
     }
 
-    List<Organization> res = [];
+    List<Site> res = [];
 
-    if (json.containsKey('organizations')) {
-      List organizations = json['organizations'];
-      for (var i = 0; i < organizations.length; i++) {
-        Organization org =
-            Organization.fromJson(organizations[i]["organization"]);
+    if (json.containsKey('sites')) {
+      List sites = json['sites'];
+      for (var i = 0; i < sites.length; i++) {
+        Site org = Site.fromJson(sites[i]["site"]);
         res.add(org);
       }
     }
 
-    user.organizations = res;
+    user.sites = res;
 
     return user;
   }

@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   LoginApi loginApi = LoginApi();
   UserApi userAPI = UserApi();
 
-  final String _title = 'organizations';
+  final String _title = 'sites';
   final String _currentTenant = 'fidwork';
   @override
   void dispose() {

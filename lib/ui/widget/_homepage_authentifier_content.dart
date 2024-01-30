@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_user.dart';
 
-import 'organizations.dart';
+import 'sites.dart';
 
 class HomepageAuthentifiedContent extends StatefulWidget {
   const HomepageAuthentifiedContent({super.key, required this.user});
@@ -18,8 +18,7 @@ class _HomepageAuthentifiedContentState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: getOrganizationsWidget(
-          context: context, organizations: widget.user.organizations),
+      body: getSitesWidget(context: context, sites: widget.user.sites),
     );
     // This trailing comma makes auto-formatting nicer for build methods.
   }

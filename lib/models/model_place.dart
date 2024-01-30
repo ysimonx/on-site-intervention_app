@@ -6,20 +6,20 @@ class Place {
   String id;
   String place_on_site_uuid;
   String name;
-  String organization_id;
+  String site_id;
 
   Place(
       {required this.id,
       required this.place_on_site_uuid,
       required this.name,
-      required this.organization_id});
+      required this.site_id});
 
   Map<String, dynamic> toJSON() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['place_on_site_uuid'] = organization_id;
+    data['place_on_site_uuid'] = site_id;
     data['name'] = name;
-    data['organization_id'] = organization_id;
+    data['site_id'] = site_id;
     return data;
   }
 
@@ -29,13 +29,13 @@ class Place {
             ? json['place_on_site_uuid']
             : generateUUID(),
         name = json['name'] as String,
-        organization_id = json['organization_id'] as String;
+        site_id = json['site_id'] as String;
 
-  static Place nowhere({required String organization_id}) {
+  static Place nowhere({required String site_id}) {
     return Place(
-        id: organization_id, // hack pour avoir un id unique
+        id: site_id, // hack pour avoir un id unique
         name: "nowhere",
-        place_on_site_uuid: organization_id, // hack pour avoir un id unique
-        organization_id: organization_id);
+        place_on_site_uuid: site_id, // hack pour avoir un id unique
+        site_id: site_id);
   }
 }

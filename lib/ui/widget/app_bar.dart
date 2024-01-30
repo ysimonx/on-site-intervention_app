@@ -1,3 +1,4 @@
+import '../../models/model_user.dart';
 import '../../network/api/login_api.dart';
 import 'package:flutter/material.dart';
 
@@ -11,12 +12,14 @@ class AuthentifiedBaseAppBar extends StatelessWidget
   final String title;
   final String tenant;
   final Function(int) onDeconnexion;
+  final User user;
 
   const AuthentifiedBaseAppBar(
       {super.key,
       required this.title,
       required this.onDeconnexion,
-      required this.tenant});
+      required this.tenant,
+      required this.user});
 
   static const int valueDECONNEXION = 0;
   static const int valueLIST = 1;

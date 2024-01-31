@@ -82,23 +82,6 @@ class _SitePageState extends State<SitePage> {
                                         Intervention i =
                                             listInterventions[index];
 
-                                        UserApi userAPI = UserApi();
-
-                                        /* Map<String, Formulaire> initializedForms =
-                                        await userAPI
-                                            .getInterventionInitializedFormsFromTemplate(
-                                                site:
-                                                    widget.site.name,
-                                                type_intervention:
-                                                    i.type_intervention_name);
-                                    */
-
-                                        /* Place nowhere = Place.nowhere(
-                                        site_id:
-                                            widget.site.id);
-                                    */
-                                        /* i.forms = initializedForms; */
-
                                         if (!context.mounted) {
                                           return;
                                         }

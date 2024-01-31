@@ -29,4 +29,5 @@ class Endpoints {
 
   static const String listInterventionsValues = '/api/v1/intervention_values';
   static const String postInterventionValues = '/api/v1/intervention_values';
+  static const String postSite = '/api/v1/site';
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-
 import '../models/model_user.dart';
 import '../network/api/login_api.dart';
 import '../network/api/user_api.dart';

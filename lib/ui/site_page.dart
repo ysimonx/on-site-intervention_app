@@ -147,7 +147,6 @@ class _SitePageState extends State<SitePage> {
             }
 
             String typeInterventionName = "scaffolding request";
-            String typeInterventionId = "aec24222-6893-4f46-b1e0-1439b0a9a165";
 
             UserApi userAPI = UserApi();
 
@@ -163,7 +162,8 @@ class _SitePageState extends State<SitePage> {
               intervention_name: "nouvelle",
               site_id: widget.site.id,
               intervention_values_on_site_uuid: generateUUID(),
-              type_intervention_id: typeInterventionId,
+              type_intervention_id:
+                  typeInterventionName, // let's consider it is an ID
               type_intervention_name: typeInterventionName,
               forms: initializedForms,
               place: nowhere,

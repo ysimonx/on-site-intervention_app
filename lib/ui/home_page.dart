@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                 title: _title,
                 tenant: _currentTenant,
                 user: me,
-                onDeconnexion: (value) => setState(() {}))
+                onCallback: (value) => setState(() {}))
             : const BaseAppBar(title: "login"));
   }
 

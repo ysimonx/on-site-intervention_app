@@ -11,19 +11,20 @@ class AuthentifiedBaseAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   final String title;
   final String tenant;
-  final Function(int) onDeconnexion;
+  final Function(int) onCallback;
   final User user;
 
   const AuthentifiedBaseAppBar(
       {super.key,
       required this.title,
-      required this.onDeconnexion,
+      required this.onCallback,
       required this.tenant,
       required this.user});
 
   static const int valueDECONNEXION = 0;
   static const int valueLIST = 1;
   static const int valueUSERS = 2;
+  static const int valueREFRESH = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +53,10 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                 itemBuilder: (context) {
                 return [
                   PopupMenuItem<int>(
+                    value: valueREFRESH,
+                    child: Text(I18N("Refresh").toTitleCase()),
+                  ),
+                  PopupMenuItem<int>(
                     value: valueUSERS,
                     child: Text(I18N("gestion des utilisateurs").toTitleCase()),
                   ),
@@ -72,7 +77,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                   if (context.mounted) {
                     Navigator.popUntil(context, (route) => route.isFirst);
                   }
-                  onDeconnexion(1);
+                  onCallback(1);
                 }
                 if (value == valueLIST) {
                   if (context.mounted) {
@@ -89,6 +94,9 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                       return UsersPage(tenant: tenant);
                     }));
                   }
+                }
+                if (value == valueREFRESH) {
+                  onCallback(1);
                 }
               })
             : const Text(''),

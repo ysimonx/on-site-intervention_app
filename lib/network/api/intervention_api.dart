@@ -9,6 +9,7 @@ import 'package:on_site_intervention_app/ui/utils/sizes.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../models/model_intervention.dart';
+import '../../ui/utils/files.dart';
 import '../../ui/utils/logger.dart';
 import '../dio_client.dart';
 import 'constants.dart';
@@ -119,13 +120,8 @@ class InterventionApi {
     }
   }
 
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    return directory.path;
-  }
-
   Future<File> getlocalFileList({required Site site}) async {
-    final path = await _localPath;
+    final path = await localPath;
     String pathfile = '$path/interventions_${site.name}.json';
     return File(pathfile);
   }
@@ -156,7 +152,7 @@ class InterventionApi {
   }
 
   Future<File> getlocalUpdatedFile({required Intervention intervention}) async {
-    final path = await _localPath;
+    final path = await localPath;
     String pathfile =
         '$path/$DIRINTERVENTIONUPDATED/intervention_${intervention.intervention_values_on_site_uuid}.json';
     return File(pathfile);
@@ -164,10 +160,10 @@ class InterventionApi {
 
   //
   Future<List<FileSystemEntity>> getLocalUpdatedFiles() async {
-    String directory = (await getApplicationDocumentsDirectory()).path;
+    String path = await localPath;
 
     try {
-      Directory d = Directory("$directory/$DIRINTERVENTIONUPDATED/");
+      Directory d = Directory("$path/$DIRINTERVENTIONUPDATED/");
 
       List<FileSystemEntity> list = Directory(d.path).listSync();
       for (var i = 0; i < list.length; i++) {

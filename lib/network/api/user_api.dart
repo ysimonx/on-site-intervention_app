@@ -12,6 +12,7 @@ import '../../models/model_config.dart';
 import '../../models/model_formulaire.dart';
 import '../../models/model_site.dart';
 import '../../models/model_user.dart';
+import '../../ui/utils/files.dart';
 import '../../ui/utils/logger.dart';
 import '../dio_client.dart';
 import 'constants.dart';
@@ -67,13 +68,8 @@ class UserApi {
     return me;
   }
 
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    return directory.path;
-  }
-
   Future<File> get _localFile async {
-    final path = await _localPath;
+    final path = await localPath;
     return File('$path/userMe.json');
   }
 

@@ -41,10 +41,11 @@ class _HomepageAuthentifiedContentState
               widget.onRefresh(1);
             }),
         floatingActionButton: (widget.user.tenants_administrator_of.length == 1)
-            ? FloatingActionButton(
+            ? FloatingActionButton.extended(
                 tooltip: 'Nouveau site',
+                label: Text("SITE"),
                 onPressed: _showDialog,
-                child: const Icon(Icons.add))
+                icon: const Icon(Icons.add))
             : Container());
     // This trailing comma makes auto-formatting nicer for build methods.
   }

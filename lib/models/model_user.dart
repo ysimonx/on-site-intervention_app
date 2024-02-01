@@ -48,7 +48,7 @@ class User {
         email: jsonUser['email'] as String,
         phone: jsonUser['phone'] as String);
 
-    if (json.containsKey('config_site_type_intervention')) {
+    if (json.containsKey('config_types_intervention')) {
       user.myconfig = Config.fromJson(json);
     }
 

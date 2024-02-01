@@ -108,8 +108,8 @@ class UserApi {
       required String type_intervention_name}) async {
     User me = await myConfig(tryRealTime: false);
 
-    Map<String, dynamic> formsTemplates = await me
-        .myconfig.sites_types_interventions[site_name][type_intervention_name];
+    Map<String, dynamic> formsTemplates =
+        await me.myconfig.config_types_intervention[type_intervention_name];
 
     Map<String, Formulaire> forms = {};
 
@@ -153,7 +153,7 @@ class UserApi {
   Future<Map<String, dynamic>> getTemplate(
       {required Site organisation, required Intervention intervention}) async {
     User me = await myConfig(tryRealTime: false);
-    return me.myconfig.sites_types_interventions[organisation.name]
+    return me.myconfig.config_types_intervention[organisation.name]
         [intervention.type_intervention_name];
   }
 }

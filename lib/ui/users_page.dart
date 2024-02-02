@@ -117,8 +117,18 @@ class UsersPageState extends State<UsersPage> {
                                                 Icons.manage_accounts)),
                                         IconButton(
                                             onPressed: () async {
-                                              if (!context.mounted) {
-                                                return;
+                                              SiteApi siteApi = SiteApi();
+
+                                              Response response =
+                                                  await siteApi.RemoveUserRoles(
+                                                      site_id: s.id,
+                                                      email: u.email);
+
+                                              if (response.statusCode == 200) {
+                                                CB("Processing Data");
+                                              }
+                                              if (response.statusCode == 400) {
+                                                CB("Processing Data Error ${response.data["error"]}");
                                               }
                                             },
                                             icon: const Icon(Icons.cancel)),

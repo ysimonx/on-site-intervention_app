@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:on_site_intervention_app/models/model_intervention.dart';
+import 'package:on_site_intervention_app/models/model_tenant.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 
@@ -22,10 +23,13 @@ class UserApi {
 
   DioClient dioClient = DioClient(Dio());
 
-  Future<List<User>> userList({String tenant = 'ctei'}) async {
+  Future<List<User>> userList(
+      {String tenant = 'ctei',
+      required Site site,
+      required List<Tenant> tenants}) async {
     List<User> res = [];
 
-    Map<String, String> qParams = {'tenant_id': tenant};
+    Map<String, String> qParams = {'tenant_id': tenant, 'site_id': site.id};
 
     try {
       final Response response =

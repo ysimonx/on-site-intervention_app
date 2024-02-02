@@ -19,7 +19,6 @@ class _HomePageState extends State<HomePage> {
   LoginApi loginApi = LoginApi();
 
   final String _title = 'sites';
-  final String _currentTenant = 'ctei';
 
   Future<User> getMyInformations() async {
     bool ok = await loginApi.hasAnAccessToken();
@@ -51,10 +50,7 @@ class _HomePageState extends State<HomePage> {
         preferredSize: const Size.fromHeight(100),
         child: me.isAuthorized()
             ? AuthentifiedBaseAppBar(
-                title: _title,
-                tenant: _currentTenant,
-                user: me,
-                onCallback: (value) => setState(() {}))
+                title: _title, user: me, onCallback: (value) => setState(() {}))
             : const BaseAppBar(title: "login"));
   }
 

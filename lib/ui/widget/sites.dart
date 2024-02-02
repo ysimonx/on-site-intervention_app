@@ -7,7 +7,8 @@ import '../utils/sizes.dart';
 Widget getSitesWidget(
     {required BuildContext context,
     required List<Site> sites,
-    required Function(int) onRefresh}) {
+    required Function(int) onRefresh,
+    required user}) {
   return ListTileTheme(
     contentPadding: const EdgeInsets.all(15),
     iconColor: Colors.green,
@@ -34,6 +35,7 @@ Widget getSitesWidget(
                         context,
                         MaterialPageRoute(
                             builder: (context) => SitePage(
+                                user: user,
                                 site: Site(
                                     id: sites[index].id,
                                     name: sites[index].name))));

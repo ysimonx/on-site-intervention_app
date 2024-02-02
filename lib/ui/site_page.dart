@@ -17,12 +17,13 @@ import '../network/api/user_api.dart';
 import 'utils/i18n.dart';
 import 'utils/logger.dart';
 import 'utils/uuid.dart';
+import 'widget/app_bar.dart';
 
 class SitePage extends StatefulWidget {
-  const SitePage({super.key, required this.site});
+  const SitePage({super.key, required this.site, required this.user});
 
   final Site site;
-
+  final User user;
   @override
   State<SitePage> createState() => _SitePageState();
 }
@@ -30,7 +31,6 @@ class SitePage extends StatefulWidget {
 class _SitePageState extends State<SitePage> {
   late UserApi userAPI;
   late InterventionApi interventionAPI;
-  late User me;
 
   @override
   void initState() {
@@ -39,13 +39,24 @@ class _SitePageState extends State<SitePage> {
     userAPI = UserApi();
   }
 
+  PreferredSize widgetAppBar(
+      {required String title, required User user, required Site site}) {
+    return PreferredSize(
+        preferredSize: const Size.fromHeight(100),
+        child: user.isAuthorized()
+            ? AuthentifiedBaseAppBar(
+                title: title,
+                user: user,
+                site: site,
+                onCallback: (value) => setState(() {}))
+            : BaseAppBar(title: title));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.site.name.toUpperCase()),
-        ),
+        appBar: widgetAppBar(
+            title: widget.site.name, user: widget.user, site: widget.site),
         body: FutureBuilder(
             future: getInterventions(site: widget.site),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -174,8 +185,6 @@ class _SitePageState extends State<SitePage> {
 
   Future<List<Intervention>> getInterventions({required Site site}) async {
     List<Intervention> list = await interventionAPI.getList(site: site);
-    me = await userAPI.myConfig(tryRealTime: false);
-
     return list;
   }
 
@@ -187,7 +196,7 @@ class _SitePageState extends State<SitePage> {
       useRootNavigator: false,
       context: context,
       builder: (BuildContext context) {
-        Map<String, dynamic> x = me.myconfig.config_types_intervention;
+        Map<String, dynamic> x = widget.user.myconfig.config_types_intervention;
         List<Map<String, dynamic>> listTypeInterventions = [];
         x.forEach((key, value) {
           print(key);

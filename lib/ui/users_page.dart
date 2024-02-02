@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:on_site_intervention_app/models/model_site.dart';
+import 'package:on_site_intervention_app/models/model_tenant.dart';
 
 import '../models/model_user.dart';
 import '../network/api/user_api.dart';
 
 class UsersPage extends StatefulWidget {
-  final String tenant;
-
-  const UsersPage({super.key, required this.tenant});
+  final List<Tenant> tenants;
+  final Site site;
+  const UsersPage({super.key, required this.tenants, required this.site});
 
   @override
   State<StatefulWidget> createState() {
@@ -26,9 +28,8 @@ class UsersPageState extends State<UsersPage> {
 
   Future<List<User>> getUsersList() async {
     UserApi userApi = UserApi();
-
-    List<User> res = await userApi.userList();
-
+    List<User> res =
+        await userApi.userList(tenants: widget.tenants, site: widget.site);
     return res;
   }
 
@@ -38,7 +39,7 @@ class UsersPageState extends State<UsersPage> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text("Users ${widget.tenant}"),
+          title: Text("Users"),
         ),
         body: FutureBuilder(
             future: getUsersList(),

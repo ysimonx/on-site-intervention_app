@@ -8,11 +8,10 @@ import 'sites.dart';
 
 class HomepageAuthentifiedContent extends StatefulWidget {
   final Function(int) onRefresh;
+  final User user;
 
   const HomepageAuthentifiedContent(
       {super.key, required this.user, required this.onRefresh});
-
-  final User user;
 
   @override
   State<HomepageAuthentifiedContent> createState() =>
@@ -36,6 +35,7 @@ class _HomepageAuthentifiedContentState
     return Scaffold(
         body: getSitesWidget(
             context: context,
+            user: widget.user,
             sites: widget.user.sites,
             onRefresh: (value) {
               widget.onRefresh(1);

@@ -1,3 +1,5 @@
+import 'package:on_site_intervention_app/models/model_site.dart';
+
 import '../../models/model_user.dart';
 import '../../network/api/login_api.dart';
 import 'package:flutter/material.dart';
@@ -10,16 +12,16 @@ import '../utils/i18n.dart';
 class AuthentifiedBaseAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   final String title;
-  final String tenant;
   final Function(int) onCallback;
   final User user;
+  final Site? site;
 
   const AuthentifiedBaseAppBar(
       {super.key,
       required this.title,
       required this.onCallback,
-      required this.tenant,
-      required this.user});
+      required this.user,
+      this.site});
 
   static const int valueDECONNEXION = 0;
   static const int valueLIST = 1;
@@ -56,10 +58,12 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                     value: valueREFRESH,
                     child: Text(I18N("Refresh").toTitleCase()),
                   ),
-                  PopupMenuItem<int>(
-                    value: valueUSERS,
-                    child: Text(I18N("gestion des utilisateurs").toTitleCase()),
-                  ),
+                  if (site != null)
+                    PopupMenuItem<int>(
+                      value: valueUSERS,
+                      child:
+                          Text(I18N("gestion des utilisateurs").toTitleCase()),
+                    ),
                   PopupMenuItem<int>(
                     value: valueLIST,
                     child: Text(I18N("gestion des listes").toTitleCase()),
@@ -83,16 +87,20 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                   if (context.mounted) {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
-                      return ListsPage(tenant: tenant);
+                      return ListsPage(tenants: user.tenants_administrator_of);
                     }));
                   }
                 }
                 if (value == valueUSERS) {
                   if (context.mounted) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return UsersPage(tenant: tenant);
-                    }));
+                    if (site != null) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return UsersPage(
+                            site: site!,
+                            tenants: user.tenants_administrator_of);
+                      }));
+                    }
                   }
                 }
                 if (value == valueREFRESH) {

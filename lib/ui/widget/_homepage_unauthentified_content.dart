@@ -5,11 +5,8 @@ import '../utils/context.dart';
 import '../../network/api/login_api.dart';
 
 class HomepageUnAuthentifiedContent extends StatefulWidget {
-  const HomepageUnAuthentifiedContent({
-    super.key,
-    required this.context,
-    required this.onConnexion,
-  });
+  const HomepageUnAuthentifiedContent(
+      {super.key, required this.context, required this.onConnexion});
 
   final BuildContext context;
   final Function(int) onConnexion;

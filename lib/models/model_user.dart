@@ -9,6 +9,7 @@ class User {
   String lastname;
   String email;
   String phone;
+  String company;
 
   late List<Site> sites;
   late List<Tenant> tenants_administrator_of;
@@ -20,7 +21,8 @@ class User {
       required this.firstname,
       required this.lastname,
       required this.email,
-      required this.phone});
+      required this.phone,
+      required this.company});
 
   Map<String, dynamic> toJSON() {
     var resorg = [];
@@ -35,6 +37,7 @@ class User {
     data['email'] = email;
     data['phone'] = phone;
     data['sites'] = resorg;
+    data['company'] = company;
     return data;
   }
 
@@ -42,11 +45,14 @@ class User {
     Map<String, dynamic> jsonUser = json['user'];
 
     User user = User(
-        id: jsonUser['id'] as String,
-        firstname: jsonUser['firstname'] as String,
-        lastname: jsonUser['lastname'] as String,
-        email: jsonUser['email'] as String,
-        phone: jsonUser['phone'] as String);
+      id: jsonUser['id'] as String,
+      firstname: jsonUser['firstname'] as String,
+      lastname: jsonUser['lastname'] as String,
+      email: jsonUser['email'] as String,
+      phone: jsonUser['phone'] as String,
+      company:
+          jsonUser.containsKey('company') ? jsonUser['company'] as String : "",
+    );
 
     if (json.containsKey('config_types_intervention')) {
       user.myconfig = Config.fromJson(json);
@@ -83,7 +89,8 @@ class User {
   }
 
   static User nobody() {
-    User user = User(id: "", firstname: "", lastname: "", email: "", phone: "");
+    User user = User(
+        id: "", firstname: "", lastname: "", email: "", phone: "", company: "");
     return user;
   }
 
@@ -100,7 +107,10 @@ class User {
         firstname: IfNull(jsonUser['firstname']),
         lastname: IfNull(jsonUser['lastname']),
         email: IfNull(jsonUser['email']),
-        phone: IfNull(jsonUser['phone']));
+        phone: IfNull(jsonUser['phone']),
+        company: jsonUser.containsKey('company')
+            ? jsonUser['company'] as String
+            : "");
     return user;
   }
 }

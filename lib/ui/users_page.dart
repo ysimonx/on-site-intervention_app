@@ -106,9 +106,12 @@ class UsersPageState extends State<UsersPage> {
                                       children: [
                                         IconButton(
                                             onPressed: () async {
-                                              if (!context.mounted) {
-                                                return;
-                                              }
+                                              _showDialog(
+                                                  callback: CB,
+                                                  site: s,
+                                                  email: u.email,
+                                                  roles: dictRolesUsers[u.id]
+                                                      as List<String>);
                                             },
                                             icon: const Icon(
                                                 Icons.manage_accounts)),
@@ -140,19 +143,26 @@ class UsersPageState extends State<UsersPage> {
     return FloatingActionButton(
       // onPressed: {},
       onPressed: () async {
-        _showDialog(callback: callback, site: s);
+        _showDialog(callback: callback, site: s, email: null, roles: []);
       },
       child: const Icon(Icons.add),
     );
   }
 
   void _showDialog(
-      {required void Function(String message) callback, required Site site}) {
+      {required void Function(String message) callback,
+      required Site site,
+      required String? email,
+      required List<String> roles}) {
     late TextEditingController textEmailController = TextEditingController();
 
     Map<String, bool> dictSiteRoles = {};
     SiteApi siteApi = SiteApi();
-    String error_message = "to";
+
+    if (email != null) {
+      textEmailController.text = email;
+    }
+
     showDialog<void>(
       useRootNavigator: false,
       context: context,
@@ -163,6 +173,9 @@ class UsersPageState extends State<UsersPage> {
           x.forEach((key, jsonRole) {
             listRoles.add(jsonRole);
             dictSiteRoles[jsonRole["id"]] = false;
+            if (roles.contains(jsonRole["name"])) {
+              dictSiteRoles[jsonRole["id"]] = true;
+            }
           });
         }
         // listRoles = ["admin", "supervisor", "gnass"];
@@ -174,14 +187,15 @@ class UsersPageState extends State<UsersPage> {
               const Text(
                 "En tant qu'administrateur  vous pouvez administrer la liste des utilisateurs",
               ),
-              Text("${error_message}"), //
-              TextField(
-                controller: textEmailController,
-                autofocus: true,
-                decoration: InputDecoration(
-                    hintText: "Enter the e-mail address of the new user"
-                        .toCapitalized()),
-              ),
+              (email == null)
+                  ? TextField(
+                      controller: textEmailController,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                          hintText: "Enter the e-mail address of the new user"
+                              .toCapitalized()),
+                    )
+                  : Text(email),
               Container(
                   height: 300.0, // Change as per your requirement
                   width: 300.0, //

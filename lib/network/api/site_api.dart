@@ -70,7 +70,7 @@ class SiteApi {
       required String email,
       required List<String> roles_id}) async {
     try {
-      var formData = {"user_email": email, "roless": roles_id};
+      var formData = {"user_email": email, "roles": roles_id};
       String json = jsonEncode(formData);
 
       String s = Endpoints.addUserRoles.replaceAll("<site_id>", site_id);

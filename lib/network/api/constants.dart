@@ -31,4 +31,5 @@ class Endpoints {
   static const String postInterventionValues = '/api/v1/intervention_values';
   static const String postSite = '/api/v1/site';
   static const String siteRead = '/api/v1/site/<id>';
+  static const String addUserRoles = '/api/v1/site/<site_id>/user';
 }

@@ -64,4 +64,41 @@ class SiteApi {
       rethrow;
     }
   }
+
+  AddUserRoles(
+      {required String site_id,
+      required String email,
+      required List<String> roles_id}) async {
+    try {
+      var formData = {"user_email": email, "roless": roles_id};
+      String json = jsonEncode(formData);
+
+      String s = Endpoints.addUserRoles.replaceAll("<site_id>", site_id);
+
+      final Response response = await dioClient.post(
+        s,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: json,
+      );
+
+      if (response.statusCode == 200) {
+        logger.d("nouveaux roles ajoutés :)");
+      }
+
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        logger.e(e.response!.statusCode);
+        if (e.response!.statusCode == 401) {
+          return e.response!;
+        }
+        if (e.response!.statusCode == 400) {
+          return e.response!;
+        }
+      }
+      rethrow;
+    }
+  }
 }

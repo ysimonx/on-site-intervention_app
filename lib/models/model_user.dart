@@ -46,12 +46,12 @@ class User {
 
     User user = User(
       id: jsonUser['id'] as String,
-      firstname: jsonUser['firstname'] as String,
-      lastname: jsonUser['lastname'] as String,
+      firstname: IfNull(jsonUser['firstname']),
+      lastname: IfNull(jsonUser['lastname']),
       email: jsonUser['email'] as String,
-      phone: jsonUser['phone'] as String,
+      phone: IfNull(jsonUser['phone']),
       company:
-          jsonUser.containsKey('company') ? jsonUser['company'] as String : "",
+          jsonUser.containsKey('company') ? IfNull(jsonUser['company']) : "",
     );
 
     if (json.containsKey('config_types_intervention')) {

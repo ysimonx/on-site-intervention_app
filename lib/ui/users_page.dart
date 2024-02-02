@@ -1,5 +1,6 @@
 // ignore_for_file: unused_import
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/models/model_tenant.dart';
@@ -96,58 +97,46 @@ class UsersPageState extends State<UsersPage> {
                           User u = listUsers[index];
                           String sroles = dictRolesUsers[u.id]!.join(", ");
                           return Card(
-                            margin: const EdgeInsets.all(10),
-                            child: ListTile(
-                                title: Text('${u.email}'),
-                                subtitle: Text("roles: ${sroles}")),
-                          );
+                              margin: const EdgeInsets.all(10),
+                              child: ListTile(
+                                  title: Text('${u.email}'),
+                                  subtitle: Text("roles: ${sroles}"),
+                                  trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                            onPressed: () async {
+                                              if (!context.mounted) {
+                                                return;
+                                              }
+                                            },
+                                            icon: const Icon(
+                                                Icons.manage_accounts)),
+                                        IconButton(
+                                            onPressed: () async {
+                                              if (!context.mounted) {
+                                                return;
+                                              }
+                                            },
+                                            icon: const Icon(Icons.cancel)),
+                                      ])));
                         }));
               }
-              return Text("to");
+              return Text("loading");
             }),
-        floatingActionButton: FAB_User(context: context, callback: go));
+        floatingActionButton: FAB_User(context: context, callback: CB));
   }
 
-  void go(String typeInterventionName) async {
-    // String typeInterventionName = "scaffolding request";
-
-    /*
-    UserApi userAPI = UserApi();
-
-    Map<String, Formulaire> initializedForms =
-        await userAPI.getInterventionFormsFromTemplate(
-            site_name: widget.site.name,
-            type_intervention_name: typeInterventionName);
-
-    Place nowhere = Place.nowhere(site_id: widget.site.id);
-
-    Intervention newIntervention = Intervention(
-      id: "new_${generateUUID()}",
-      intervention_name: "nouvelle",
-      site_id: widget.site.id,
-      intervention_values_on_site_uuid: generateUUID(),
-      type_intervention_id: typeInterventionName, // let's consider it is an ID
-      type_intervention_name: typeInterventionName,
-      forms: initializedForms,
-      place: nowhere,
+  void CB(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("${message}")),
     );
-
-    if (!context.mounted) {
-      return;
-    }
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => InterventionPage(
-                intervention: newIntervention,
-                site: widget.site))).then((value) => setState(() {}));
-    ;
-    */
+    setState(() {});
   }
 
   FloatingActionButton FAB_User(
       {required BuildContext context,
-      required void Function(String typeInterventionName) callback}) {
+      required void Function(String message) callback}) {
     return FloatingActionButton(
       // onPressed: {},
       onPressed: () async {
@@ -158,12 +147,12 @@ class UsersPageState extends State<UsersPage> {
   }
 
   void _showDialog(
-      {required void Function(String typeInterventionName) callback,
-      required Site site}) {
-    bool checkedValue = true;
+      {required void Function(String message) callback, required Site site}) {
     late TextEditingController textEmailController = TextEditingController();
-    Map<String, bool> dictSiteRoles = {};
 
+    Map<String, bool> dictSiteRoles = {};
+    SiteApi siteApi = SiteApi();
+    String error_message = "to";
     showDialog<void>(
       useRootNavigator: false,
       context: context,
@@ -184,7 +173,8 @@ class UsersPageState extends State<UsersPage> {
             return Column(children: [
               const Text(
                 "En tant qu'administrateur  vous pouvez administrer la liste des utilisateurs",
-              ), //
+              ),
+              Text("${error_message}"), //
               TextField(
                 controller: textEmailController,
                 autofocus: true,
@@ -224,6 +214,35 @@ class UsersPageState extends State<UsersPage> {
               child: Text(I18N("annuler").toTitleCase()),
               onPressed: () {
                 Navigator.pop(context);
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Ok'),
+              onPressed: () async {
+                String email = textEmailController.text;
+                List<String> roles_id = [];
+
+                dictSiteRoles.forEach((key, value) {
+                  if (value) {
+                    roles_id.add(key);
+                  }
+                });
+                Response response = await siteApi.AddUserRoles(
+                    site_id: s.id, email: email, roles_id: roles_id);
+
+                if (response.statusCode == 200) {
+                  Navigator.pop(context);
+                  callback("Processing Data");
+                  return;
+                }
+                if (response.statusCode == 400) {
+                  Navigator.pop(context);
+                  callback("Processing Data Error ${response.data["error"]}");
+                  return;
+                }
               },
             ),
           ],

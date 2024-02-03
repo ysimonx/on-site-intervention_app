@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/model_user.dart';
 import '../network/api/login_api.dart';
 import '../network/api/user_api.dart';
-import 'widget/_homepage_authentifier_content.dart';
+import 'widget/_homepage_authentified_content.dart';
 import 'widget/_homepage_unauthentified_content.dart';
 import 'widget/app_bar.dart';
 

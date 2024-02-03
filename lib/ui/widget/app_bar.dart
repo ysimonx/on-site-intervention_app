@@ -59,18 +59,19 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                     child: Text(I18N("Refresh").toTitleCase()),
                   ),
                   if (site != null)
-                    PopupMenuItem<int>(
-                      value: valueUSERS,
-                      child:
-                          Text(I18N("gestion des utilisateurs").toTitleCase()),
-                    ),
+                    if (site!.getRoleNamesForUser(user).contains("admin"))
+                      PopupMenuItem<int>(
+                        value: valueUSERS,
+                        child: Text(
+                            I18N("gestion des utilisateurs").toCapitalized()),
+                      ),
                   PopupMenuItem<int>(
                     value: valueLIST,
-                    child: Text(I18N("gestion des listes").toTitleCase()),
+                    child: Text(I18N("gestion des listes").toCapitalized()),
                   ),
                   PopupMenuItem<int>(
                     value: valueDECONNEXION,
-                    child: Text(I18N("déconnexion").toTitleCase()),
+                    child: Text(I18N("déconnexion").toCapitalized()),
                   ),
                 ];
               }, onSelected: (value) async {

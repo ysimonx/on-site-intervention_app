@@ -29,16 +29,14 @@ Widget getSitesWidget(
             children: [
               // IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
               // IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
+              Text(sites[index].getRoleNamesForUser(user).join(", ")),
               IconButton(
                   onPressed: () async {
                     await Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => SitePage(
-                                user: user,
-                                site: Site(
-                                    id: sites[index].id,
-                                    name: sites[index].name))));
+                            builder: (context) =>
+                                SitePage(user: user, site: sites[index])));
                     onRefresh(1);
                   },
                   icon: const Icon(Icons.navigate_next)),

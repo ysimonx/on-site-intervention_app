@@ -27,6 +27,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
   static const int valueLIST = 1;
   static const int valueUSERS = 2;
   static const int valueREFRESH = 3;
+  static const int valueACCOUNT = 4;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +55,10 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                 // icon: Icon(Icons.book)
                 itemBuilder: (context) {
                 return [
+                  PopupMenuItem<int>(
+                    value: valueACCOUNT,
+                    child: Text(user.email.toTitleCase()),
+                  ),
                   PopupMenuItem<int>(
                     value: valueREFRESH,
                     child: Text(I18N("Refresh").toTitleCase()),

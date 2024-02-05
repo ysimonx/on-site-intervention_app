@@ -4,10 +4,10 @@ import 'package:on_site_intervention_app/models/model_user.dart';
 import 'package:on_site_intervention_app/ui/utils/i18n.dart';
 
 import '../../network/api/site_api.dart';
-import 'sites.dart';
+import '_sites_page.dart';
 
 class HomepageAuthentifiedContent extends StatefulWidget {
-  final Function(int) onRefresh;
+  final Function(int, String) onRefresh;
   final User user;
 
   const HomepageAuthentifiedContent(
@@ -40,24 +40,23 @@ class _HomepageAuthentifiedContentState
                 user: widget.user,
                 sites: widget.user.sites,
                 onRefresh: (value) {
-                  widget.onRefresh(1);
+                  widget.onRefresh(1, "refreshing list");
                 })),
-        floatingActionButton: (widget.user.tenants_administrator_of.length == 1)
-            ? FloatingActionButton.extended(
-                tooltip: 'Nouveau site',
-                label: Text("SITE"),
-                onPressed: _showDialog,
-                icon: const Icon(Icons.add))
-            : Container());
+        floatingActionButton: FloatingActionButton.extended(
+            tooltip: 'Nouveau site',
+            label: Text("SITE"),
+            onPressed: (widget.user.tenants_administrator_of.length == 1)
+                ? _showDialogOk
+                : _showDialogNok,
+            icon: const Icon(Icons.add)));
     // This trailing comma makes auto-formatting nicer for build methods.
   }
 
   Future<void> _pullRefresh() async {
-    widget.onRefresh(1);
-    // why use freshNumbers var? https://stackoverflow.com/a/52992836/2301224
+    widget.onRefresh(1, "refreshing list");
   }
 
-  void _showDialog() {
+  void _showDialogOk() {
     showDialog<void>(
       useRootNavigator: false,
       context: context,
@@ -91,24 +90,46 @@ class _HomepageAuthentifiedContentState
               ),
               child: const Text('Ok'),
               onPressed: () async {
-                print(widget.user.tenants_administrator_of.length);
                 String site_name = _textController.text;
-                print(site_name);
                 Response response = await siteApi.AddNewSite(
                     site_name: site_name,
                     tenant_id: widget.user.tenants_administrator_of[0].id);
-                print(response.data);
-                print(response.statusCode);
+                String snack_message = "";
                 if (response.statusCode == 201) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
-                  );
+                  snack_message = 'Processing Data';
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data Error')),
-                  );
+                  snack_message =
+                      'Processing Data Error ${response.statusCode.toString()}';
                 }
-                widget.onRefresh(1);
+                widget.onRefresh(1, snack_message);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDialogNok() {
+    showDialog<void>(
+      useRootNavigator: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Veuillez contacter FIDWORK'.toCapitalized()),
+          content: const Column(children: [
+            Text(
+              "Vous n'avez pas encore souscrit une licence FIDWORK, veuillez nous contacter sur contact@fidwork.fr",
+            ),
+          ]),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Ok'),
+              onPressed: () async {
                 Navigator.pop(context);
               },
             ),

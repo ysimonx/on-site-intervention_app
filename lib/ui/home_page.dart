@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../models/model_user.dart';
 import '../network/api/login_api.dart';
 import '../network/api/user_api.dart';
-import 'widget/_homepage_authentified_content.dart';
-import 'widget/_homepage_unauthentified_content.dart';
+import 'widget/_home_page_authentified_content.dart';
+import 'widget/_home_page_unauthentified_content.dart';
 import 'widget/app_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -59,7 +59,16 @@ class _HomePageState extends State<HomePage> {
         ? Scaffold(
             appBar: widgetAppBar(me),
             body: HomepageAuthentifiedContent(
-                user: me, onRefresh: (value) => setState(() {})))
+                user: me,
+                onRefresh: (valueint, valueString) => setState(() {
+                      if (valueString != "") {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              duration: const Duration(milliseconds: 100),
+                              content: Text(valueString)),
+                        );
+                      }
+                    })))
         : Scaffold(
             appBar: widgetAppBar(null),
             body: HomepageUnAuthentifiedContent(

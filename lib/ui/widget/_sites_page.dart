@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 
-import '../site_page.dart';
+import '../sites_page.dart';
 import '../utils/sizes.dart';
 
 Widget getSitesWidget(
@@ -27,8 +27,6 @@ Widget getSitesWidget(
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
-              // IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
               Text(sites[index].getRoleNamesForUser(user).join(", ")),
               IconButton(
                   onPressed: () async {

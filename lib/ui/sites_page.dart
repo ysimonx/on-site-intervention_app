@@ -31,7 +31,7 @@ class SitePage extends StatefulWidget {
 class _SitePageState extends State<SitePage> {
   late UserApi userAPI;
   late InterventionApi interventionAPI;
-
+  bool isDark = false;
   @override
   void initState() {
     super.initState();
@@ -52,6 +52,11 @@ class _SitePageState extends State<SitePage> {
             : BaseAppBar(title: title));
   }
 
+  Future<List<Intervention>> getInterventions({required Site site}) async {
+    List<Intervention> list = await interventionAPI.getList(site: site);
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,57 +68,12 @@ class _SitePageState extends State<SitePage> {
               if (snapshot.hasData) {
                 List<Intervention> listInterventions = snapshot.data;
                 if (listInterventions.isNotEmpty) {
-                  return Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 50),
-                      child: ListTileTheme(
-                        contentPadding: const EdgeInsets.all(15),
-                        iconColor: Colors.green,
-                        textColor: Colors.black54,
-                        tileColor: Colors.yellow[10],
-                        style: ListTileStyle.list,
-                        dense: true,
-                        child: ListView.builder(
-                          itemCount: listInterventions.length,
-                          itemBuilder: (_, index) => Card(
-                            margin: const EdgeInsets.all(10),
-                            child: ListTile(
-                              title: Text(listInterventions[index]
-                                  .intervention_name
-                                  .toUpperCase()),
-                              subtitle: Text(listInterventions[index]
-                                  .type_intervention_name),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  /* IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.edit)),
-                              IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.delete)),*/
-                                  IconButton(
-                                      onPressed: () async {
-                                        Intervention i =
-                                            listInterventions[index];
-
-                                        if (!context.mounted) {
-                                          return;
-                                        }
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder: (context) {
-                                          return InterventionPage(
-                                              intervention: i,
-                                              site: widget.site);
-                                        })).then((value) => setState(() {}));
-                                      },
-                                      icon: const Icon(Icons.navigate_next)),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ));
+                  return Column(children: <Widget>[
+                    searchBar(),
+                    Expanded(
+                        child:
+                            widgetListInterventions(listInterventions, context))
+                  ]);
                 } else {
                   return Center(
                     child: ElevatedButton(
@@ -134,12 +94,49 @@ class _SitePageState extends State<SitePage> {
                 );
               }
             }),
-        floatingActionButton: FAB_Scaff(context, go));
+        floatingActionButton: fabNewScaff(context, go));
+  }
+
+  ListTileTheme widgetListInterventions(
+      List<Intervention> listInterventions, BuildContext context) {
+    return ListTileTheme(
+      contentPadding: const EdgeInsets.all(15),
+      style: ListTileStyle.list,
+      dense: true,
+      child: ListView.builder(
+        itemCount: listInterventions.length,
+        itemBuilder: (_, index) => Card(
+          margin: const EdgeInsets.all(10),
+          child: ListTile(
+            title:
+                Text(listInterventions[index].intervention_name.toUpperCase()),
+            subtitle: Text(listInterventions[index].type_intervention_name),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                    onPressed: () async {
+                      Intervention i = listInterventions[index];
+
+                      if (!context.mounted) {
+                        return;
+                      }
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return InterventionPage(
+                            intervention: i, site: widget.site);
+                      })).then((value) => setState(() {}));
+                    },
+                    icon: const Icon(Icons.navigate_next)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   void go(String typeInterventionName) async {
-    // String typeInterventionName = "scaffolding request";
-
     UserApi userAPI = UserApi();
 
     Map<String, Formulaire> initializedForms =
@@ -172,7 +169,7 @@ class _SitePageState extends State<SitePage> {
     ;
   }
 
-  FloatingActionButton FAB_Scaff(
+  FloatingActionButton fabNewScaff(
       BuildContext context, void Function(String typeInterventionName) go) {
     return FloatingActionButton(
       // onPressed: {},
@@ -182,14 +179,6 @@ class _SitePageState extends State<SitePage> {
       child: const Icon(Icons.add),
     );
   }
-
-  Future<List<Intervention>> getInterventions({required Site site}) async {
-    List<Intervention> list = await interventionAPI.getList(site: site);
-    return list;
-  }
-
-  /* 
-  */
 
   void _showDialog(void Function(String typeInterventionName) go) {
     showDialog<void>(
@@ -241,5 +230,55 @@ class _SitePageState extends State<SitePage> {
         );
       },
     );
+  }
+
+  Widget searchBar() {
+    return Padding(
+        padding: EdgeInsets.all(20),
+        child: SearchAnchor(
+          builder: (BuildContext context, SearchController controller) {
+            return SearchBar(
+              controller: controller,
+              padding: const MaterialStatePropertyAll<EdgeInsets>(
+                  EdgeInsets.symmetric(horizontal: 16.0)),
+              onTap: () {
+                controller.openView();
+              },
+              onChanged: (_) {
+                controller.openView();
+              },
+              leading: const Icon(Icons.search),
+              trailing: <Widget>[
+                Tooltip(
+                  message: 'Change brightness mode',
+                  child: IconButton(
+                    isSelected: isDark,
+                    onPressed: () {
+                      setState(() {
+                        isDark = !isDark;
+                      });
+                    },
+                    icon: const Icon(Icons.wb_sunny_outlined),
+                    selectedIcon: const Icon(Icons.brightness_2_outlined),
+                  ),
+                )
+              ],
+            );
+          },
+          suggestionsBuilder:
+              (BuildContext context, SearchController controller) {
+            return List<ListTile>.generate(5, (int index) {
+              final String item = 'item $index';
+              return ListTile(
+                title: Text(item),
+                onTap: () {
+                  setState(() {
+                    controller.closeView(item);
+                  });
+                },
+              );
+            });
+          },
+        ));
   }
 }

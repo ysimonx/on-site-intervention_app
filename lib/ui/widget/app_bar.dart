@@ -56,7 +56,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                 return [
                   PopupMenuItem<int>(
                     value: valueACCOUNT,
-                    child: Text(user.email.toTitleCase()),
+                    child: Text(user.email.toLowerCase()),
                   ),
                   if (site != null)
                     if (site!.getRoleNamesForUser(user).contains("admin"))

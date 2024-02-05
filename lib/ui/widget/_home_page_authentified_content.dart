@@ -44,7 +44,7 @@ class _HomepageAuthentifiedContentState
                 })),
         floatingActionButton: FloatingActionButton.extended(
             tooltip: 'Nouveau site',
-            label: Text("SITE"),
+            label: const Text("SITE"),
             onPressed: (widget.user.tenants_administrator_of.length == 1)
                 ? _showDialogOk
                 : _showDialogNok,
@@ -80,7 +80,7 @@ class _HomepageAuthentifiedContentState
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
               child: const Text('Annuler'),
-              onPressed: () {
+              onPressed: () async {
                 Navigator.pop(context);
               },
             ),
@@ -90,19 +90,19 @@ class _HomepageAuthentifiedContentState
               ),
               child: const Text('Ok'),
               onPressed: () async {
-                String site_name = _textController.text;
+                Navigator.pop(context);
                 Response response = await siteApi.AddNewSite(
-                    site_name: site_name,
+                    site_name: _textController.text,
                     tenant_id: widget.user.tenants_administrator_of[0].id);
-                String snack_message = "";
+                String snackMessage = "";
                 if (response.statusCode == 201) {
-                  snack_message = 'Processing Data';
+                  snackMessage = 'Processing Data';
                 } else {
-                  snack_message =
+                  snackMessage =
                       'Processing Data Error ${response.statusCode.toString()}';
                 }
-                widget.onRefresh(1, snack_message);
-                Navigator.pop(context);
+
+                widget.onRefresh(1, snackMessage);
               },
             ),
           ],

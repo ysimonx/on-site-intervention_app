@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             User me = snapshot.data;
-            return Scaffold(appBar: widgetAppBar(me), body: widgetBody(me));
+            return widgetBody(me);
           } else if (snapshot.hasError) {
             return widgetError();
           } else {
@@ -45,10 +45,10 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  PreferredSize widgetAppBar(User me) {
+  PreferredSize widgetAppBar(User? me) {
     return PreferredSize(
         preferredSize: const Size.fromHeight(100),
-        child: me.isAuthorized()
+        child: (me != null && me.isAuthorized())
             ? AuthentifiedBaseAppBar(
                 title: _title, user: me, onCallback: (value) => setState(() {}))
             : const BaseAppBar(title: "login"));
@@ -56,23 +56,28 @@ class _HomePageState extends State<HomePage> {
 
   Widget widgetBody(User me) {
     return me.isAuthorized()
-        ? HomepageAuthentifiedContent(
-            user: me, onRefresh: (value) => setState(() {}))
-        : HomepageUnAuthentifiedContent(
-            context: context, onConnexion: (value) => setState(() {}));
+        ? Scaffold(
+            appBar: widgetAppBar(me),
+            body: HomepageAuthentifiedContent(
+                user: me, onRefresh: (value) => setState(() {})))
+        : Scaffold(
+            appBar: widgetAppBar(null),
+            body: HomepageUnAuthentifiedContent(
+                context: context, onConnexion: (value) => setState(() {})));
   }
 
   Scaffold widgetWaiting() {
-    return const Scaffold(
-        body: Center(
+    return Scaffold(
+        appBar: widgetAppBar(null),
+        body: const Center(
             child: SizedBox(
-      width: 60,
-      height: 60,
-      child: CircularProgressIndicator(),
-    )));
+          width: 60,
+          height: 60,
+          child: CircularProgressIndicator(),
+        )));
   }
 
   Scaffold widgetError() {
-    return const Scaffold(body: Text("error"));
+    return Scaffold(appBar: widgetAppBar(null), body: const Text("error"));
   }
 }

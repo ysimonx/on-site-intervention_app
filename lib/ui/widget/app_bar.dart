@@ -26,7 +26,6 @@ class AuthentifiedBaseAppBar extends StatelessWidget
   static const int valueDECONNEXION = 0;
   static const int valueLIST = 1;
   static const int valueUSERS = 2;
-  static const int valueREFRESH = 3;
   static const int valueACCOUNT = 4;
 
   @override
@@ -58,10 +57,6 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                   PopupMenuItem<int>(
                     value: valueACCOUNT,
                     child: Text(user.email.toTitleCase()),
-                  ),
-                  PopupMenuItem<int>(
-                    value: valueREFRESH,
-                    child: Text(I18N("Refresh").toTitleCase()),
                   ),
                   if (site != null)
                     if (site!.getRoleNamesForUser(user).contains("admin"))
@@ -111,9 +106,6 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                     }
                   }
                 }
-                if (value == valueREFRESH) {
-                  onCallback(1);
-                }
               })
             : const Text(''),
       ],
@@ -124,7 +116,6 @@ class AuthentifiedBaseAppBar extends StatelessWidget
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
-// cf https://stackoverflow.com/a/64147831
 class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
 

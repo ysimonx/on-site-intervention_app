@@ -33,13 +33,15 @@ class _HomepageAuthentifiedContentState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: getSitesWidget(
-            context: context,
-            user: widget.user,
-            sites: widget.user.sites,
-            onRefresh: (value) {
-              widget.onRefresh(1);
-            }),
+        body: RefreshIndicator(
+            onRefresh: _pullRefresh,
+            child: getSitesWidget(
+                context: context,
+                user: widget.user,
+                sites: widget.user.sites,
+                onRefresh: (value) {
+                  widget.onRefresh(1);
+                })),
         floatingActionButton: (widget.user.tenants_administrator_of.length == 1)
             ? FloatingActionButton.extended(
                 tooltip: 'Nouveau site',
@@ -48,6 +50,11 @@ class _HomepageAuthentifiedContentState
                 icon: const Icon(Icons.add))
             : Container());
     // This trailing comma makes auto-formatting nicer for build methods.
+  }
+
+  Future<void> _pullRefresh() async {
+    widget.onRefresh(1);
+    // why use freshNumbers var? https://stackoverflow.com/a/52992836/2301224
   }
 
   void _showDialog() {

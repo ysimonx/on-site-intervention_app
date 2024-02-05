@@ -9,6 +9,11 @@ Widget getSitesWidget(
     required List<Site> sites,
     required Function(int) onRefresh,
     required user}) {
+  //
+  // sort list
+  //
+  sites.sort((s1, s2) => s1.name.compareTo(s2.name));
+
   return Column(children: <Widget>[
     Expanded(
         child: ListTileTheme(

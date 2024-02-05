@@ -75,4 +75,33 @@ class LoginApi {
     await _storage.delete(key: LoginApi.keyRefreshToken);
     return;
   }
+
+  resetPassword({required String email}) async {
+    try {
+      var formData = {
+        "email": email,
+      };
+      String json = jsonEncode(formData);
+
+      final Response response = await dioClient.post(
+        Endpoints.resetPassword,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: json,
+      );
+
+      if (response.statusCode == 200) {
+        logger.d("password sent by email");
+      }
+
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        logger.e(e.response!.statusCode);
+        return e.response!;
+      }
+      rethrow;
+    }
+  }
 }

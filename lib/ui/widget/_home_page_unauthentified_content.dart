@@ -23,6 +23,8 @@ class _HomepageUnAuthentifiedContentState
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+  bool badAuth = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,45 +59,110 @@ class _HomepageUnAuthentifiedContentState
   }
 
   Widget submit() {
-    return MaterialButton(
-        onPressed: () async {
-          String email = "";
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      MaterialButton(
+          onPressed: () async {
+            String email = "";
 
-          email = emailController.text.trim();
-          email = email.replaceAll("\n", " ");
-          email = email.replaceAll("\r", " ");
+            email = emailController.text.trim();
+            email = email.replaceAll("\n", " ");
+            email = email.replaceAll("\r", " ");
 
-          String password = "";
+            if (validateEmail(email) != null) {
+              context.showErrorSnackBar("adresse email non valide");
+              badAuth = false;
+              setState(() {});
+              return;
+            }
 
-          password = passwordController.text.trim();
-          password = password.replaceAll("\n", " ");
-          password = password.replaceAll("\r", " ");
+            String password = "";
 
-          try {
-            Response result =
-                await loginApi.login(email: email, password: password);
+            password = passwordController.text.trim();
+            password = password.replaceAll("\n", " ");
+            password = password.replaceAll("\r", " ");
 
-            if (result.statusCode == 401) {
+            try {
+              Response result =
+                  await loginApi.login(email: email, password: password);
+
+              if (result.statusCode == 401) {
+                if (!context.mounted) {
+                  return;
+                }
+                badAuth = true;
+                context.showErrorSnackBar("Echec d'authentification");
+                setState(() {});
+                return;
+              }
+              badAuth = false;
+              widget.onConnexion(1);
+
+              // setState(() {});
+            } catch (e) {
               if (!context.mounted) {
                 return;
               }
-              context.showErrorSnackBar("Echec d'authentification");
+              context.showErrorSnackBar("Echec d'authentification $e");
               return;
             }
-            widget.onConnexion(1);
+          },
+          color: Theme.of(context).colorScheme.inversePrimary,
+          textColor: Colors.white,
+          child: const Text("Submit")),
+      const SizedBox(height: 20),
+      (badAuth)
+          ? MaterialButton(
+              onPressed: () async {
+                String email = "";
 
-            // setState(() {});
-          } catch (e) {
-            if (!context.mounted) {
-              return;
-            }
-            context.showErrorSnackBar("Echec d'authentification $e");
-            return;
-          }
-        },
-        color: Theme.of(context).colorScheme.inversePrimary,
-        textColor: Colors.white,
-        child: const Text("Submit"));
+                email = emailController.text.trim();
+                email = email.replaceAll("\n", " ");
+                email = email.replaceAll("\r", " ");
+
+                if (validateEmail(email) != null) {
+                  context.showErrorSnackBar("adresse email non valide");
+                  badAuth = false;
+                  setState(() {});
+                  return;
+                }
+
+                try {
+                  Response result = await loginApi.resetPassword(
+                    email: email,
+                  );
+
+                  if (result.statusCode == 200) {
+                    if (!context.mounted) {
+                      return;
+                    }
+
+                    context.showCustomSnackBar(
+                        text:
+                            "Veuillez retrouver votre nouveau mot de passe dans votre boite mail",
+                        icon: Icon(Icons.check));
+                    badAuth = false;
+                    setState(() {});
+                    return;
+                  }
+                  badAuth = false;
+                  context.showErrorSnackBar(
+                      "Echec de la reinitialisation du mot de passe");
+                  setState(() {});
+                  return;
+                } catch (e) {
+                  if (!context.mounted) {
+                    return;
+                  }
+                  context.showErrorSnackBar(
+                      "Echec de la reinitialisation du mot de passe $e");
+                  return;
+                }
+              },
+              color: Theme.of(context).colorScheme.inversePrimary,
+              textColor: Colors.white,
+              child: const Text("send me a new password"))
+          : Container()
+    ]);
   }
 
   Widget emailForm() {

@@ -26,9 +26,11 @@ class Endpoints {
 
   static const String userMe = '/api/v1/user/me/config';
   static const String userList = '/api/v1/user';
+  static const String resetPassword = '/api/v1/user/reset_password';
 
   static const String listInterventionsValues = '/api/v1/intervention_values';
   static const String postInterventionValues = '/api/v1/intervention_values';
+
   static const String postSite = '/api/v1/site';
   static const String siteRead = '/api/v1/site/<id>';
   static const String addUserRoles = '/api/v1/site/<site_id>/user';

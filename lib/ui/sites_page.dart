@@ -94,7 +94,8 @@ class _SitePageState extends State<SitePage> {
                 );
               }
             }),
-        floatingActionButton: fabNewScaff(context, addIntervention));
+        floatingActionButton:
+            fabNewScaff(context: context, callback: addIntervention));
   }
 
   ListTileTheme widgetListInterventions(
@@ -173,8 +174,9 @@ class _SitePageState extends State<SitePage> {
     ;
   }
 
-  FloatingActionButton fabNewScaff(BuildContext context,
-      void Function(String typeInterventionName) callback) {
+  FloatingActionButton fabNewScaff(
+      {required BuildContext context,
+      required void Function(String typeInterventionName) callback}) {
     return FloatingActionButton(
       // onPressed: {},
       onPressed: () async {

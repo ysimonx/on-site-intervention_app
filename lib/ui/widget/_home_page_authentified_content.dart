@@ -48,7 +48,7 @@ class _HomepageAuthentifiedContentState
             onPressed: (widget.user.tenants_administrator_of.length == 1)
                 ? _showDialogOk
                 : _showDialogNok,
-            icon: const Icon(Icons.add)));
+            icon: const Icon(Icons.domain_add)));
     // This trailing comma makes auto-formatting nicer for build methods.
   }
 

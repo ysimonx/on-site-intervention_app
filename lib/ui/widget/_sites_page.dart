@@ -25,6 +25,7 @@ Widget getSitesWidget(
         itemBuilder: (_, index) => Card(
           margin: const EdgeInsets.all(10),
           child: ListTile(
+            leading: const Icon(Icons.business),
             title: Text("${sites[index].name.toUpperCase()}"),
             subtitle: Text(
                 "Organization : ${sites[index].tenant.name.toUpperCase()}",

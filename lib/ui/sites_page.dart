@@ -108,6 +108,7 @@ class _SitePageState extends State<SitePage> {
         itemBuilder: (_, index) => Card(
           margin: const EdgeInsets.all(10),
           child: ListTile(
+            leading: Icon(Icons.factory),
             title:
                 Text(listInterventions[index].intervention_name.toUpperCase()),
             subtitle: Text(listInterventions[index].type_intervention_name),

@@ -9,11 +9,17 @@ import '../models/model_user.dart';
 import '../network/api/site_api.dart';
 import '../network/api/user_api.dart';
 import 'utils/i18n.dart';
+import 'widget/app_bar.dart';
 
 class UsersPage extends StatefulWidget {
   final List<Tenant> tenants;
   final Site site;
-  const UsersPage({super.key, required this.tenants, required this.site});
+  final User user;
+  const UsersPage(
+      {super.key,
+      required this.tenants,
+      required this.site,
+      required this.user});
 
   @override
   State<StatefulWidget> createState() {
@@ -23,19 +29,22 @@ class UsersPage extends StatefulWidget {
 
 // Create a corresponding State class.
 class UsersPageState extends State<UsersPage> {
+  Map<String, User> dictUser = {};
+  Map<String, List<String>> dictRolesUsers = {};
+  late Site s;
+
+  late String _title = 'users';
+
   @override
   void initState() {
     super.initState();
 
     dictUser = {};
     dictRolesUsers = {};
+    _title = "${widget.site.name} : users";
   }
 
-  Map<String, User> dictUser = {};
-  Map<String, List<String>> dictRolesUsers = {};
-  late Site s;
-
-  Future<List<User>> getUsersList() async {
+  Future<List<User>> getMyInformations() async {
     SiteApi siteApi = SiteApi();
     s = await siteApi.readSite(site_id: widget.site.id);
     dictUser = {};
@@ -60,85 +69,104 @@ class UsersPageState extends State<UsersPage> {
         }
       });
     }
-
     List<User> res = [];
-
     dictUser.forEach((key, user) {
       res.add(user);
     });
-
     return res;
   }
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: getMyInformations(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            List<User> listUsers = snapshot.data;
+            return widgetBody(listUsers);
+          } else if (snapshot.hasError) {
+            return widgetError(widget.user);
+          } else {
+            return widgetWaiting(widget.user);
+          }
+        });
+  }
+
+  Scaffold widgetWaiting(User? user) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text("Users"),
-        ),
-        body: FutureBuilder(
-            future: getUsersList(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                List<User> listUsers = snapshot.data;
-                return ListTileTheme(
-                    contentPadding: const EdgeInsets.all(15),
-                    iconColor: Colors.green,
-                    textColor: Colors.black54,
-                    tileColor: Colors.yellow[10],
-                    style: ListTileStyle.list,
-                    dense: true,
-                    child: ListView.builder(
-                        padding: const EdgeInsets.all(8),
-                        itemCount: listUsers.length,
-                        itemBuilder: (_, index) {
-                          User u = listUsers[index];
-                          String sroles = dictRolesUsers[u.id]!.join(", ");
-                          return Card(
-                              margin: const EdgeInsets.all(10),
-                              child: ListTile(
-                                  title: Text('${u.email}'),
-                                  leading: Icon(Icons.person_2_outlined),
-                                  subtitle: Text("roles: ${sroles}"),
-                                  trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        IconButton(
-                                            onPressed: () async {
-                                              _showDialog(
-                                                  callback: CB,
-                                                  site: s,
-                                                  email: u.email,
-                                                  roles: dictRolesUsers[u.id]
-                                                      as List<String>);
-                                            },
-                                            icon: const Icon(
-                                                Icons.manage_accounts)),
-                                        IconButton(
-                                            onPressed: () async {
-                                              SiteApi siteApi = SiteApi();
+        appBar: widgetAppBar(user),
+        body: const Center(
+            child: SizedBox(
+          width: 60,
+          height: 60,
+          child: CircularProgressIndicator(),
+        )));
+  }
 
-                                              Response response =
-                                                  await siteApi.RemoveUserRoles(
-                                                      site_id: s.id,
-                                                      email: u.email);
+  Scaffold widgetError(User? user) {
+    return Scaffold(appBar: widgetAppBar(user), body: const Text("error"));
+  }
 
-                                              if (response.statusCode == 200) {
-                                                CB("Processing Data");
-                                              }
-                                              if (response.statusCode == 400) {
-                                                CB("Processing Data Error ${response.data["error"]}");
-                                              }
-                                            },
-                                            icon: const Icon(Icons.cancel)),
-                                      ])));
-                        }));
-              }
-              return Text("loading");
-            }),
-        floatingActionButton: FAB_User(context: context, callback: CB));
+  PreferredSize widgetAppBar(User? me) {
+    return PreferredSize(
+        preferredSize: const Size.fromHeight(100),
+        child: (me != null && me.isAuthorized())
+            ? AuthentifiedBaseAppBar(
+                title: _title, user: me, onCallback: (value) => setState(() {}))
+            : const BaseAppBar(title: "login"));
+  }
+
+  Widget widgetBody(List<User> listUsers) {
+    return Scaffold(
+      appBar: widgetAppBar(widget.user),
+      body: ListTileTheme(
+          contentPadding: const EdgeInsets.all(15),
+          style: ListTileStyle.list,
+          dense: true,
+          child: ListView.builder(
+              padding: const EdgeInsets.all(8),
+              itemCount: listUsers.length,
+              itemBuilder: (_, index) {
+                User u = listUsers[index];
+                String sroles = dictRolesUsers[u.id]!.join(", ");
+                return Card(
+                    margin: const EdgeInsets.all(10),
+                    child: ListTile(
+                        title: Text('${u.email}'),
+                        leading: Icon(Icons.person_2_outlined),
+                        subtitle: Text("roles: ${sroles}"),
+                        trailing:
+                            Row(mainAxisSize: MainAxisSize.min, children: [
+                          IconButton(
+                              onPressed: () async {
+                                _showDialog(
+                                    callback: CB,
+                                    site: s,
+                                    email: u.email,
+                                    roles:
+                                        dictRolesUsers[u.id] as List<String>);
+                              },
+                              icon: const Icon(Icons.manage_accounts)),
+                          IconButton(
+                              onPressed: () async {
+                                SiteApi siteApi = SiteApi();
+
+                                Response response =
+                                    await siteApi.RemoveUserRoles(
+                                        site_id: s.id, email: u.email);
+
+                                if (response.statusCode == 200) {
+                                  CB("Processing Data");
+                                }
+                                if (response.statusCode == 400) {
+                                  CB("Processing Data Error ${response.data["error"]}");
+                                }
+                              },
+                              icon: const Icon(Icons.cancel)),
+                        ])));
+              })),
+      floatingActionButton: FAB_User(context: context, callback: CB),
+    );
   }
 
   void CB(String message) {

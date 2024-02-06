@@ -101,7 +101,8 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                           MaterialPageRoute(builder: (context) {
                         return UsersPage(
                             site: site!,
-                            tenants: user.tenants_administrator_of);
+                            tenants: user.tenants_administrator_of,
+                            user: user);
                       }));
                     }
                   }

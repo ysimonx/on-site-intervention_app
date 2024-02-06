@@ -94,7 +94,7 @@ class _SitePageState extends State<SitePage> {
                 );
               }
             }),
-        floatingActionButton: fabNewScaff(context, go));
+        floatingActionButton: fabNewScaff(context, addIntervention));
   }
 
   ListTileTheme widgetListInterventions(
@@ -108,7 +108,10 @@ class _SitePageState extends State<SitePage> {
         itemBuilder: (_, index) => Card(
           margin: const EdgeInsets.all(10),
           child: ListTile(
-            leading: Icon(Icons.factory),
+            leading: (listInterventions[index].type_intervention_name ==
+                    "calorifuge")
+                ? const Icon(Icons.local_fire_department)
+                : const Icon(Icons.foundation),
             title:
                 Text(listInterventions[index].intervention_name.toUpperCase()),
             subtitle: Text(listInterventions[index].type_intervention_name),
@@ -137,7 +140,7 @@ class _SitePageState extends State<SitePage> {
     );
   }
 
-  void go(String typeInterventionName) async {
+  void addIntervention(String typeInterventionName) async {
     UserApi userAPI = UserApi();
 
     Map<String, Formulaire> initializedForms =
@@ -170,18 +173,18 @@ class _SitePageState extends State<SitePage> {
     ;
   }
 
-  FloatingActionButton fabNewScaff(
-      BuildContext context, void Function(String typeInterventionName) go) {
+  FloatingActionButton fabNewScaff(BuildContext context,
+      void Function(String typeInterventionName) callback) {
     return FloatingActionButton(
       // onPressed: {},
       onPressed: () async {
-        _showDialog(go);
+        _showDialog(callback);
       },
       child: const Icon(Icons.add),
     );
   }
 
-  void _showDialog(void Function(String typeInterventionName) go) {
+  void _showDialog(void Function(String typeInterventionName) callback) {
     showDialog<void>(
       useRootNavigator: false,
       context: context,
@@ -209,7 +212,7 @@ class _SitePageState extends State<SitePage> {
                                   String typeInterventionName =
                                       listTypeInterventions[index]["key"];
                                   Navigator.pop(context);
-                                  go(typeInterventionName);
+                                  callback(typeInterventionName);
                                 },
                                 child: Align(
                                   alignment: Alignment.centerLeft,

@@ -90,7 +90,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                   if (context.mounted) {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
-                      return ListsPage(tenants: user.tenants_administrator_of);
+                      return ListsPage(site: site, user: user);
                     }));
                   }
                 }

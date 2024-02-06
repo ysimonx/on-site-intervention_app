@@ -100,6 +100,7 @@ class UsersPageState extends State<UsersPage> {
                               margin: const EdgeInsets.all(10),
                               child: ListTile(
                                   title: Text('${u.email}'),
+                                  leading: Icon(Icons.person),
                                   subtitle: Text("roles: ${sroles}"),
                                   trailing: Row(
                                       mainAxisSize: MainAxisSize.min,

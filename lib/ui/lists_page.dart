@@ -96,7 +96,7 @@ class ListsPageState extends State<ListsPage> {
       // onPressed: {},
       onPressed: () async {
         //  _showDialog(callback);
-        _showDialog(callback: callback, site: widget.site);
+        _showDialog(callback: callback, site: widget.site, listname: null);
       },
       child: const Icon(Icons.add),
     );
@@ -151,6 +151,20 @@ class ListsPageState extends State<ListsPage> {
                     title: Text('${list[index]}'),
                     subtitle: Text(
                         "${subvalues.join(", ")} ... (${values.length} items) "),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.manage_search),
+                          onPressed: () {
+                            _showDialog(
+                                callback: CB,
+                                site: widget.site,
+                                listname: list[index]);
+                          },
+                        ),
+                      ],
+                    ),
                   ));
             }));
   }
@@ -158,10 +172,16 @@ class ListsPageState extends State<ListsPage> {
   void _showDialog({
     required void Function(String message) callback,
     required Site? site,
+    required String? listname,
   }) {
     late TextEditingController controllerListName = TextEditingController();
     late TextEditingController controllerValues = TextEditingController();
-    List<String> listValues = ["val1", "val2"];
+    List<String> listValues = [];
+    if (listname != null) {
+      controllerListName.text = listname;
+      listValues = dictOfLists[listname]!;
+    }
+
     controllerValues.text = listValues.join("\n");
 
     showDialog<void>(
@@ -223,6 +243,7 @@ class ListsPageState extends State<ListsPage> {
                       child: const Text('Ok'),
                       onPressed: () async {
                         Navigator.pop(context);
+                        dictOfLists.remove(listname);
                         dictOfLists[controllerListName.text] =
                             controllerValues.text.split("\n");
                         callback(controllerListName.text);

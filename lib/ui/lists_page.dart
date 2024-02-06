@@ -29,7 +29,7 @@ class ListsPageState extends State<ListsPage> {
     super.initState();
     _title = "${widget.site!.name} : lists";
     dictOfLists = {
-      "BATIMENTS": ["R1", "R2"]
+      "batiments": ["R1", "R2"]
     };
   }
 
@@ -125,19 +125,34 @@ class ListsPageState extends State<ListsPage> {
     dict_of_lists.forEach((key, value) {
       list.add(key);
     });
+    list.sort();
 
-    return ListView.builder(
-        padding: const EdgeInsets.all(8),
-        itemCount: list.length,
-        itemBuilder: (BuildContext context, int index) {
-          List<String>? values = dict_of_lists[list[index]];
+    return ListTileTheme(
+        contentPadding: const EdgeInsets.all(15),
+        style: ListTileStyle.list,
+        dense: true,
+        child: ListView.builder(
+            padding: const EdgeInsets.all(8),
+            itemCount: list.length,
+            itemBuilder: (BuildContext context, int index) {
+              List<String>? values = dict_of_lists[list[index]];
 
-          return SizedBox(
-            height: 50,
-            child:
-                Center(child: Text('Entry ${list[index]}: ${values!.length}')),
-          );
-        });
+              int max = 5;
+              if (max > values!.length) {
+                max = values.length;
+              }
+
+              List<String> subvalues = values.sublist(0, max);
+
+              return Card(
+                  margin: const EdgeInsets.all(10),
+                  child: ListTile(
+                    leading: Icon(Icons.list),
+                    title: Text('${list[index]}'),
+                    subtitle: Text(
+                        "${subvalues.join(", ")} ... (${values.length} items) "),
+                  ));
+            }));
   }
 
   void _showDialog({
@@ -160,6 +175,10 @@ class ListsPageState extends State<ListsPage> {
                       builder: (BuildContext context, StateSetter setState) {
                     return Column(children: [
                       TextField(
+                        onChanged: (v) {
+                          controllerListName.text =
+                              controllerListName.text.toLowerCase();
+                        },
                         controller: controllerListName,
                         autofocus: true,
                         decoration: InputDecoration(

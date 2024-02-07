@@ -5,6 +5,7 @@ class Site {
   String id;
   String name;
   List<dynamic> roles = [];
+  Map<String, List<String>> dictOfLists = {};
   late Tenant tenant;
 
   Site({required this.id, required this.name});
@@ -14,6 +15,7 @@ class Site {
     data['id'] = id;
     data['name'] = name;
     data['roles'] = roles;
+    data['dictOfLists'] = dictOfLists;
     return data;
   }
 

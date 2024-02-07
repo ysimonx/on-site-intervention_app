@@ -20,10 +20,6 @@ class Endpoints {
   static const String refreshToken = "/api/v1/token/refresh";
   static const String listUsers = "/api/v1/user";
 
-  static const String uploadGeste = "/api/v1/geste";
-  static const String downloadBackOfficeFeedBack =
-      "/api/v1/controle/filter_by_gestes";
-
   static const String userMe = '/api/v1/user/me/config';
   static const String userList = '/api/v1/user';
   static const String resetPassword = '/api/v1/user/reset_password';
@@ -35,4 +31,5 @@ class Endpoints {
   static const String siteRead = '/api/v1/site/<id>';
   static const String addUserRoles = '/api/v1/site/<site_id>/user';
   static const String removeUserRoles = '/api/v1/site/<site_id>/user';
+  static const String updateLists = '/api/v1/site/<site_id>/lists';
 }

@@ -133,4 +133,40 @@ class SiteApi {
       rethrow;
     }
   }
+
+  Future<Response> updateSiteLists(
+      {required String idSite,
+      required Map<String, List<String>> dictOfLists}) async {
+    try {
+      var formData = {"dict_of_lists": dictOfLists};
+      String json = jsonEncode(formData);
+
+      String s = Endpoints.updateLists.replaceAll("<site_id>", idSite);
+
+      final Response response = await dioClient.post(
+        s,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: json,
+      );
+
+      if (response.statusCode == 200) {
+        logger.d("toutes les listes ont été mises à jour :)");
+      }
+
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        logger.e(e.response!.statusCode);
+        if (e.response!.statusCode == 401) {
+          return e.response!;
+        }
+        if (e.response!.statusCode == 400) {
+          return e.response!;
+        }
+      }
+      rethrow;
+    }
+  }
 }

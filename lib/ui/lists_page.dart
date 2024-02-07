@@ -1,10 +1,12 @@
 // ignore_for_file: unused_import
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/models/model_tenant.dart';
 import 'package:on_site_intervention_app/models/model_user.dart';
 
+import '../network/api/site_api.dart';
 import 'utils/i18n.dart';
 import 'widget/app_bar.dart';
 
@@ -83,10 +85,13 @@ class ListsPageState extends State<ListsPage> {
     );
   }
 
-  void callBack(String message) {
+  void callBack(
+      {required String message,
+      required Map<String, List<String>> dictOfLists}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
+    widget.site!.dictOfLists = dictOfLists;
     setState(() {});
   }
 
@@ -143,6 +148,7 @@ class ListsPageState extends State<ListsPage> {
               }
 
               List<String> subvalues = values.sublist(0, max);
+              subvalues.sort();
 
               return Card(
                   margin: const EdgeInsets.all(10),
@@ -170,7 +176,10 @@ class ListsPageState extends State<ListsPage> {
   }
 
   void _showDialog({
-    required void Function(String message) callback,
+    required void Function(
+            {required String message,
+            required Map<String, List<String>> dictOfLists})
+        callback,
     required Site? site,
     required String? listname,
   }) {
@@ -180,6 +189,7 @@ class ListsPageState extends State<ListsPage> {
     if (listname != null) {
       controllerListName.text = listname;
       listValues = dictOfLists[listname]!;
+      listValues.sort();
     }
 
     controllerValues.text = listValues.join("\n");
@@ -242,11 +252,37 @@ class ListsPageState extends State<ListsPage> {
                       ),
                       child: const Text('Ok'),
                       onPressed: () async {
-                        Navigator.pop(context);
                         dictOfLists.remove(listname);
                         dictOfLists[controllerListName.text] =
                             controllerValues.text.split("\n");
-                        callback(controllerListName.text);
+
+                        SiteApi siteApi = SiteApi();
+
+                        try {
+                          Response response = await siteApi.updateSiteLists(
+                              idSite: widget.site!.id,
+                              dictOfLists: dictOfLists);
+
+                          if (response.statusCode == 200) {
+                            Navigator.pop(context);
+
+                            callback(
+                                message: "Processing Data",
+                                dictOfLists: dictOfLists);
+                            return;
+                          }
+                          if (response.statusCode == 400) {
+                            callback(
+                                message:
+                                    "Processing Data Error ${response.data["error"]}",
+                                dictOfLists: dictOfLists);
+                            return;
+                          }
+                        } catch (e) {
+                          print("error");
+                          callback(
+                              message: e.toString(), dictOfLists: dictOfLists);
+                        }
                       },
                     ),
                   ],

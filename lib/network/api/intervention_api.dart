@@ -14,6 +14,8 @@ import '../../ui/utils/logger.dart';
 import '../dio_client.dart';
 import 'constants.dart';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 const String DIRINTERVENTIONUPDATED = "interventions_updated";
 
 class InterventionApi {
@@ -22,6 +24,13 @@ class InterventionApi {
   DioClient dioClient = DioClient(Dio());
 
   Future<List<Intervention>> getList({required Site site}) async {
+    dynamic content = null;
+
+    bool isMobileFirst = true;
+    if (kIsWeb) {
+      isMobileFirst = false;
+    }
+
     try {
       Map<String, String> qParams = {'site_id': site.id};
 
@@ -29,7 +38,7 @@ class InterventionApi {
           .get(Endpoints.listInterventionsValues, queryParameters: qParams);
 
       if (response.statusCode == 200) {
-        await writeInterventionsList(site: site, jsonEncode(response.data));
+        content = jsonEncode(response.data);
       }
     } on DioException catch (e) {
       if (e.response != null) {
@@ -38,22 +47,45 @@ class InterventionApi {
         }
         logger.e("getList : ${e.response!.statusCode}");
       }
+    } catch (e) {
+      logger.e("${e.toString()}");
     }
 
-    // returns data already downloaded, even in mobile-first Mode
-    dynamic content = await readListInterventionValues(site: site);
-    List<dynamic> arrayJsonLastDownloadedListInterventionValues =
-        jsonDecode(content);
+    if (!isMobileFirst) {
+      List<Intervention> listInterventionValues = [];
+      List<dynamic> arrayJsonLastDownloadedListInterventionValues =
+          jsonDecode(content);
+      for (var i = 0;
+          i < arrayJsonLastDownloadedListInterventionValues.length;
+          i++) {
+        Map<String, dynamic> itemJson =
+            arrayJsonLastDownloadedListInterventionValues[i];
+
+        Intervention intervention = Intervention.fromJson(itemJson);
+        listInterventionValues.add(intervention);
+      }
+      return listInterventionValues;
+    }
+
+    // for mobile first
+    if (content != null) {
+      await writeListInterventionValues(site: site, data: content);
+    }
+
     List<Intervention> listInterventionValues = [];
 
-    List<FileSystemEntity> listLocalUpdatedFiles = await getLocalUpdatedFiles();
+    List<FileSystemEntity> listLocalUpdatedFiles = [];
 
+    content = await readListInterventionValues(site: site);
+
+    listLocalUpdatedFiles = await getLocalUpdatedFiles();
+    List<dynamic> arrayJsonLastDownloadedListInterventionValues =
+        jsonDecode(content);
     for (var i = 0;
         i < arrayJsonLastDownloadedListInterventionValues.length;
         i++) {
       Map<String, dynamic> itemJson =
           arrayJsonLastDownloadedListInterventionValues[i];
-
       Intervention intervention = Intervention.fromJson(itemJson);
 
       // au cas où une intervention est sauvegardée en local
@@ -86,6 +118,7 @@ class InterventionApi {
           }
         }
       }
+
       listInterventionValues.add(intervention);
     }
 
@@ -126,7 +159,8 @@ class InterventionApi {
     return File(pathfile);
   }
 
-  Future<File> writeInterventionsList(String data, {required Site site}) async {
+  Future<File> writeListInterventionValues(
+      {required String data, required Site site}) async {
     final file = await getlocalFileList(site: site);
 
     if (!await file.exists()) {

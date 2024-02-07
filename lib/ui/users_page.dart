@@ -288,19 +288,24 @@ class UsersPageState extends State<UsersPage> {
                             idsRole.add(key);
                           }
                         });
-                        Response response = await siteApi.addUserRoles(
-                            idSite: s.id, email: email, idsRoles: idsRole);
 
-                        if (response.statusCode == 200) {
-                          Navigator.pop(context);
-                          callback("Processing Data");
-                          return;
-                        }
-                        if (response.statusCode == 400) {
-                          Navigator.pop(context);
-                          callback(
-                              "Processing Data Error ${response.data["error"]}");
-                          return;
+                        try {
+                          Response response = await siteApi.addUserRoles(
+                              idSite: s.id, email: email, idsRoles: idsRole);
+
+                          if (response.statusCode == 200) {
+                            Navigator.pop(context);
+                            callback("Processing Data");
+                            return;
+                          }
+                          if (response.statusCode == 400) {
+                            Navigator.pop(context);
+                            callback(
+                                "Processing Data Error ${response.data["error"]}");
+                            return;
+                          }
+                        } on Exception catch (e) {
+                          callback("Processing Data Error ${e.toString()}");
                         }
                       },
                     ),

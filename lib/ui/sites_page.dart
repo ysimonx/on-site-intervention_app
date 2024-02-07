@@ -98,47 +98,51 @@ class _SitePageState extends State<SitePage> {
             fabNewScaff(context: context, callback: addIntervention));
   }
 
-  ListTileTheme widgetListInterventions(
+  Widget widgetListInterventions(
       List<Intervention> listInterventions, BuildContext context) {
-    return ListTileTheme(
-      contentPadding: const EdgeInsets.all(15),
-      style: ListTileStyle.list,
-      dense: true,
-      child: ListView.builder(
-        itemCount: listInterventions.length,
-        itemBuilder: (_, index) => Card(
-          margin: const EdgeInsets.all(10),
-          child: ListTile(
-            leading: (listInterventions[index].type_intervention_name ==
-                    "calorifuge")
-                ? const Icon(Icons.local_fire_department)
-                : const Icon(Icons.foundation),
-            title:
-                Text(listInterventions[index].intervention_name.toUpperCase()),
-            subtitle: Text(listInterventions[index].type_intervention_name),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                    onPressed: () async {
-                      Intervention i = listInterventions[index];
+    return RefreshIndicator(
+        onRefresh: () async {
+          return;
+        },
+        child: ListTileTheme(
+          contentPadding: const EdgeInsets.all(15),
+          style: ListTileStyle.list,
+          dense: true,
+          child: ListView.builder(
+            itemCount: listInterventions.length,
+            itemBuilder: (_, index) => Card(
+              margin: const EdgeInsets.all(10),
+              child: ListTile(
+                leading: (listInterventions[index].type_intervention_name ==
+                        "calorifuge")
+                    ? const Icon(Icons.local_fire_department)
+                    : const Icon(Icons.foundation),
+                title: Text(
+                    listInterventions[index].intervention_name.toUpperCase()),
+                subtitle: Text(listInterventions[index].type_intervention_name),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                        onPressed: () async {
+                          Intervention i = listInterventions[index];
 
-                      if (!context.mounted) {
-                        return;
-                      }
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return InterventionPage(
-                            intervention: i, site: widget.site);
-                      })).then((value) => setState(() {}));
-                    },
-                    icon: const Icon(Icons.navigate_next)),
-              ],
+                          if (!context.mounted) {
+                            return;
+                          }
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return InterventionPage(
+                                intervention: i, site: widget.site);
+                          })).then((value) => setState(() {}));
+                        },
+                        icon: const Icon(Icons.navigate_next)),
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   void addIntervention(String typeInterventionName) async {

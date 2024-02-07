@@ -1,11 +1,12 @@
 import 'model_tenant.dart';
 import 'model_user.dart';
+import 'dart:convert';
 
 class Site {
   String id;
   String name;
   List<dynamic> roles = [];
-  Map<String, List<String>> dictOfLists = {};
+  Map<String, dynamic> dictOfLists = {};
   late Tenant tenant;
 
   Site({required this.id, required this.name});
@@ -15,7 +16,7 @@ class Site {
     data['id'] = id;
     data['name'] = name;
     data['roles'] = roles;
-    data['dictOfLists'] = dictOfLists;
+    data['dictOfLists'] = jsonEncode(dictOfLists);
     return data;
   }
 
@@ -23,6 +24,8 @@ class Site {
       : id = json['id'] as String,
         name = json['name'] as String,
         roles = json.containsKey('roles') ? json['roles'] : [],
+        dictOfLists =
+            json.containsKey('dict_of_lists') ? json['dict_of_lists'] : {},
         tenant = Tenant.fromJson(json['tenant']);
 
   List<String> getRoleNamesForUser(User u) {

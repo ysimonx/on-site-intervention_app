@@ -24,18 +24,16 @@ class ListsPage extends StatefulWidget {
 // Create a corresponding State class.
 class ListsPageState extends State<ListsPage> {
   late String _title = 'lists';
-  late Map<String, List<String>> dictOfLists = {};
+  late Map<String, dynamic> dictOfLists = {};
 
   @override
   void initState() {
     super.initState();
     _title = "${widget.site!.name} : lists";
-    dictOfLists = {
-      "batiments": ["R1", "R2"]
-    };
+    dictOfLists = widget.site!.dictOfLists;
   }
 
-  Future<Map<String, List<String>>> getMyInformations() async {
+  Future<Map<String, dynamic>> getMyInformations() async {
     return dictOfLists;
   }
 
@@ -65,7 +63,7 @@ class ListsPageState extends State<ListsPage> {
   }
 
   Widget widgetBody(
-      {required User user, required Map<String, List<String>> dictOfLists}) {
+      {required User user, required Map<String, dynamic> dictOfLists}) {
     return Scaffold(
       appBar: widgetAppBar(user),
       body: widgetListOfListContent(
@@ -86,8 +84,7 @@ class ListsPageState extends State<ListsPage> {
   }
 
   void callBack(
-      {required String message,
-      required Map<String, List<String>> dictOfLists}) {
+      {required String message, required Map<String, dynamic> dictOfLists}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
@@ -125,7 +122,7 @@ class ListsPageState extends State<ListsPage> {
   Widget widgetListOfListContent(
       {required User user,
       required void Function(dynamic valueint, dynamic valueString) onRefresh,
-      required Map<String, List<String>> dictOfLists}) {
+      required Map<String, dynamic> dictOfLists}) {
     List<String> list = [];
     dictOfLists.forEach((key, value) {
       list.add(key);
@@ -140,14 +137,15 @@ class ListsPageState extends State<ListsPage> {
             padding: const EdgeInsets.all(8),
             itemCount: list.length,
             itemBuilder: (BuildContext context, int index) {
-              List<String>? values = dictOfLists[list[index]];
+              var x = dictOfLists[list[index]];
+              print(x.toString());
 
               int max = 5;
-              if (max > values!.length) {
-                max = values.length;
+              if (max > x.length) {
+                max = x.length;
               }
 
-              List<String> subvalues = values.sublist(0, max);
+              var subvalues = x.sublist(0, max);
               subvalues.sort();
 
               return Card(
@@ -156,7 +154,7 @@ class ListsPageState extends State<ListsPage> {
                     leading: const Icon(Icons.list),
                     title: Text(list[index]),
                     subtitle: Text(
-                        "${subvalues.join(", ")} ... (${values.length} items) "),
+                        "${subvalues.join(", ")} ... (${x.length} items) "),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -178,17 +176,23 @@ class ListsPageState extends State<ListsPage> {
   void _showDialog({
     required void Function(
             {required String message,
-            required Map<String, List<String>> dictOfLists})
+            required Map<String, dynamic> dictOfLists})
         callback,
     required Site? site,
     required String? listname,
   }) {
     late TextEditingController controllerListName = TextEditingController();
     late TextEditingController controllerValues = TextEditingController();
-    List<String> listValues = [];
+
+    List<dynamic> listValues = [];
+
     if (listname != null) {
       controllerListName.text = listname;
-      listValues = dictOfLists[listname]!;
+
+      if (site!.dictOfLists.keys.contains(listname)) {
+        listValues = site!.dictOfLists[listname];
+      }
+
       listValues.sort();
     }
 

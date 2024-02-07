@@ -136,7 +136,7 @@ class SiteApi {
 
   Future<Response> updateSiteLists(
       {required String idSite,
-      required Map<String, List<String>> dictOfLists}) async {
+      required Map<String, dynamic> dictOfLists}) async {
     try {
       var formData = {"dict_of_lists": dictOfLists};
       String json = jsonEncode(formData);

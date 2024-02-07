@@ -180,7 +180,10 @@ class InterventionPageState extends State<InterventionPage> {
             _initialIndex == 0
                 ? widgetBodyFormulaire(
                     scaffoldSupervisor, scaffoldUser, scaffold)
-                : widgetBodyFormulaireNG(_initialIndex)
+                : widgetBodyFormulaireNG(_initialIndex),
+            SizedBox(
+              height: 200,
+            )
           ])),
     ]);
   }
@@ -367,7 +370,32 @@ class InterventionPageState extends State<InterventionPage> {
       return genCardSettingsSwitch(_initialValue, f);
     }
 
+    if (f.field_type == "user_from_role") {
+      return genCardSettingsUserFromRole(_initialValue, f);
+    }
     return genCardSettingsInt(_initialValue, s, f);
+  }
+
+  CardSettingsListPicker<dynamic> genCardSettingsUserFromRole(
+      String initialValue, Field f) {
+    String roleName = f.field_possible_values[0];
+    List<String> possible_values = widget.site.getUsersForRoleName(roleName);
+
+    return CardSettingsListPicker(
+        initialItem: initialValue,
+        label: f.field_label,
+        items: possible_values,
+        // controller: fieldsController[f.field_on_site_uuid],
+        validator: (value) {
+          String newvalue;
+          if (value == null) {
+            newvalue = "";
+          } else {
+            newvalue = value;
+          }
+          fieldsController[f.field_on_site_uuid]!.text = newvalue;
+          fieldsValue[f.field_on_site_uuid] = newvalue;
+        });
   }
 
   CardSettingsListPicker<dynamic> genCardSettingsListPicker(

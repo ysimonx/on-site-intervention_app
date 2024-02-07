@@ -46,4 +46,22 @@ class Site {
     return userRoles;
     // return "role";
   }
+
+  List<String> getUsersForRoleName(String whichRoleName) {
+    List<String> usersEmail = [];
+
+    for (var i = 0; i < roles.length; i++) {
+      Map<String, dynamic> x = roles[i];
+      x.forEach((roleName, jsonrole) {
+        if (roleName == whichRoleName) {
+          List<dynamic> jsonusers = jsonrole["users"];
+          for (var j = 0; j < jsonusers.length; j++) {
+            Map<String, dynamic> jsonuser = jsonusers[j]["user"];
+            usersEmail.add(jsonuser["email"]);
+          }
+        }
+      });
+    }
+    return usersEmail;
+  }
 }

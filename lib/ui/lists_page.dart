@@ -44,7 +44,7 @@ class ListsPageState extends State<ListsPage> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             dictOfLists = snapshot.data;
-            return widgetBody(user: widget.user, dict_of_lists: dictOfLists);
+            return widgetBody(user: widget.user, dictOfLists: dictOfLists);
           } else if (snapshot.hasError) {
             return widgetError(widget.user);
           } else {
@@ -63,12 +63,12 @@ class ListsPageState extends State<ListsPage> {
   }
 
   Widget widgetBody(
-      {required User user, required Map<String, List<String>> dict_of_lists}) {
+      {required User user, required Map<String, List<String>> dictOfLists}) {
     return Scaffold(
       appBar: widgetAppBar(user),
       body: widgetListOfListContent(
         user: user,
-        dict_of_lists: dict_of_lists,
+        dictOfLists: dictOfLists,
         onRefresh: (valueint, valueString) => setState(() {
           if (valueString != "") {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -79,13 +79,13 @@ class ListsPageState extends State<ListsPage> {
           }
         }),
       ),
-      floatingActionButton: fabNewList(context: context, callback: CB),
+      floatingActionButton: fabNewList(context: context, callback: callBack),
     );
   }
 
-  void CB(String message) {
+  void callBack(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("${message}")),
+      SnackBar(content: Text(message)),
     );
     setState(() {});
   }
@@ -120,9 +120,9 @@ class ListsPageState extends State<ListsPage> {
   Widget widgetListOfListContent(
       {required User user,
       required void Function(dynamic valueint, dynamic valueString) onRefresh,
-      required Map<String, List<String>> dict_of_lists}) {
+      required Map<String, List<String>> dictOfLists}) {
     List<String> list = [];
-    dict_of_lists.forEach((key, value) {
+    dictOfLists.forEach((key, value) {
       list.add(key);
     });
     list.sort();
@@ -135,7 +135,7 @@ class ListsPageState extends State<ListsPage> {
             padding: const EdgeInsets.all(8),
             itemCount: list.length,
             itemBuilder: (BuildContext context, int index) {
-              List<String>? values = dict_of_lists[list[index]];
+              List<String>? values = dictOfLists[list[index]];
 
               int max = 5;
               if (max > values!.length) {
@@ -147,8 +147,8 @@ class ListsPageState extends State<ListsPage> {
               return Card(
                   margin: const EdgeInsets.all(10),
                   child: ListTile(
-                    leading: Icon(Icons.list),
-                    title: Text('${list[index]}'),
+                    leading: const Icon(Icons.list),
+                    title: Text(list[index]),
                     subtitle: Text(
                         "${subvalues.join(", ")} ... (${values.length} items) "),
                     trailing: Row(
@@ -158,7 +158,7 @@ class ListsPageState extends State<ListsPage> {
                           icon: const Icon(Icons.manage_search),
                           onPressed: () {
                             _showDialog(
-                                callback: CB,
+                                callback: callBack,
                                 site: widget.site,
                                 listname: list[index]);
                           },
@@ -190,7 +190,7 @@ class ListsPageState extends State<ListsPage> {
       builder: (BuildContext context) {
         return LayoutBuilder(
             builder: (_, constrains) => AlertDialog(
-                  title: Text(I18N("nouvelle liste").toTitleCase()),
+                  title: Text(translateI18N("nouvelle liste").toTitleCase()),
                   content: StatefulBuilder(
                       builder: (BuildContext context, StateSetter setState) {
                     return Column(children: [
@@ -203,7 +203,7 @@ class ListsPageState extends State<ListsPage> {
                         autofocus: true,
                         decoration: InputDecoration(
                             filled: true,
-                            fillColor: Color(0xFFF2F2F2),
+                            fillColor: const Color(0xFFF2F2F2),
                             hintText: "Enter the name of this new list"
                                 .toCapitalized()),
                       ),
@@ -231,7 +231,7 @@ class ListsPageState extends State<ListsPage> {
                       style: TextButton.styleFrom(
                         textStyle: Theme.of(context).textTheme.labelLarge,
                       ),
-                      child: Text(I18N("annuler").toTitleCase()),
+                      child: Text(translateI18N("annuler").toTitleCase()),
                       onPressed: () async {
                         Navigator.pop(context);
                       },

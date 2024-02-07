@@ -42,7 +42,7 @@ class InterventionPageState extends State<InterventionPage> {
   late String email = "";
   late int phone;
   late DateTime date1stutil;
-  late int duration_days;
+  late int durationInDays;
 
   bool _needSave = false;
 
@@ -82,8 +82,6 @@ class InterventionPageState extends State<InterventionPage> {
 
     // Chargement des données initiales de chaque "Field"
     // dans des TextEditingController
-    print(widget.intervention.intervention_name);
-    print(mapFormulaires.length);
     mapFormulaires.forEach((key, formulaire) {
       formulaire.sections.forEach((key, section) {
         section.fields.forEach((key, f) {
@@ -127,7 +125,7 @@ class InterventionPageState extends State<InterventionPage> {
                   title: Text(widget.intervention.intervention_name),
                 ),
                 body: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 50),
+                    padding: const EdgeInsets.symmetric(horizontal: 50),
                     child: widgetMainBody(context)),
                 floatingActionButton: FloatingActionButton(
                   onPressed: () async {
@@ -402,7 +400,7 @@ class InterventionPageState extends State<InterventionPage> {
 
     return CardSettingsInt(
       initialValue: _initialIntValue,
-      label: "${f.field_label}",
+      label: f.field_label,
       controller: fieldsController[f.field_on_site_uuid],
       validator: (value) {
         String newvalue;

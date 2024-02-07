@@ -139,7 +139,7 @@ class _HomepageUnAuthentifiedContentState
                     context.showCustomSnackBar(
                         text:
                             "Veuillez retrouver votre nouveau mot de passe dans votre boite mail",
-                        icon: Icon(Icons.check));
+                        icon: const Icon(Icons.check));
                     badAuth = false;
                     setState(() {});
                     return;

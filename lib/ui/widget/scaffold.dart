@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 // ignore: must_be_immutable
 class CardSettingsSectionScaffold {
   late DateTime date1stutil;
-  late int duration_days;
+  late int durationInDays;
 
   CardSettingsSection render({required GlobalKey<FormState> key}) {
     return CardSettingsSection(
@@ -30,7 +30,7 @@ class CardSettingsSectionScaffold {
               if (value == null) return 'Duration is required.';
               return null;
             },
-            onSaved: (value) => duration_days = value!,
+            onSaved: (value) => durationInDays = value!,
           ),
           CardSettingsListPicker(label: 'Action', items: const [
             "Montage échafaudage",

@@ -1,4 +1,4 @@
-String I18N(value) {
+String translateI18N(value) {
   String lang = "fr";
 
   Map<String, dynamic> trads = {

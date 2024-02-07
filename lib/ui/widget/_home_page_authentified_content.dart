@@ -91,9 +91,9 @@ class _HomepageAuthentifiedContentState
               child: const Text('Ok'),
               onPressed: () async {
                 Navigator.pop(context);
-                Response response = await siteApi.AddNewSite(
-                    site_name: _textController.text,
-                    tenant_id: widget.user.tenants_administrator_of[0].id);
+                Response response = await siteApi.addNewSite(
+                    siteName: _textController.text,
+                    idTenant: widget.user.tenants_administrator_of[0].id);
                 String snackMessage = "";
                 if (response.statusCode == 201) {
                   snackMessage = 'Processing Data';

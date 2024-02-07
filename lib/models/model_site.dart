@@ -24,21 +24,21 @@ class Site {
         tenant = Tenant.fromJson(json['tenant']);
 
   List<String> getRoleNamesForUser(User u) {
-    List<String> user_roles = [];
+    List<String> userRoles = [];
 
     for (var i = 0; i < roles.length; i++) {
       Map<String, dynamic> x = roles[i];
-      x.forEach((role_name, jsonrole) {
+      x.forEach((roleName, jsonrole) {
         List<dynamic> jsonusers = jsonrole["users"];
         for (var j = 0; j < jsonusers.length; j++) {
           Map<String, dynamic> jsonuser = jsonusers[j]["user"];
           if (jsonuser["email"] == u.email) {
-            user_roles.add(role_name);
+            userRoles.add(roleName);
           }
         }
       });
     }
-    return user_roles;
+    return userRoles;
     // return "role";
   }
 }

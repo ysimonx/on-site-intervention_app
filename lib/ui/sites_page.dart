@@ -194,15 +194,14 @@ class _SitePageState extends State<SitePage> {
         Map<String, dynamic> x = widget.user.myconfig.config_types_intervention;
         List<Map<String, dynamic>> listTypeInterventions = [];
         x.forEach((key, value) {
-          print(key);
           listTypeInterventions.add({"key": key, "value": value});
         });
 
         return AlertDialog(
-          title: Text(I18N("nouvelle intervention").toTitleCase()),
+          title: Text(translateI18N("nouvelle intervention").toTitleCase()),
           content: //
               // ListView.builder(itemBuilder: ,)
-              Container(
+              SizedBox(
                   height: 300.0, // Change as per your requirement
                   width: 300.0, //
                   child: ListView.builder(
@@ -227,7 +226,7 @@ class _SitePageState extends State<SitePage> {
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: Text(I18N("annuler").toTitleCase()),
+              child: Text(translateI18N("annuler").toTitleCase()),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -240,7 +239,7 @@ class _SitePageState extends State<SitePage> {
 
   Widget searchBar() {
     return Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: SearchAnchor(
           builder: (BuildContext context, SearchController controller) {
             return SearchBar(

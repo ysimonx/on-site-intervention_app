@@ -13,32 +13,29 @@ class SiteApi {
 
   DioClient dioClient = DioClient(Dio());
 
-  Future<Site> readSite({required String site_id}) async {
-    Site _site = Site(id: site_id, name: "");
+  Future<Site> readSite({required String idSite}) async {
+    Site site = Site(id: idSite, name: "");
 
-    String s = Endpoints.siteRead.replaceAll("<id>", site_id);
+    String s = Endpoints.siteRead.replaceAll("<id>", idSite);
 
     try {
       final Response response = await dioClient.get(s);
       if (response.statusCode == 200) {
         // await writeUserMe(jsonEncode(response.data));
-        print(response.statusCode);
-        print(response.data);
         Map<String, dynamic> jsonSite = response.data;
-        print(jsonSite);
-        _site = Site.fromJson(jsonSite);
+        site = Site.fromJson(jsonSite);
       }
     } on DioException catch (e) {
       logger.e(e.message);
     }
 
-    return _site;
+    return site;
   }
 
-  Future<Response> AddNewSite(
-      {required String site_name, required String tenant_id}) async {
+  Future<Response> addNewSite(
+      {required String siteName, required String idTenant}) async {
     try {
-      var formData = {"site_name": site_name, "tenant_id": tenant_id};
+      var formData = {"site_name": siteName, "tenant_id": idTenant};
       String json = jsonEncode(formData);
 
       final Response response = await dioClient.post(
@@ -65,15 +62,15 @@ class SiteApi {
     }
   }
 
-  Future<Response> AddUserRoles(
-      {required String site_id,
+  Future<Response> addUserRoles(
+      {required String idSite,
       required String email,
-      required List<String> roles_id}) async {
+      required List<String> idsRoles}) async {
     try {
-      var formData = {"user_email": email, "roles": roles_id};
+      var formData = {"user_email": email, "roles": idsRoles};
       String json = jsonEncode(formData);
 
-      String s = Endpoints.addUserRoles.replaceAll("<site_id>", site_id);
+      String s = Endpoints.addUserRoles.replaceAll("<site_id>", idSite);
 
       final Response response = await dioClient.post(
         s,
@@ -102,13 +99,13 @@ class SiteApi {
     }
   }
 
-  Future<Response> RemoveUserRoles(
-      {required String site_id, required String email}) async {
+  Future<Response> removeUserRoles(
+      {required String idSite, required String email}) async {
     try {
       var formData = {"user_email": email};
       String json = jsonEncode(formData);
 
-      String s = Endpoints.removeUserRoles.replaceAll("<site_id>", site_id);
+      String s = Endpoints.removeUserRoles.replaceAll("<site_id>", idSite);
 
       final Response response = await dioClient.delete(
         s,

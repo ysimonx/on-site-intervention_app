@@ -53,19 +53,35 @@ class UserApi {
 
   Future<User> myConfig({bool tryRealTime = true}) async {
     // attempt to retrieve my profile from server
-    if (tryRealTime) {
+
+    dynamic content = {};
+
+    bool blnCoudRead = false;
+    try {
+      content = await readUserMe();
+      blnCoudRead = true;
+    } on Exception catch (e) {
+      logger.e(e.toString());
+    }
+
+    if (tryRealTime || !blnCoudRead) {
+      // si j'avais deja lu les données, je les precharge (mobile-first)
+
+      // je tente quand meme de les rafraichir
       try {
         final Response response = await dioClient.get(Endpoints.userMe);
+
         if (response.statusCode == 200) {
-          await writeUserMe(jsonEncode(response.data));
+          content = jsonEncode(response.data);
+          await writeUserMe(content);
         }
       } on DioException catch (e) {
         logger.e(e.message);
+      } on Exception catch (e) {
+        logger.e(e.toString());
       }
     }
 
-    // return data already downloaded, even in mobile-first Mode
-    dynamic content = await readUserMe();
     Map<String, dynamic> contentJson = jsonDecode(content);
 
     User me = User.fromConfigJson(contentJson);
@@ -87,7 +103,7 @@ class UserApi {
       return contents;
     } catch (e) {
       // If encountering an error, return ""
-      return "";
+      rethrow;
     }
   }
 

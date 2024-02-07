@@ -46,26 +46,25 @@ class UsersPageState extends State<UsersPage> {
 
   Future<List<User>> getMyInformations() async {
     SiteApi siteApi = SiteApi();
-    s = await siteApi.readSite(site_id: widget.site.id);
+    s = await siteApi.readSite(idSite: widget.site.id);
     dictUser = {};
     dictRolesUsers = {};
 
     for (var i = 0; i < s.roles.length; i++) {
       Map<String, dynamic> item = s.roles[i];
       item.forEach((key, jsonRole) {
-        String role_name = jsonRole["name"];
+        String roleName = jsonRole["name"];
         var users = jsonRole["users"];
 
         for (var i = 0; i < users.length; i++) {
           var jsonUser = users[i];
           User u = User.fromJson(jsonUser["user"]);
-          print(u.id);
           dictUser[u.id] = u;
 
           if (!dictRolesUsers.containsKey(u.id)) {
             dictRolesUsers[u.id] = [];
           }
-          dictRolesUsers[u.id]?.add(role_name);
+          dictRolesUsers[u.id]?.add(roleName);
         }
       });
     }
@@ -132,15 +131,15 @@ class UsersPageState extends State<UsersPage> {
                 return Card(
                     margin: const EdgeInsets.all(10),
                     child: ListTile(
-                        title: Text('${u.email}'),
-                        leading: Icon(Icons.person_2_outlined),
-                        subtitle: Text("roles: ${sroles}"),
+                        title: Text(u.email),
+                        leading: const Icon(Icons.person_2_outlined),
+                        subtitle: Text("roles: $sroles"),
                         trailing:
                             Row(mainAxisSize: MainAxisSize.min, children: [
                           IconButton(
                               onPressed: () async {
                                 _showDialog(
-                                    callback: CB,
+                                    callback: callBack,
                                     site: s,
                                     email: u.email,
                                     roles:
@@ -152,31 +151,32 @@ class UsersPageState extends State<UsersPage> {
                                 SiteApi siteApi = SiteApi();
 
                                 Response response =
-                                    await siteApi.RemoveUserRoles(
-                                        site_id: s.id, email: u.email);
+                                    await siteApi.removeUserRoles(
+                                        idSite: s.id, email: u.email);
 
                                 if (response.statusCode == 200) {
-                                  CB("Processing Data");
+                                  callBack("Processing Data");
                                 }
                                 if (response.statusCode == 400) {
-                                  CB("Processing Data Error ${response.data["error"]}");
+                                  callBack(
+                                      "Processing Data Error ${response.data["error"]}");
                                 }
                               },
                               icon: const Icon(Icons.cancel)),
                         ])));
               })),
-      floatingActionButton: FAB_User(context: context, callback: CB),
+      floatingActionButton: fabAddUser(context: context, callback: callBack),
     );
   }
 
-  void CB(String message) {
+  void callBack(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("${message}")),
+      SnackBar(content: Text(message)),
     );
     setState(() {});
   }
 
-  FloatingActionButton FAB_User(
+  FloatingActionButton fabAddUser(
       {required BuildContext context,
       required void Function(String message) callback}) {
     return FloatingActionButton(
@@ -220,7 +220,7 @@ class UsersPageState extends State<UsersPage> {
         return LayoutBuilder(
             builder: (_, constrains) => AlertDialog(
                   title: (email == null)
-                      ? Text(I18N("nouvel utilisateur").toTitleCase())
+                      ? Text(translateI18N("nouvel utilisateur").toTitleCase())
                       : Text(email.toTitleCase()),
                   content: StatefulBuilder(
                       builder: (BuildContext context, StateSetter setState) {
@@ -269,7 +269,7 @@ class UsersPageState extends State<UsersPage> {
                       style: TextButton.styleFrom(
                         textStyle: Theme.of(context).textTheme.labelLarge,
                       ),
-                      child: Text(I18N("annuler").toTitleCase()),
+                      child: Text(translateI18N("annuler").toTitleCase()),
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -281,15 +281,15 @@ class UsersPageState extends State<UsersPage> {
                       child: const Text('Ok'),
                       onPressed: () async {
                         String email = textEmailController.text;
-                        List<String> roles_id = [];
+                        List<String> idsRole = [];
 
                         dictSiteRoles.forEach((key, value) {
                           if (value) {
-                            roles_id.add(key);
+                            idsRole.add(key);
                           }
                         });
-                        Response response = await siteApi.AddUserRoles(
-                            site_id: s.id, email: email, roles_id: roles_id);
+                        Response response = await siteApi.addUserRoles(
+                            idSite: s.id, email: email, idsRoles: idsRole);
 
                         if (response.statusCode == 200) {
                           Navigator.pop(context);

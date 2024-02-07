@@ -46,12 +46,12 @@ class User {
 
     User user = User(
       id: jsonUser['id'] as String,
-      firstname: IfNull(jsonUser['firstname']),
-      lastname: IfNull(jsonUser['lastname']),
+      firstname: ifNull(jsonUser['firstname']),
+      lastname: ifNull(jsonUser['lastname']),
       email: jsonUser['email'] as String,
-      phone: IfNull(jsonUser['phone']),
+      phone: ifNull(jsonUser['phone']),
       company:
-          jsonUser.containsKey('company') ? IfNull(jsonUser['company']) : "",
+          jsonUser.containsKey('company') ? ifNull(jsonUser['company']) : "",
     );
 
     if (json.containsKey('config_types_intervention')) {
@@ -104,10 +104,10 @@ class User {
   static User fromJson(Map<String, dynamic> jsonUser) {
     User user = User(
         id: jsonUser['id'] as String,
-        firstname: IfNull(jsonUser['firstname']),
-        lastname: IfNull(jsonUser['lastname']),
-        email: IfNull(jsonUser['email']),
-        phone: IfNull(jsonUser['phone']),
+        firstname: ifNull(jsonUser['firstname']),
+        lastname: ifNull(jsonUser['lastname']),
+        email: ifNull(jsonUser['email']),
+        phone: ifNull(jsonUser['phone']),
         company: jsonUser.containsKey('company')
             ? jsonUser['company'] as String
             : "");
@@ -115,7 +115,7 @@ class User {
   }
 }
 
-String IfNull(String? s) {
+String ifNull(String? s) {
   if (s != null) {
     return s;
   }

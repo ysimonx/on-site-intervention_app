@@ -138,7 +138,9 @@ class InterventionApi {
       return response;
     } on DioException catch (e) {
       logger.e("postInterventionOnServer :${e.response?.statusCode}");
-      rethrow;
+      if (e.response?.statusCode == 500) {
+        rethrow;
+      }
     } catch (e) {
       logger.e("postInterventionOnServer :${e.toString()}");
       rethrow;
@@ -290,8 +292,12 @@ class InterventionApi {
         String contents = await f.readAsString();
         Map<String, dynamic> contentJson = jsonDecode(contents);
         Intervention i = Intervention.fromJson(contentJson);
-        var r = await postInterventionValuesOnServer(i);
-        logger.d(r.toString());
+        try {
+          var r = await postInterventionValuesOnServer(i);
+          logger.d(r.toString());
+        } catch (e) {
+          await f.delete();
+        }
       }
     }
   }

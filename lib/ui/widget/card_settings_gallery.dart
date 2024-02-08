@@ -440,6 +440,6 @@ class _CardSettingsGalleryState extends FormFieldState<String> {
         contentOnNewLine: widget.contentOnNewLine,
         enabled: widget.enabled,
         fieldPadding: widget.fieldPadding,
-        content: widgetGallery(initialValue: ""));
+        content: widgetGallery(initialValue: "", context: context));
   }
 }

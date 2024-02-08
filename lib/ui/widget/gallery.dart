@@ -1,28 +1,50 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-Widget widgetGallery({required String initialValue}) {
+import '../camera_page.dart';
+
+Widget widgetGallery(
+    {required String initialValue, required BuildContext context}) {
   List<String> listPictures = [
     "https://webapp.sandbox.fidwork.fr/api/request/images/picture_4398_visit_20230306165933.jpg",
     "https://webapp.sandbox.fidwork.fr/api/request/images/picture_4398_visit_20221204154542.jpg"
   ];
 
-  return CarouselSlider.builder(
-      itemCount: listPictures.length,
-      options: CarouselOptions(
-          scrollDirection: Axis.horizontal,
-          // height: 100,
-          autoPlay: false,
-          aspectRatio: 0.85,
-          enlargeCenterPage: true,
-          enableInfiniteScroll: false),
-      itemBuilder: (ctx, photoIndex, realIdx) {
-        return widgetGalleryItem(
-            directory: Directory(""), uriPicture: listPictures[photoIndex]);
-      });
+  return Column(children: [
+    IconButton(
+      padding: EdgeInsets.zero,
+      iconSize: 50,
+      icon: const Icon(Icons.photo_camera),
+      onPressed: () async {
+        List<CameraDescription> camerasDescriptions = await availableCameras();
+
+        if (!context.mounted) {
+          return;
+        }
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return CameraPage(
+              title: 'Prise de Photo', cameras: camerasDescriptions);
+        }));
+      },
+    ),
+    CarouselSlider.builder(
+        itemCount: listPictures.length,
+        options: CarouselOptions(
+            scrollDirection: Axis.horizontal,
+            // height: 100,
+            autoPlay: false,
+            aspectRatio: 0.85,
+            enlargeCenterPage: true,
+            enableInfiniteScroll: false),
+        itemBuilder: (ctx, photoIndex, realIdx) {
+          return widgetGalleryItem(
+              directory: Directory(""), uriPicture: listPictures[photoIndex]);
+        })
+  ]);
 }
 
 Widget widgetGalleryItem(

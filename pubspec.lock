@@ -210,7 +210,7 @@ packages:
     source: hosted
     version: "5.4.0"
   extended_masked_text:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: extended_masked_text
       sha256: dba132fffa2b931e8cdd005e0509dfac359d3f98a175eca18c0ac71605247b6b
@@ -271,7 +271,7 @@ packages:
     source: hosted
     version: "1.0.3"
   flutter_cupertino_settings:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_cupertino_settings
       sha256: e313dab20b8a655a41186deaeb8b73a70dfb12faf2dcf8a06e4361c2a8bb84f8

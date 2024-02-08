@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
       title: 'On Site Interventions',
       debugShowCheckedModeBanner: false,
       // https://docs.flutter.dev/cookbook/design/themes#set-a-unique-themedata-instance
+      // https://medium.flutterdevs.com/implement-dark-mode-in-flutter-using-provider-158925112bf9
       theme: ThemeData(
         fontFamily: GoogleFonts.poppins().fontFamily,
         colorScheme: ColorScheme.fromSeed(

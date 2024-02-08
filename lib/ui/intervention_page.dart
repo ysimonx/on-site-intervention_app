@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:card_settings/card_settings.dart';
 import 'package:intl/intl.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../models/model_field.dart';
 import '../models/model_formulaire.dart';
@@ -58,6 +63,8 @@ class InterventionPageState extends State<InterventionPage> {
   Map<String, String> fieldsValue = {};
   Map<String, TextEditingController> fieldsController = {};
 
+  late Directory directory;
+
   void _onChangedText() {
     final text = controllerInterventionName.text;
     logger.d(" new size of : '$text' (${text.characters.length})");
@@ -74,6 +81,8 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Future<List<User>> getMyConfig({required int dummy}) async {
+    directory = await getApplicationDocumentsDirectory();
+
     usersSupervisors = await userAPI.getSupervisorsList(site: widget.site);
 
     mapFormulaires = await userAPI.getInterventionFormsFromTemplate(
@@ -124,9 +133,7 @@ class InterventionPageState extends State<InterventionPage> {
                   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
                   title: Text(widget.intervention.intervention_name),
                 ),
-                body: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 50),
-                    child: widgetMainBody(context)),
+                body: widgetMainBody(context),
                 floatingActionButton: FloatingActionButton(
                   onPressed: () async {
                     // Validate returns true if the form is valid, or false otherwise.
@@ -172,7 +179,9 @@ class InterventionPageState extends State<InterventionPage> {
           key: _formKey,
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            widgetBodyFormLocation(),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: widgetBodyFormLocation()),
             widgetBodyFormInterventionName(),
             const Padding(
                 padding: EdgeInsets.symmetric(vertical: 2), child: Text(' ')),
@@ -181,9 +190,10 @@ class InterventionPageState extends State<InterventionPage> {
                 ? widgetBodyFormulaire(
                     scaffoldSupervisor, scaffoldUser, scaffold)
                 : widgetBodyFormulaireNG(_initialIndex),
+            widgetSlider(),
             const SizedBox(
               height: 200,
-            )
+            ),
           ])),
     ]);
   }
@@ -244,7 +254,7 @@ class InterventionPageState extends State<InterventionPage> {
         initialIndex: _initialIndex,
         length: mapFormulaires.length,
         child: TabBar(
-            isScrollable: false,
+            isScrollable: true,
             onTap: (selectedTabIndex) async {
               await saveIntervention(context);
               setState(() {
@@ -509,5 +519,82 @@ class InterventionPageState extends State<InterventionPage> {
       },
       onSaved: (value) {},
     );
+  }
+
+  Widget widgetSlider() {
+    List<String> listPictures = [
+      "https://webapp.sandbox.fidwork.fr/api/request/images/picture_4398_visit_20230306165933.jpg",
+      "https://webapp.sandbox.fidwork.fr/api/request/images/picture_4398_visit_20221204154542.jpg"
+    ];
+
+    return CarouselSlider.builder(
+        itemCount: listPictures.length,
+        options: CarouselOptions(
+            scrollDirection: Axis.horizontal,
+            // height: 100,
+            autoPlay: false,
+            aspectRatio: 0.85,
+            enlargeCenterPage: true,
+            enableInfiniteScroll: false),
+        itemBuilder: (ctx, photoIndex, realIdx) {
+          return CarouselSliderItem(listPictures[photoIndex]);
+        });
+  }
+
+  Widget CarouselSliderItem(itemPicture) {
+    return Container(
+      margin: const EdgeInsets.all(5.0),
+      child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+          child: Stack(
+            children: <Widget>[
+              GestureDetector(
+                  child: itemPicture.startsWith("http")
+                      ? CachedNetworkImage(
+                          imageUrl: itemPicture,
+                          fit: BoxFit.cover,
+                          width: 1000.0,
+                          height: 1000.0)
+                      : Image.file(
+                          File(Platform.isIOS
+                              ? getImagePathiOS(directory, itemPicture)
+                              : itemPicture),
+                          alignment: Alignment.topCenter,
+                          fit: BoxFit.fitWidth,
+                          width: 1000.0,
+                          height: 1000.0)),
+              Positioned(
+                  top: 0.0,
+                  right: 0.0,
+                  child: GestureDetector(
+                    onTap: () async {
+                      //
+                      setState(() {});
+                    },
+                    child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20.0, horizontal: 20.0),
+                        child: const CircleAvatar(
+                            radius: 12,
+                            backgroundColor: Colors.white,
+                            child: Icon(
+                              Icons.delete_outline_rounded,
+                              color: Colors.black,
+                            ))),
+                  )),
+            ],
+          )),
+    );
+  }
+
+  String getImagePathiOS(Directory directory, String pathOrigin) {
+    const String localSubDirectoryCameraPictures = 'camera/pictures';
+    final String pathDirectory =
+        "${directory.path}/$localSubDirectoryCameraPictures";
+
+    var strParts = pathOrigin.split('pictures/');
+
+    String path = "${pathDirectory}/${strParts[1]}";
+    return path;
   }
 }

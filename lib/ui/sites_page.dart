@@ -68,12 +68,15 @@ class _SitePageState extends State<SitePage> {
               if (snapshot.hasData) {
                 List<Intervention> listInterventions = snapshot.data;
                 if (listInterventions.isNotEmpty) {
-                  return Column(children: <Widget>[
-                    searchBar(),
-                    Expanded(
-                        child:
-                            widgetListInterventions(listInterventions, context))
-                  ]);
+                  return Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(children: <Widget>[
+                        searchBar(),
+                        Expanded(
+                            child: widgetListInterventions(
+                                listInterventions, context)),
+                        const SizedBox(height: 100)
+                      ]));
                 } else {
                   return Center(
                     child: ElevatedButton(
@@ -242,52 +245,49 @@ class _SitePageState extends State<SitePage> {
   }
 
   Widget searchBar() {
-    return Padding(
-        padding: const EdgeInsets.all(20),
-        child: SearchAnchor(
-          builder: (BuildContext context, SearchController controller) {
-            return SearchBar(
-              controller: controller,
-              padding: const MaterialStatePropertyAll<EdgeInsets>(
-                  EdgeInsets.symmetric(horizontal: 16.0)),
-              onTap: () {
-                controller.openView();
-              },
-              onChanged: (_) {
-                controller.openView();
-              },
-              leading: const Icon(Icons.search),
-              trailing: <Widget>[
-                Tooltip(
-                  message: 'Change brightness mode',
-                  child: IconButton(
-                    isSelected: isDark,
-                    onPressed: () {
-                      setState(() {
-                        isDark = !isDark;
-                      });
-                    },
-                    icon: const Icon(Icons.wb_sunny_outlined),
-                    selectedIcon: const Icon(Icons.brightness_2_outlined),
-                  ),
-                )
-              ],
-            );
+    return SearchAnchor(
+      builder: (BuildContext context, SearchController controller) {
+        return SearchBar(
+          controller: controller,
+          padding: const MaterialStatePropertyAll<EdgeInsets>(
+              EdgeInsets.symmetric(horizontal: 16.0)),
+          onTap: () {
+            controller.openView();
           },
-          suggestionsBuilder:
-              (BuildContext context, SearchController controller) {
-            return List<ListTile>.generate(5, (int index) {
-              final String item = 'item $index';
-              return ListTile(
-                title: Text(item),
-                onTap: () {
+          onChanged: (_) {
+            controller.openView();
+          },
+          leading: const Icon(Icons.search),
+          trailing: <Widget>[
+            Tooltip(
+              message: 'Change brightness mode',
+              child: IconButton(
+                isSelected: isDark,
+                onPressed: () {
                   setState(() {
-                    controller.closeView(item);
+                    isDark = !isDark;
                   });
                 },
-              );
-            });
-          },
-        ));
+                icon: const Icon(Icons.wb_sunny_outlined),
+                selectedIcon: const Icon(Icons.brightness_2_outlined),
+              ),
+            )
+          ],
+        );
+      },
+      suggestionsBuilder: (BuildContext context, SearchController controller) {
+        return List<ListTile>.generate(5, (int index) {
+          final String item = 'item $index';
+          return ListTile(
+            title: Text(item),
+            onTap: () {
+              setState(() {
+                controller.closeView(item);
+              });
+            },
+          );
+        });
+      },
+    );
   }
 }

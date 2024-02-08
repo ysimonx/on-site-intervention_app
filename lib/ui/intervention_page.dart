@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:card_settings/card_settings.dart';
 import 'package:intl/intl.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/model_field.dart';
@@ -17,7 +15,6 @@ import '../network/api/intervention_api.dart';
 import '../network/api/user_api.dart';
 import 'utils/logger.dart';
 import 'widget/card_settings_gallery.dart';
-import 'widget/gallery.dart';
 import 'widget/scaffold.dart';
 import 'widget/scaffold_supervisor.dart';
 import 'widget/scaffold_user.dart';

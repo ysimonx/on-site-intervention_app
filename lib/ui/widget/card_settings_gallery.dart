@@ -245,15 +245,17 @@ class _CardSettingsGalleryState extends FormFieldState<String> {
       return;
     }
 
-    if (this.widget.onFieldSubmitted != null)
+    if (this.widget.onFieldSubmitted != null) {
       this.widget.onFieldSubmitted!(value);
+    }
   }
 
   Widget _build(BuildContext context) {
-    if (showCupertino(context, widget.showMaterialonIOS))
+    if (showCupertino(context, widget.showMaterialonIOS)) {
       return _buildCupertinoTextbox(context);
-    else
+    } else {
       return _buildMaterialTextbox(context);
+    }
   }
 
   Container _buildCupertinoTextbox(BuildContext context) {
@@ -264,80 +266,78 @@ class _CardSettingsGalleryState extends FormFieldState<String> {
     }
 
     final ls = labelStyle(context, widget.enabled);
-    final _child = Container(
-      child: CupertinoTextField(
-        prefix: widget.prefixText == null
-            ? null
-            : Text(
-                widget.prefixText ?? '',
-                style: ls,
+    final _child = CupertinoTextField(
+      prefix: widget.prefixText == null
+          ? null
+          : Text(
+              widget.prefixText ?? '',
+              style: ls,
+            ),
+      suffix: widget.unitLabel == null
+          ? null
+          : Text(
+              widget.unitLabel ?? '',
+              style: ls,
+            ),
+      controller: _controller,
+      focusNode: widget.focusNode,
+      textInputAction: widget.inputAction,
+      keyboardType: widget.keyboardType,
+      textCapitalization: widget.textCapitalization,
+      style: contentStyle(context, value, widget.enabled),
+      decoration: hasError
+          ? BoxDecoration(
+              border: Border.all(color: Colors.red),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(4.0),
               ),
-        suffix: widget.unitLabel == null
-            ? null
-            : Text(
-                widget.unitLabel ?? '',
-                style: ls,
-              ),
-        controller: _controller,
-        focusNode: widget.focusNode,
-        textInputAction: widget.inputAction,
-        keyboardType: widget.keyboardType,
-        textCapitalization: widget.textCapitalization,
-        style: contentStyle(context, value, widget.enabled),
-        decoration: hasError
-            ? BoxDecoration(
-                border: Border.all(color: Colors.red),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(4.0),
+            )
+          : const BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: CupertinoColors.lightBackgroundGray,
+                  style: BorderStyle.solid,
+                  width: 0.0,
                 ),
-              )
-            : BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color: CupertinoColors.lightBackgroundGray,
-                    style: BorderStyle.solid,
-                    width: 0.0,
-                  ),
-                  bottom: BorderSide(
-                    color: CupertinoColors.lightBackgroundGray,
-                    style: BorderStyle.solid,
-                    width: 0.0,
-                  ),
-                  left: BorderSide(
-                    color: CupertinoColors.lightBackgroundGray,
-                    style: BorderStyle.solid,
-                    width: 0.0,
-                  ),
-                  right: BorderSide(
-                    color: CupertinoColors.lightBackgroundGray,
-                    style: BorderStyle.solid,
-                    width: 0.0,
-                  ),
+                bottom: BorderSide(
+                  color: CupertinoColors.lightBackgroundGray,
+                  style: BorderStyle.solid,
+                  width: 0.0,
                 ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(4.0),
+                left: BorderSide(
+                  color: CupertinoColors.lightBackgroundGray,
+                  style: BorderStyle.solid,
+                  width: 0.0,
+                ),
+                right: BorderSide(
+                  color: CupertinoColors.lightBackgroundGray,
+                  style: BorderStyle.solid,
+                  width: 0.0,
                 ),
               ),
-        clearButtonMode: widget.showClearButtonIOS,
-        placeholder: widget.hintText,
-        textAlign: widget.contentAlign ?? TextAlign.end,
-        autofocus: widget.autofocus,
-        obscureText: widget.obscureText,
-        autocorrect: widget.autocorrect,
-        maxLengthEnforcement: widget.maxLengthEnforcement,
-        maxLines: widget.numberOfLines,
-        maxLength: (widget.showCounter)
-            ? widget.maxLength
-            : null, // if we want counter use default behavior
-        onChanged: _handleOnChanged,
-        onSubmitted: _onFieldSubmitted,
-        inputFormatters: widget.inputFormatters ??
-            [
-              // if we don't want the counter, use this maxLength instead
-              LengthLimitingTextInputFormatter(widget.maxLength)
-            ],
-        enabled: widget.enabled,
-      ),
+              borderRadius: BorderRadius.all(
+                Radius.circular(4.0),
+              ),
+            ),
+      clearButtonMode: widget.showClearButtonIOS,
+      placeholder: widget.hintText,
+      textAlign: widget.contentAlign ?? TextAlign.end,
+      autofocus: widget.autofocus,
+      obscureText: widget.obscureText,
+      autocorrect: widget.autocorrect,
+      maxLengthEnforcement: widget.maxLengthEnforcement,
+      maxLines: widget.numberOfLines,
+      maxLength: (widget.showCounter)
+          ? widget.maxLength
+          : null, // if we want counter use default behavior
+      onChanged: _handleOnChanged,
+      onSubmitted: _onFieldSubmitted,
+      inputFormatters: widget.inputFormatters ??
+          [
+            // if we don't want the counter, use this maxLength instead
+            LengthLimitingTextInputFormatter(widget.maxLength)
+          ],
+      enabled: widget.enabled,
     );
     return Container(
       child: widget.visible == false
@@ -357,14 +357,15 @@ class _CardSettingsGalleryState extends FormFieldState<String> {
                       style: CSWidgetStyle(icon: widget.icon),
                     ),
                     Container(
-                      padding: EdgeInsets.all(5.0),
-                      child: _child,
+                      padding: const EdgeInsets.all(5.0),
                       color: Theme.of(context).brightness == Brightness.dark
                           ? null
                           : CupertinoColors.white,
+                      child: _child,
                     ),
                     Container(
-                      padding: widget.showCounter ? EdgeInsets.all(5.0) : null,
+                      padding:
+                          widget.showCounter ? const EdgeInsets.all(5.0) : null,
                       color: Theme.of(context).brightness == Brightness.dark
                           ? null
                           : CupertinoColors.white,
@@ -374,7 +375,7 @@ class _CardSettingsGalleryState extends FormFieldState<String> {
                               children: <Widget>[
                                 Text(
                                   "${_controller?.text.length ?? 0}/${widget.maxLength}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: CupertinoColors.inactiveGray,
                                   ),
                                 ),
@@ -388,7 +389,7 @@ class _CardSettingsGalleryState extends FormFieldState<String> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     CSControl(
-                      nameWidget: Container(
+                      nameWidget: SizedBox(
                         width: widget.labelWidth ??
                             CardSettings.of(context)?.labelWidth ??
                             120.0,
@@ -398,14 +399,15 @@ class _CardSettingsGalleryState extends FormFieldState<String> {
                       ),
                       contentWidget: Expanded(
                         child: Container(
-                          padding: EdgeInsets.only(left: 10.0),
+                          padding: const EdgeInsets.only(left: 10.0),
                           child: _child,
                         ),
                       ),
                       style: CSWidgetStyle(icon: widget.icon),
                     ),
                     Container(
-                      padding: widget.showCounter ? EdgeInsets.all(5.0) : null,
+                      padding:
+                          widget.showCounter ? const EdgeInsets.all(5.0) : null,
                       color: Theme.of(context).brightness == Brightness.dark
                           ? null
                           : CupertinoColors.white,
@@ -415,7 +417,7 @@ class _CardSettingsGalleryState extends FormFieldState<String> {
                               children: <Widget>[
                                 Text(
                                   "${_controller?.text.length ?? 0}/${widget.maxLength}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: CupertinoColors.inactiveGray,
                                   ),
                                 ),

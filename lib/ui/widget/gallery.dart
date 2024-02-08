@@ -101,6 +101,6 @@ String getImagePathiOS(Directory directory, String pathOrigin) {
 
   var strParts = pathOrigin.split('pictures/');
 
-  String path = "${pathDirectory}/${strParts[1]}";
+  String path = "$pathDirectory/${strParts[1]}";
   return path;
 }

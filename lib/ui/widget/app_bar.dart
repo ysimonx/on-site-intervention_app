@@ -77,10 +77,10 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                         child: Text(translateI18N("gestion des listes")
                             .toCapitalized()),
                       ),
-                  PopupMenuItem<int>(
-                    value: valueCAMERA,
-                    child: Text(translateI18N("camera").toCapitalized()),
-                  ),
+                  // PopupMenuItem<int>(
+                  //   value: valueCAMERA,
+                  //   child: Text(translateI18N("camera").toCapitalized()),
+                  // ),
                   PopupMenuItem<int>(
                     value: valueDECONNEXION,
                     child: Text(translateI18N("déconnexion").toCapitalized()),

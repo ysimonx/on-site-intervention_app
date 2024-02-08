@@ -51,6 +51,7 @@ dependencies:
   cached_network_image: ^3.3.1
   flutter_cupertino_settings: ^0.5.0
   extended_masked_text: ^2.3.1
+  google_fonts: ^6.1.0
   
 
 dev_dependencies:

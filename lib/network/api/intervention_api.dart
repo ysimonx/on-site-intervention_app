@@ -44,7 +44,7 @@ class InterventionApi {
         logger.e("getList : ${e.response!.statusCode}");
       }
     } catch (e) {
-      logger.e("${e.toString()}");
+      logger.e(e.toString());
     }
 
     if (!isMobileFirst()) {

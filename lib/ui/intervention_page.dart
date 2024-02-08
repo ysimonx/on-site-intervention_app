@@ -181,7 +181,7 @@ class InterventionPageState extends State<InterventionPage> {
                 ? widgetBodyFormulaire(
                     scaffoldSupervisor, scaffoldUser, scaffold)
                 : widgetBodyFormulaireNG(_initialIndex),
-            SizedBox(
+            const SizedBox(
               height: 200,
             )
           ])),
@@ -345,46 +345,46 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   CardSettingsWidget fieldCardSettings(Field f, Section s) {
-    String _DefaultInitialValue = "10";
-    late String _initialValue;
+    String defaultInitialValue = "10";
+    late String initialValue;
 
     if (fieldsController.containsKey(f.field_on_site_uuid)) {
-      _initialValue = fieldsController[f.field_on_site_uuid]!.text;
+      initialValue = fieldsController[f.field_on_site_uuid]!.text;
     } else {
-      _initialValue = _DefaultInitialValue;
+      initialValue = defaultInitialValue;
     }
 
     if (f.field_type == "integer") {
-      return genCardSettingsInt(_initialValue, s, f);
+      return genCardSettingsInt(initialValue, s, f);
     }
 
     if (f.field_type == "list") {
-      return genCardSettingsListPicker(_initialValue, f);
+      return genCardSettingsListPicker(initialValue, f);
     }
 
     if (f.field_type == "date") {
-      return genCardSettingsDatePicker(_initialValue, f);
+      return genCardSettingsDatePicker(initialValue, f);
     }
 
     if (f.field_type == "switch") {
-      return genCardSettingsSwitch(_initialValue, f);
+      return genCardSettingsSwitch(initialValue, f);
     }
 
     if (f.field_type == "user_from_role") {
-      return genCardSettingsUserFromRole(_initialValue, f);
+      return genCardSettingsUserFromRole(initialValue, f);
     }
-    return genCardSettingsInt(_initialValue, s, f);
+    return genCardSettingsInt(initialValue, s, f);
   }
 
   CardSettingsListPicker<dynamic> genCardSettingsUserFromRole(
       String initialValue, Field f) {
     String roleName = f.field_possible_values[0];
-    List<String> possible_values = widget.site.getUsersForRoleName(roleName);
+    List<String> possibleValues = widget.site.getUsersForRoleName(roleName);
 
     return CardSettingsListPicker(
         initialItem: initialValue,
         label: f.field_label,
-        items: possible_values,
+        items: possibleValues,
         // controller: fieldsController[f.field_on_site_uuid],
         validator: (value) {
           String newvalue;
@@ -418,16 +418,16 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   CardSettingsInt genCardSettingsInt(String initialValue, Section s, Field f) {
-    int _initialIntValue = 0;
+    int initialIntValue = 0;
 
     try {
-      _initialIntValue = int.parse(initialValue);
+      initialIntValue = int.parse(initialValue);
     } catch (e) {
-      _initialIntValue = 0;
+      initialIntValue = 0;
     }
 
     return CardSettingsInt(
-      initialValue: _initialIntValue,
+      initialValue: initialIntValue,
       label: f.field_label,
       controller: fieldsController[f.field_on_site_uuid],
       validator: (value) {
@@ -481,20 +481,20 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   CardSettingsSwitch genCardSettingsSwitch(String initialValue, Field f) {
-    bool _init = false;
+    bool init = false;
     if (initialValue == f.field_switch_on) {
-      _init = true;
+      init = true;
     }
 
     if (initialValue == f.field_switch_off) {
-      _init = false;
+      init = false;
     }
 
     return CardSettingsSwitch(
       label: f.field_label,
       trueLabel: f.field_switch_on,
       falseLabel: f.field_switch_off,
-      initialValue: _init,
+      initialValue: init,
       validator: (value) {
         String newvalue;
         if (value != null) {

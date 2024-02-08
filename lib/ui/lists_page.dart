@@ -138,7 +138,6 @@ class ListsPageState extends State<ListsPage> {
             itemCount: list.length,
             itemBuilder: (BuildContext context, int index) {
               var x = dictOfLists[list[index]];
-              print(x.toString());
 
               int max = 5;
               if (max > x.length) {
@@ -283,7 +282,6 @@ class ListsPageState extends State<ListsPage> {
                             return;
                           }
                         } catch (e) {
-                          print("error");
                           callback(
                               message: e.toString(), dictOfLists: dictOfLists);
                         }

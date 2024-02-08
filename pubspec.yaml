@@ -46,6 +46,8 @@ dependencies:
   path_provider: ^2.1.1
   logger: ^2.0.2+1
   card_settings: ^3.5.0
+  geolocator: ^10.1.0
+  camera: ^0.10.5+9
   
 
 dev_dependencies:

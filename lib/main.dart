@@ -5,10 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
-  runApp(const MaterialApp(
-    title: 'Navigation Basics',
-    home: MyApp(),
-  ));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -19,9 +16,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'On Site Interventions',
+      debugShowCheckedModeBanner: false,
+      // https://docs.flutter.dev/cookbook/design/themes#set-a-unique-themedata-instance
       theme: ThemeData(
-        fontFamily: GoogleFonts.inter().fontFamily,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
+        fontFamily: GoogleFonts.poppins().fontFamily,
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blueGrey, brightness: Brightness.light),
         useMaterial3: true,
       ),
       home: const HomePage(),

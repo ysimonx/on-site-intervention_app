@@ -217,100 +217,98 @@ class UsersPageState extends State<UsersPage> {
             }
           });
         }
-        return LayoutBuilder(
-            builder: (_, constrains) => AlertDialog(
-                  title: (email == null)
-                      ? Text(translateI18N("nouvel utilisateur").toTitleCase())
-                      : Text(email.toTitleCase()),
-                  content: StatefulBuilder(
-                      builder: (BuildContext context, StateSetter setState) {
-                    return Column(children: [
-                      /*const Text(
+        return AlertDialog(
+          title: (email == null)
+              ? Text(translateI18N("nouvel utilisateur").toTitleCase())
+              : Text(email.toTitleCase()),
+          content: Container(
+              width: double.maxFinite,
+              child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                return Column(children: [
+                  /*const Text(
                             "En tant qu'administrateur  vous pouvez administrer la liste des utilisateurs",
                           ),*/
-                      (email == null)
-                          ? TextField(
-                              controller: textEmailController,
-                              autofocus: true,
-                              decoration: InputDecoration(
-                                  hintText:
-                                      "Enter the e-mail address of the new user"
-                                          .toCapitalized()),
-                            )
-                          : const Text(""),
-                      SizedBox(
-                          width: constrains.maxWidth * .8,
-                          height: constrains.maxHeight * .7, //
-                          child: ListView.builder(
-                              itemCount: listRoles.length,
-                              itemBuilder: (_, index) {
-                                Map<String, dynamic> jsonRole =
-                                    listRoles[index];
-                                return Card(
-                                    margin: const EdgeInsets.all(10),
-                                    child: CheckboxListTile(
-                                      title: Text(jsonRole["name"]),
-                                      value: dictSiteRoles[jsonRole["id"]],
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          // checkedValue = newValue!;
-                                          dictSiteRoles[jsonRole["id"]] =
-                                              newValue!;
-                                        });
-                                      },
-                                      controlAffinity: ListTileControlAffinity
-                                          .leading, //  <-- leading Checkbox
-                                    ));
-                              }))
-                    ]);
-                  }),
-                  actions: <Widget>[
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        textStyle: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      child: Text(translateI18N("annuler").toTitleCase()),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        textStyle: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      child: const Text('Ok'),
-                      onPressed: () async {
-                        String email = textEmailController.text;
-                        List<String> idsRole = [];
+                  (email == null)
+                      ? TextField(
+                          controller: textEmailController,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                              hintText:
+                                  "Enter the e-mail address of the new user"
+                                      .toCapitalized()),
+                        )
+                      : const Text(""),
+                  Flexible(
+                      // width: constrains.maxWidth * .8,
+                      // height: constrains.maxHeight * .7, //
+                      child: ListView.builder(
+                          itemCount: listRoles.length,
+                          itemBuilder: (_, index) {
+                            Map<String, dynamic> jsonRole = listRoles[index];
+                            return Card(
+                                margin: const EdgeInsets.all(10),
+                                child: CheckboxListTile(
+                                  title: Text(jsonRole["name"]),
+                                  value: dictSiteRoles[jsonRole["id"]],
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      // checkedValue = newValue!;
+                                      dictSiteRoles[jsonRole["id"]] = newValue!;
+                                    });
+                                  },
+                                  controlAffinity: ListTileControlAffinity
+                                      .leading, //  <-- leading Checkbox
+                                ));
+                          }))
+                ]);
+              })),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: Text(translateI18N("annuler").toTitleCase()),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Ok'),
+              onPressed: () async {
+                String email = textEmailController.text;
+                List<String> idsRole = [];
 
-                        dictSiteRoles.forEach((key, value) {
-                          if (value) {
-                            idsRole.add(key);
-                          }
-                        });
+                dictSiteRoles.forEach((key, value) {
+                  if (value) {
+                    idsRole.add(key);
+                  }
+                });
 
-                        try {
-                          Response response = await siteApi.addUserRoles(
-                              idSite: s.id, email: email, idsRoles: idsRole);
+                try {
+                  Response response = await siteApi.addUserRoles(
+                      idSite: s.id, email: email, idsRoles: idsRole);
 
-                          if (response.statusCode == 200) {
-                            Navigator.pop(context);
-                            callback("Processing Data");
-                            return;
-                          }
-                          if (response.statusCode == 400) {
-                            Navigator.pop(context);
-                            callback(
-                                "Processing Data Error ${response.data["error"]}");
-                            return;
-                          }
-                        } on Exception catch (e) {
-                          callback("Processing Data Error ${e.toString()}");
-                        }
-                      },
-                    ),
-                  ],
-                ));
+                  if (response.statusCode == 200) {
+                    Navigator.pop(context);
+                    callback("Processing Data");
+                    return;
+                  }
+                  if (response.statusCode == 400) {
+                    Navigator.pop(context);
+                    callback("Processing Data Error ${response.data["error"]}");
+                    return;
+                  }
+                } on Exception catch (e) {
+                  callback("Processing Data Error ${e.toString()}");
+                }
+              },
+            ),
+          ],
+        );
       },
     );
   }

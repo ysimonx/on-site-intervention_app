@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:card_settings/card_settings.dart';
 import 'package:intl/intl.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
+import 'package:on_site_intervention_app/ui/utils/mobilefirst.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/model_field.dart';
@@ -22,10 +23,14 @@ import 'widget/scaffold_user.dart';
 // Create a Form widget.
 class InterventionPage extends StatefulWidget {
   const InterventionPage(
-      {super.key, required this.intervention, required this.site});
+      {super.key,
+      required this.intervention,
+      required this.site,
+      required this.user});
 
   final Intervention intervention;
   final Site site;
+  final User user;
 
   @override
   InterventionPageState createState() {
@@ -62,7 +67,7 @@ class InterventionPageState extends State<InterventionPage> {
   Map<String, String> fieldsValue = {};
   Map<String, TextEditingController> fieldsController = {};
 
-  late Directory directory;
+  // late Directory directory;
 
   void _onChangedText() {
     final text = controllerInterventionName.text;
@@ -80,11 +85,11 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Future<List<User>> getMyConfig({required int dummy}) async {
-    directory = await getApplicationDocumentsDirectory();
-
-    usersSupervisors = await userAPI.getSupervisorsList(site: widget.site);
+    usersSupervisors =
+        await userAPI.getSupervisorsList(user: widget.user, site: widget.site);
 
     mapFormulaires = await userAPI.getInterventionFormsFromTemplate(
+        user: widget.user,
         site_name: widget.site.name,
         type_intervention_name: widget.intervention.type_intervention_name);
 
@@ -280,10 +285,15 @@ class InterventionPageState extends State<InterventionPage> {
 
     InterventionApi interventionApi = InterventionApi();
 
-    await interventionApi.localUpdatedFileSave(
-        intervention: widget.intervention);
+    if (isMobileFirst()) {
+      await interventionApi.localUpdatedFileSave(
+          intervention: widget.intervention);
 
-    await interventionApi.syncLocalUpdatedFiles();
+      await interventionApi.syncLocalUpdatedFiles();
+    } else {
+      var r = await interventionApi
+          .postInterventionValuesOnServer(widget.intervention);
+    }
 
     _needSave = false;
   }

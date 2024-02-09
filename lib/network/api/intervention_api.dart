@@ -145,6 +145,7 @@ class InterventionApi {
       logger.e("postInterventionOnServer :${e.toString()}");
       rethrow;
     }
+    return null;
   }
 
   Future<File> getlocalFileList({required Site site}) async {

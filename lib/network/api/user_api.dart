@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:on_site_intervention_app/models/model_intervention.dart';
 import 'package:on_site_intervention_app/models/model_tenant.dart';
+import 'package:on_site_intervention_app/ui/utils/mobilefirst.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 
@@ -56,34 +57,27 @@ class UserApi {
 
     dynamic content = {};
 
-    bool blnCoudRead = false;
     try {
-      content = await readUserMe();
-      blnCoudRead = true;
+      final Response response = await dioClient.get(Endpoints.userMe);
+
+      if (response.statusCode == 200) {
+        content = jsonEncode(response.data);
+      }
+    } on DioException catch (e) {
+      logger.e(e.message);
     } on Exception catch (e) {
       logger.e(e.toString());
     }
 
-    if (tryRealTime || !blnCoudRead) {
-      // si j'avais deja lu les données, je les precharge (mobile-first)
-
-      // je tente quand meme de les rafraichir
-      try {
-        final Response response = await dioClient.get(Endpoints.userMe);
-
-        if (response.statusCode == 200) {
-          content = jsonEncode(response.data);
-          await writeUserMe(content);
-        }
-      } on DioException catch (e) {
-        logger.e(e.message);
-      } on Exception catch (e) {
-        logger.e(e.toString());
+    if (isMobileFirst()) {
+      if (content != {}) {
+        await writeUserMe(content);
+      } else {
+        content = await readUserMe();
       }
     }
 
     Map<String, dynamic> contentJson = jsonDecode(content);
-
     User me = User.fromConfigJson(contentJson);
     return me;
   }
@@ -108,24 +102,28 @@ class UserApi {
   }
 
   Future<File> writeUserMe(String data) async {
-    final file = await _localFile;
+    try {
+      final file = await _localFile;
 
-    if (!await file.exists()) {
-      // read the file from assets first and create the local file with its contents
-      await file.create();
+      if (!await file.exists()) {
+        // read the file from assets first and create the local file with its contents
+        await file.create();
+      }
+
+      // Write the file
+      return file.writeAsString(data);
+    } catch (e) {
+      // If encountering an error, return ""
+      rethrow;
     }
-
-    // Write the file
-    return file.writeAsString(data);
   }
 
   Future<Map<String, Formulaire>> getInterventionFormsFromTemplate(
       {required String site_name,
-      required String type_intervention_name}) async {
-    User me = await myConfig(tryRealTime: false);
-
+      required String type_intervention_name,
+      required User user}) async {
     Map<String, dynamic> formsTemplates =
-        await me.myconfig.config_types_intervention[type_intervention_name];
+        await user.myconfig.config_types_intervention[type_intervention_name];
 
     Map<String, Formulaire> forms = {};
 
@@ -139,13 +137,12 @@ class UserApi {
     return forms;
   }
 
-  Future<List<User>> getSupervisorsList({required Site site}) async {
-    User me = await myConfig(tryRealTime: false);
-
+  Future<List<User>> getSupervisorsList(
+      {required Site site, required User user}) async {
     List<User> res = [];
 
-    for (var i = 0; i < me.sites.length; i++) {
-      Site o = me.sites[i];
+    for (var i = 0; i < user.sites.length; i++) {
+      Site o = user.sites[i];
       if (o.id == site.id) {
         for (var j = 0; j < o.roles.length; j++) {
           Map<String, dynamic> mapRoles = o.roles[j];

@@ -136,7 +136,9 @@ class _SitePageState extends State<SitePage> {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
                             return InterventionPage(
-                                intervention: i, site: widget.site);
+                                user: widget.user,
+                                intervention: i,
+                                site: widget.site);
                           })).then((value) => setState(() {}));
                         },
                         icon: const Icon(Icons.navigate_next)),
@@ -153,6 +155,7 @@ class _SitePageState extends State<SitePage> {
 
     Map<String, Formulaire> initializedForms =
         await userAPI.getInterventionFormsFromTemplate(
+            user: widget.user,
             site_name: widget.site.name,
             type_intervention_name: typeInterventionName);
 
@@ -176,6 +179,7 @@ class _SitePageState extends State<SitePage> {
         context,
         MaterialPageRoute(
             builder: (context) => InterventionPage(
+                user: widget.user,
                 intervention: newIntervention,
                 site: widget.site))).then((value) => setState(() {}));
     ;

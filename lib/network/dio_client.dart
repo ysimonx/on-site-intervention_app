@@ -82,16 +82,21 @@ class DioClient {
           },
         ));
 
-    if (response.statusCode == 200) {
-      // successfully got the new access token
-      logger.e("refresh token ok");
-      String accessToken = response.data["access_token"];
-      await _storage.write(key: LoginApi.keyAccessToken, value: accessToken);
-    } else {
-      // refresh token is wrong so log out user.
-      logger.e("refresh token failed");
-      _storage.deleteAll();
+    try {
+      if (response.statusCode == 200) {
+        // successfully got the new access token
+        logger.e("refresh token ok");
+        String accessToken = response.data["access_token"];
+        await _storage.write(key: LoginApi.keyAccessToken, value: accessToken);
+        return;
+      } else {
+        // refresh token is wrong so log out user.
+        logger.e("refresh token failed");
+      }
+    } catch (e) {
+      logger.e("refresh token nok");
     }
+    _storage.deleteAll();
   }
 
   Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {

@@ -1,19 +1,16 @@
-// ignore_for_file: avoid_print, unnecessary_brace_in_string_interps, unused_import, non_constant_identifier_names
-
 import 'dart:io';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:on_site_intervention_app/models/model_intervention.dart';
-import 'package:on_site_intervention_app/models/model_tenant.dart';
-import 'package:on_site_intervention_app/ui/utils/mobilefirst.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'dart:async';
 
-import '../../models/model_config.dart';
+import '../../models/model_intervention.dart';
+import '../../models/model_tenant.dart';
 import '../../models/model_formulaire.dart';
 import '../../models/model_site.dart';
 import '../../models/model_user.dart';
+import '../../ui/utils/mobilefirst.dart';
 import '../../ui/utils/files.dart';
 import '../../ui/utils/logger.dart';
 import '../dio_client.dart';

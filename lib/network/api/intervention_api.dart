@@ -2,13 +2,12 @@
 
 import 'dart:io';
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
-import 'package:on_site_intervention_app/models/model_site.dart';
-import 'package:on_site_intervention_app/ui/utils/sizes.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../models/model_intervention.dart';
+import '../../models/model_site.dart';
+import '../../ui/utils/sizes.dart';
 import '../../ui/utils/files.dart';
 import '../../ui/utils/logger.dart';
 import '../../ui/utils/mobilefirst.dart';

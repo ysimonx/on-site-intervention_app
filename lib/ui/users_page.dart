@@ -133,7 +133,10 @@ class UsersPageState extends State<UsersPage> {
                     child: ListTile(
                         title: Text(u.email),
                         leading: const Icon(Icons.person_2_outlined),
-                        subtitle: Text("roles: $sroles"),
+                        subtitle: Text(
+                          "roles: $sroles",
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         trailing:
                             Row(mainAxisSize: MainAxisSize.min, children: [
                           IconButton(

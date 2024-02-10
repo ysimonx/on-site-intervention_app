@@ -175,7 +175,7 @@ class InterventionPageState extends State<InterventionPage> {
 
   Widget widgetBodyForm(BuildContext context) {
     var scaffold = CardSettingsSectionScaffold();
-    var scaffoldSupervisor = CardSettingsSectionSupervisor();
+    var scaffoldSupervisor = CardSettingsSectionHeader();
     var scaffoldUser = CardSettingsSectionScaffoldUser();
 
     return Wrap(children: [
@@ -186,13 +186,13 @@ class InterventionPageState extends State<InterventionPage> {
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: widgetBodyFormLocation()),
+            widgetHeaderFormulaire(scaffoldSupervisor),
             widgetBodyFormInterventionName(),
             const Padding(
                 padding: EdgeInsets.symmetric(vertical: 2), child: Text(' ')),
             widgetBodyTabsFormulaires(intervention: widget.intervention),
             _initialIndex == 0
-                ? widgetBodyFormulaire(
-                    scaffoldSupervisor, scaffoldUser, scaffold)
+                ? widgetBodyFormulaire(scaffoldUser, scaffold)
                 : widgetBodyFormulaireNG(_initialIndex),
             const SizedBox(
               height: 200,
@@ -202,7 +202,6 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   CardSettings widgetBodyFormulaire(
-      CardSettingsSectionSupervisor scaffoldSupervisor,
       CardSettingsSectionScaffoldUser scaffoldUser,
       CardSettingsSectionScaffold scaffold) {
     return CardSettings(
@@ -210,9 +209,20 @@ class InterventionPageState extends State<InterventionPage> {
       showMaterialonIOS: true, // default is false
       cardless: true, // default is fals
       children: <CardSettingsSection>[
-        scaffoldSupervisor.render(key: _formKey, supervisors: usersSupervisors),
         scaffoldUser.render(key: _formKey),
         scaffold.render(key: _formKey),
+      ],
+    );
+  }
+
+  CardSettings widgetHeaderFormulaire(
+      CardSettingsSectionHeader scaffoldSupervisor) {
+    return CardSettings(
+      labelWidth: 200.0,
+      showMaterialonIOS: true, // default is false
+      cardless: true, // default is fals
+      children: <CardSettingsSection>[
+        scaffoldSupervisor.render(key: _formKey, supervisors: usersSupervisors),
       ],
     );
   }
@@ -240,11 +250,9 @@ class InterventionPageState extends State<InterventionPage> {
             width: double.infinity,
             child: Card(
               elevation: 10,
-              shadowColor: Colors.black,
-              color: const Color.fromARGB(255, 247, 251, 248),
               child: ListTile(
                   leading: const Icon(Icons.room),
-                  subtitle: Text(widget.intervention.place.name),
+                  subtitle: Text("batiment: B1, level: L2, room: R3"),
                   title: const Text("Emplacement"),
                   trailing: const Icon(Icons.travel_explore)),
             )));

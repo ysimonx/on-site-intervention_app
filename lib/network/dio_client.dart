@@ -41,28 +41,22 @@ class DioClient {
       // et qu'il n'y a pas de de "msg" dans la reponse (le try plante),
       // ==> ce n'est pas un message JWT !!
       //
-      // je le traite comme d'hab
+      // sinon, si c'est un access token expiré, je fais un refresh token :)
+      // et je retente la request
       if (e.response?.statusCode == 401) {
         try {
           String msg = e.response?.data['msg'];
           logger.e("401 : ${msg}");
+          if (msg == "Token has expired") {
+            if (await _storage.containsKey(key: 'refreshToken')) {
+              // je reactualise l'accessToken
+              await refreshAccessToken();
+              // et je rente la requete Dio
+              return handler.resolve(await _retry(e.requestOptions));
+            }
+          }
         } catch (er2) {
           return handler.next(e);
-        }
-      }
-
-      // si j'ai un 401 et que le json contient un msg qui indique
-      // que le token est expiré ..
-
-      if ((e.response?.statusCode == 401 &&
-          e.response?.data['msg'] == "Token has expired")) {
-        logger.e("Token has expired");
-        // si j'ai un refreshToken
-        if (await _storage.containsKey(key: 'refreshToken')) {
-          // je reactualise l'accessToken
-          await refreshAccessToken();
-          // et je rente la requete Dio
-          return handler.resolve(await _retry(e.requestOptions));
         }
       }
 
@@ -75,14 +69,14 @@ class DioClient {
 
     await _storage.delete(key: LoginApi.keyAccessToken);
 
-    final response = await post(Endpoints.refreshToken,
-        options: Options(
-          headers: {
-            "Authorization": "Bearer ${refreshToken}",
-          },
-        ));
-
     try {
+      final response = await post(Endpoints.refreshToken,
+          options: Options(
+            headers: {
+              "Authorization": "Bearer ${refreshToken}",
+            },
+          ));
+
       if (response.statusCode == 200) {
         // successfully got the new access token
         logger.e("refresh token ok");

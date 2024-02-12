@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:card_settings/card_settings.dart';
 import 'package:intl/intl.dart';
@@ -399,7 +401,12 @@ class InterventionPageState extends State<InterventionPage> {
     }
 
     if (f.field_type == "gallery") {
-      return genCardSettingsGallery(initialValue, f);
+      List<String> listPictures = [
+        "https://webapp.sandbox.fidwork.fr/api/request/images/picture_4398_visit_20230306165933.jpg",
+        "https://webapp.sandbox.fidwork.fr/api/request/images/picture_4398_visit_20221204154542.jpg"
+      ];
+
+      return genCardSettingsGallery(jsonEncode(listPictures), f);
     }
 
     return genCardSettingsInt(initialValue, s, f);

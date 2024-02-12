@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
@@ -9,10 +10,14 @@ import '../camera_page.dart';
 
 Widget widgetGallery(
     {required String initialValue, required BuildContext context}) {
+  /*
   List<String> listPictures = [
     "https://webapp.sandbox.fidwork.fr/api/request/images/picture_4398_visit_20230306165933.jpg",
     "https://webapp.sandbox.fidwork.fr/api/request/images/picture_4398_visit_20221204154542.jpg"
   ];
+  */
+
+  List<dynamic> listPictures = jsonDecode(initialValue);
 
   return Column(children: [
     IconButton(
@@ -42,7 +47,8 @@ Widget widgetGallery(
             enableInfiniteScroll: false),
         itemBuilder: (ctx, photoIndex, realIdx) {
           return widgetGalleryItem(
-              directory: Directory(""), uriPicture: listPictures[photoIndex]);
+              directory: Directory(""),
+              uriPicture: listPictures[photoIndex] as String);
         })
   ]);
 }

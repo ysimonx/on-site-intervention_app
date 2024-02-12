@@ -15,6 +15,7 @@ import '../../ui/utils/files.dart';
 import '../../ui/utils/logger.dart';
 import '../dio_client.dart';
 import 'constants.dart';
+import 'login_api.dart';
 
 class UserApi {
   UserApi();
@@ -34,8 +35,7 @@ class UserApi {
           await dioClient.get(Endpoints.userList, queryParameters: qParams);
       if (response.statusCode == 200) {
         // await writeUserMe(jsonEncode(response.data));
-        print(response.statusCode);
-        print(response.data);
+        logger.d("userList : get statusCode ${response.statusCode}");
         List<dynamic> arrayJson = response.data;
         for (int index = 0; index < arrayJson.length; index++) {
           User u = User.fromJson(arrayJson[index]);
@@ -52,11 +52,9 @@ class UserApi {
   Future<User> myConfig({bool tryRealTime = true}) async {
     // attempt to retrieve my profile from server
 
-    dynamic content = {};
-
+    dynamic content = null;
     try {
       final Response response = await dioClient.get(Endpoints.userMe);
-
       if (response.statusCode == 200) {
         content = jsonEncode(response.data);
       }
@@ -66,17 +64,25 @@ class UserApi {
       logger.e(e.toString());
     }
 
-    if (isMobileFirst()) {
-      if (content != {}) {
-        await writeUserMe(content);
-      } else {
-        content = await readUserMe();
+    try {
+      if (isMobileFirst()) {
+        if (content != null) {
+          await writeUserMe(content);
+        } else {
+          // content is null : could not download real time data : returns last one
+          content = await readUserMe();
+        }
       }
+    } catch (e) {
+      logger.d(e.toString());
     }
 
-    Map<String, dynamic> contentJson = jsonDecode(content);
-    User me = User.fromConfigJson(contentJson);
-    return me;
+    if (content != null) {
+      Map<String, dynamic> contentJson = jsonDecode(content);
+      User me = User.fromConfigJson(contentJson);
+      return me;
+    }
+    return User.nobody();
   }
 
   Future<File> get _localFile async {
@@ -144,7 +150,6 @@ class UserApi {
         for (var j = 0; j < o.roles.length; j++) {
           Map<String, dynamic> mapRoles = o.roles[j];
           if (mapRoles.containsKey("supervisor")) {
-            print("gotcha");
             Map<String, dynamic> mapRole = mapRoles["supervisor"];
             List<dynamic> listUsers = mapRole["users"];
             for (var k = 0; k < listUsers.length; k++) {
@@ -165,5 +170,16 @@ class UserApi {
     User me = await myConfig(tryRealTime: false);
     return me.myconfig.config_types_intervention[organisation.name]
         [intervention.type_intervention_name];
+  }
+
+  Future<User> getMyInformations() async {
+    UserApi userAPI = UserApi();
+    LoginApi loginApi = LoginApi();
+    bool ok = await loginApi.hasAnAccessToken();
+    if (ok) {
+      User userMe = await userAPI.myConfig(tryRealTime: true);
+      return userMe;
+    }
+    return User.nobody();
   }
 }

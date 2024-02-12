@@ -224,7 +224,7 @@ class UsersPageState extends State<UsersPage> {
           title: (email == null)
               ? Text(translateI18N("nouvel utilisateur").toTitleCase())
               : Text(email.toTitleCase()),
-          content: Container(
+          content: SizedBox(
               width: double.maxFinite,
               child: StatefulBuilder(
                   builder: (BuildContext context, StateSetter setState) {

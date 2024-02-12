@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:card_settings/card_settings.dart';
 import 'package:intl/intl.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/ui/utils/mobilefirst.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../models/model_field.dart';
 import '../models/model_formulaire.dart';
@@ -243,18 +240,18 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Padding widgetBodyFormLocation() {
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+    return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
         child: SizedBox(
             height: 100,
             width: double.infinity,
             child: Card(
               elevation: 10,
               child: ListTile(
-                  leading: const Icon(Icons.room),
+                  leading: Icon(Icons.room),
                   subtitle: Text("batiment: B1, level: L2, room: R3"),
-                  title: const Text("Emplacement"),
-                  trailing: const Icon(Icons.travel_explore)),
+                  title: Text("Emplacement"),
+                  trailing: Icon(Icons.travel_explore)),
             )));
   }
 
@@ -301,6 +298,7 @@ class InterventionPageState extends State<InterventionPage> {
     } else {
       var r = await interventionApi
           .postInterventionValuesOnServer(widget.intervention);
+      logger.d("saveIntervention, statusCode ${r?.statusCode}");
     }
 
     _needSave = false;
@@ -547,7 +545,7 @@ class InterventionPageState extends State<InterventionPage> {
         label: f.field_label,
         initialValue: initialValue,
         validator: (value) {
-          print(value);
+          logger.f(value);
         });
   }
 }

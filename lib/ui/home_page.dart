@@ -1,7 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/model_user.dart';
-import '../network/api/login_api.dart';
 import '../network/api/user_api.dart';
 import 'widget/_home_page_authentified_content.dart';
 import 'widget/_home_page_unauthentified_content.dart';
@@ -15,28 +13,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  UserApi userAPI = UserApi();
-  LoginApi loginApi = LoginApi();
-
   final String _title = 'sites';
-
-  Future<User> getMyInformations() async {
-    bool ok = await loginApi.hasAnAccessToken();
-    if (ok) {
-      User userMe = await userAPI.myConfig(tryRealTime: true);
-      return userMe;
-    }
-    return User.nobody();
-  }
 
   @override
   Widget build(BuildContext context) {
+    UserApi userAPI = UserApi();
     return FutureBuilder(
-        future: getMyInformations(),
+        future: userAPI.getMyInformations(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            User me = snapshot.data;
-            return widgetBody(me);
+            User user = snapshot.data;
+            return widgetBody(user);
           } else if (snapshot.hasError) {
             return widgetError();
           } else {
@@ -54,12 +41,12 @@ class _HomePageState extends State<HomePage> {
             : const BaseAppBar(title: "login"));
   }
 
-  Widget widgetBody(User me) {
-    return me.isAuthorized()
+  Widget widgetBody(User user) {
+    return user.isAuthorized()
         ? Scaffold(
-            appBar: widgetAppBar(me),
+            appBar: widgetAppBar(user),
             body: HomepageAuthentifiedContent(
-                user: me,
+                user: user,
                 onRefresh: (valueint, valueString) => setState(() {
                       if (valueString != "") {
                         ScaffoldMessenger.of(context).showSnackBar(

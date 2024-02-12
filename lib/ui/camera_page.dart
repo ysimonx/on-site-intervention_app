@@ -213,10 +213,10 @@ class _CameraPageState extends State<CameraPage>
   // cf https://pub.dev/packages/camera/example
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    final CameraController? cameraController = _cameraController;
+    final CameraController cameraController = _cameraController;
 
     // App state changed before we got the chance to initialize.
-    if (cameraController == null || !cameraController.value.isInitialized) {
+    if (!cameraController.value.isInitialized) {
       return;
     }
 
@@ -246,7 +246,7 @@ class _CameraPageState extends State<CameraPage>
             : Container(
                 color: Colors.black,
                 child: const Center(child: CircularProgressIndicator())),
-        Positioned(child: sliderZoom(), top: sizeh * 0.75 - 150, left: 0),
+        Positioned(top: sizeh * 0.75 - 150, left: 0, child: sliderZoom()),
         // Align(alignment: Alignment.topCenter, child: sliderZoom()),
         Align(
             alignment: Alignment.bottomCenter,
@@ -262,9 +262,8 @@ class _CameraPageState extends State<CameraPage>
                 Container(
                     padding: const EdgeInsets.symmetric(
                         vertical: 5.0, horizontal: 0.0),
-                    child: Text("instructions",
-                        style: const TextStyle(
-                            fontSize: 10, color: Colors.white))),
+                    child: const Text("instructions",
+                        style: TextStyle(fontSize: 10, color: Colors.white))),
                 Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                   Expanded(
                       child: IconButton(
@@ -297,7 +296,7 @@ class _CameraPageState extends State<CameraPage>
                             });
                           },
                         ),
-                        Icon(Icons.flash_on, color: Colors.white)
+                        const Icon(Icons.flash_on, color: Colors.white)
                       ])),
                 ]),
                 Expanded(
@@ -314,7 +313,7 @@ class _CameraPageState extends State<CameraPage>
   }
 
   Widget sliderZoom() {
-    return Container(
+    return SizedBox(
         height: 100,
         width: MediaQuery.of(context).size.width * 0.95,
         child: Row(
@@ -343,7 +342,7 @@ class _CameraPageState extends State<CameraPage>
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   _currentZoomLevel.toStringAsFixed(1) + 'x',
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
               ),
             ),

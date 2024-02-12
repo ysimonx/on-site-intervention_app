@@ -49,7 +49,8 @@ class CardSettingsSectionHeader {
         CardSettingsListPicker(
           label: "Supervisor",
           items: listSupervisorString,
-          initialItem: listSupervisorString[0],
+          initialItem:
+              listSupervisorString.isNotEmpty ? listSupervisorString[0] : "",
         ),
       ],
     );

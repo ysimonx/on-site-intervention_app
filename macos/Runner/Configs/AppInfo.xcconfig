@@ -8,7 +8,7 @@
 PRODUCT_NAME = on_site_intervention_app
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = kysoe.com.onSiteInterventionApp
+PRODUCT_BUNDLE_IDENTIFIER = fr.fidwork.app
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2023 kysoe.com. All rights reserved.

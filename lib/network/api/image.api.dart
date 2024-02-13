@@ -84,7 +84,6 @@ class ImageApi {
       } on DioException catch (_) {
         logger.d(
             "processUploadPendingImages pas de connexion : on n'essaye pas d'uploader");
-
         return;
       } finally {}
     }

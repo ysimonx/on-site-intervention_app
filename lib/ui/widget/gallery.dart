@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -6,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
+import '../../models/model_field.dart';
+import '../../models/model_photo.dart';
+import '../../network/api/image.api.dart';
 import '../camera_page.dart';
 import '../utils/logger.dart';
 
@@ -31,13 +36,27 @@ Widget widgetGallery(
         if (!context.mounted) {
           return;
         }
-        var result =
+        var pathImage =
             await Navigator.push(context, MaterialPageRoute(builder: (context) {
           return CameraPage(
               title: 'Prise de Photo', cameras: camerasDescriptions);
         }));
 
-        logger.d(result);
+        if (pathImage == null) {
+          return;
+        }
+        logger.d(pathImage);
+        // stocke un fichier json dédié
+        // qui sera utilisé pour envoi d'image sur le serveur
+        //
+        String photoId = Photo.generateUUID();
+
+        ImageApi.addUploadPendingImage(
+          pathImage: pathImage,
+          photo_uuid: photoId,
+          // field: Field(),
+          // position: myLocation!,
+        );
       },
     ),
     CarouselSlider.builder(
@@ -73,9 +92,7 @@ Widget widgetGalleryItem(
                         width: 1000.0,
                         height: 1000.0)
                     : Image.file(
-                        File(Platform.isIOS
-                            ? getImagePathiOS(directory, uriPicture)
-                            : uriPicture),
+                        File(ImageApi.getImagePath(directory, uriPicture)),
                         alignment: Alignment.topCenter,
                         fit: BoxFit.fitWidth,
                         width: 1000.0,
@@ -102,15 +119,4 @@ Widget widgetGalleryItem(
           ],
         )),
   );
-}
-
-String getImagePathiOS(Directory directory, String pathOrigin) {
-  const String localSubDirectoryCameraPictures = 'camera/pictures';
-  final String pathDirectory =
-      "${directory.path}/$localSubDirectoryCameraPictures";
-
-  var strParts = pathOrigin.split('pictures/');
-
-  String path = "$pathDirectory/${strParts[1]}";
-  return path;
 }

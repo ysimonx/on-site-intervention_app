@@ -1,11 +1,8 @@
 import 'dart:convert';
-import 'package:geolocator/geolocator.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
-import '../../models/model_field.dart';
 import '../../ui/utils/logger.dart';
-import '../../ui/widget/gallery.dart';
 import '../dio_client.dart';
 import 'constants.dart';
 
@@ -25,8 +22,7 @@ class ImageApi {
     try {
       var directory = await getApplicationDocumentsDirectory();
       var formData = FormData.fromMap({
-        "file": await MultipartFile.fromFile(
-            Platform.isIOS ? getImagePathiOS(directory, filename) : filename,
+        "file": await MultipartFile.fromFile(getImagePath(directory, filename),
             filename: filename),
         "photo_uuid": photo_uuid,
         "latitude": latitude,
@@ -72,15 +68,7 @@ class ImageApi {
     // si on relance la connexion apres un refresh token
 
     // on parcourt la liste des fichiers à traiter pour l'envoi de photo sur le serveur
-    final Directory localDirectory = await getApplicationDocumentsDirectory();
-    final String pathDirectory =
-        "${localDirectory.path}/${localSubDirectoryUploadImages}";
-    final fileDirectory = Directory(pathDirectory);
-
-    if (!await fileDirectory.exists()) {
-      logger.d("processUploadPendingImages : directory not found, aborting ..");
-      return;
-    }
+    final fileDirectory = await getPendingUploadImageDirectory();
 
     List<FileSystemEntity> files = fileDirectory.listSync();
 
@@ -144,42 +132,59 @@ class ImageApi {
     }
   }
 
-  static Future<void> addUploadPendingImage(String pathImage,
-      {required Field field,
-      required Position position,
-      required String photo_uuid}) async {
-    final Directory localDirectory = await getApplicationDocumentsDirectory();
-    final String pathDirectory =
-        "${localDirectory.path}/${localSubDirectoryUploadImages}";
-    final fileDirectory = Directory(pathDirectory);
-
-    if (!await fileDirectory.exists()) {
-      logger.d("uploadPendingImages : directoring not found, creating ..");
-      fileDirectory.createSync();
-      logger.d("uploadPendingImages : directoring created ..");
-    }
-
-    Map<String, dynamic> jsonx = {
+  static Future<void> addUploadPendingImage({
+    // required Field field,
+    // required Position position,
+    required String photo_uuid,
+    required pathImage,
+  }) async {
+    final directory = await getPendingUploadImageDirectory();
+    Map<String, dynamic> jsonContent = {
       "photo_uuid": photo_uuid,
       "fileName": pathImage,
-      "fieldName": field.field_name,
+      /* "fieldName": field.field_name,
       "location": {
         "longitude": position.longitude,
         "latitude": position.latitude
       }
+      */
     };
 
-    String jsonAsString = jsonEncode(jsonx);
-    String path = "${pathDirectory}/${photo_uuid}.json";
-
+    String jsonContentAsString = jsonEncode(jsonContent);
+    String path = "${directory.path}/$photo_uuid.json";
     final file = File(path);
     await file.create();
-    await file.writeAsString(jsonAsString);
-
+    await file.writeAsString(jsonContentAsString);
     return;
   }
 
   bool isProcessingUploadPendingImages() {
     return isProcessingUpload;
+  }
+
+  static String getImagePath(Directory directory, String pathOrigin) {
+    const String localSubDirectoryCameraPictures = 'camera/pictures';
+    final String pathDirectory =
+        "${directory.path}/$localSubDirectoryCameraPictures";
+
+    var strParts = pathOrigin.split('pictures/');
+
+    String path = "$pathDirectory/${strParts[1]}";
+    return path;
+  }
+
+  static Future<Directory> getPendingUploadImageDirectory() async {
+    final Directory localDirectory = await getApplicationDocumentsDirectory();
+    final String pathDirectory =
+        "${localDirectory.path}/$localSubDirectoryUploadImages";
+    final directory = Directory(pathDirectory);
+
+    if (!await directory.exists()) {
+      logger.d("uploadPendingImages : directoring not found, creating ..");
+      directory.createSync(recursive: true);
+      logger.d("uploadPendingImages : directoring created ..");
+    }
+
+    return directory;
   }
 }

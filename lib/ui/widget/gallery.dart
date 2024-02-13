@@ -47,6 +47,8 @@ Widget widgetGallery(
           if (pathImage == null) {
             return;
           }
+          listPictures.add(pathImage);
+
           logger.d(pathImage);
           // stocke un fichier json dédié
           // qui sera utilisé pour envoi d'image sur le serveur
@@ -95,8 +97,7 @@ Widget widgetGalleryItem(
                         fit: BoxFit.cover,
                         width: 1000.0,
                         height: 1000.0)
-                    : Image.file(
-                        File(ImageApi.getImagePath(directory, uriPicture)),
+                    : Image.file(File(uriPicture),
                         alignment: Alignment.topCenter,
                         fit: BoxFit.fitWidth,
                         width: 1000.0,

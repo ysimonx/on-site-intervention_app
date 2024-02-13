@@ -54,7 +54,7 @@ class InterventionPageState extends State<InterventionPage> {
 
   bool _needSave = false;
 
-  late List<User> usersSupervisors;
+  late List<User> usersCoordinators;
   late Map<String, Formulaire> mapFormulaires = {};
 
   UserApi userAPI = UserApi();
@@ -84,8 +84,8 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Future<List<User>> getMyConfig({required int dummy}) async {
-    usersSupervisors =
-        await userAPI.getSupervisorsList(user: widget.user, site: widget.site);
+    usersCoordinators =
+        await userAPI.getCoordinatorsList(user: widget.user, site: widget.site);
 
     mapFormulaires = await userAPI.getInterventionFormsFromTemplate(
         user: widget.user,
@@ -120,7 +120,7 @@ class InterventionPageState extends State<InterventionPage> {
     String s = (_initialIndex + 1).toString();
     currentFormulaire = mapFormulaires[s] as Formulaire;
 
-    return usersSupervisors;
+    return usersCoordinators;
   }
 
   @override
@@ -173,10 +173,6 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Widget widgetBodyForm(BuildContext context) {
-    var scaffold = CardSettingsSectionScaffold();
-    var scaffoldSupervisor = CardSettingsSectionHeader();
-    var scaffoldUser = CardSettingsSectionScaffoldUser();
-
     return Wrap(children: [
       Form(
           key: _formKey,
@@ -185,13 +181,13 @@ class InterventionPageState extends State<InterventionPage> {
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: widgetBodyFormLocation()),
-            widgetHeaderFormulaire(scaffoldSupervisor),
+            widgetHeaderFormulaire(),
             widgetBodyFormInterventionName(),
             const Padding(
                 padding: EdgeInsets.symmetric(vertical: 2), child: Text(' ')),
             widgetBodyTabsFormulaires(intervention: widget.intervention),
             _initialIndex == 0
-                ? widgetBodyFormulaire(scaffoldUser, scaffold)
+                ? widgetBodyFormulaire()
                 : widgetBodyFormulaireNG(_initialIndex),
             const SizedBox(
               height: 200,
@@ -200,13 +196,14 @@ class InterventionPageState extends State<InterventionPage> {
     ]);
   }
 
-  CardSettings widgetBodyFormulaire(
-      CardSettingsSectionScaffoldUser scaffoldUser,
-      CardSettingsSectionScaffold scaffold) {
+  CardSettings widgetBodyFormulaire() {
+    var scaffoldUser = CardSettingsSectionScaffoldUser();
+    var scaffold = CardSettingsSectionScaffold();
+
     return CardSettings(
       labelWidth: 200.0,
       showMaterialonIOS: true, // default is false
-      cardless: true, // default is fals
+      cardless: true, // default is false
       children: <CardSettingsSection>[
         scaffoldUser.render(key: _formKey),
         scaffold.render(key: _formKey),
@@ -214,14 +211,15 @@ class InterventionPageState extends State<InterventionPage> {
     );
   }
 
-  CardSettings widgetHeaderFormulaire(
-      CardSettingsSectionHeader scaffoldSupervisor) {
+  CardSettings widgetHeaderFormulaire() {
+    var scaffoldSupervisor = CardSettingsSectionHeader();
     return CardSettings(
       labelWidth: 200.0,
       showMaterialonIOS: true, // default is false
       cardless: true, // default is fals
       children: <CardSettingsSection>[
-        scaffoldSupervisor.render(key: _formKey, supervisors: usersSupervisors),
+        scaffoldSupervisor.render(
+            key: _formKey, coordinators: usersCoordinators),
       ],
     );
   }

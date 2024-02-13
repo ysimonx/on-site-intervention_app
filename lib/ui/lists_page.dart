@@ -189,7 +189,7 @@ class ListsPageState extends State<ListsPage> {
       controllerListName.text = listname;
 
       if (site!.dictOfLists.keys.contains(listname)) {
-        listValues = site!.dictOfLists[listname];
+        listValues = site.dictOfLists[listname];
       }
 
       listValues.sort();

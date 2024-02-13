@@ -168,14 +168,6 @@ class _CameraPageState extends State<CameraPage>
       // ignore: use_build_context_synchronously
 
       Navigator.of(context).pop(picture.path);
-
-      /* Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => PreviewPage(
-                    picture: picture,
-                  )));
-                  */
     } on CameraException catch (e) {
       debugPrint('Error occured while taking picture: $e');
       return null;

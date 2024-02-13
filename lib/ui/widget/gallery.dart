@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 import '../camera_page.dart';
+import '../utils/logger.dart';
 
 Widget widgetGallery(
     {required String initialValue, required BuildContext context}) {
@@ -30,10 +31,13 @@ Widget widgetGallery(
         if (!context.mounted) {
           return;
         }
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
+        var result =
+            await Navigator.push(context, MaterialPageRoute(builder: (context) {
           return CameraPage(
               title: 'Prise de Photo', cameras: camerasDescriptions);
         }));
+
+        logger.d(result);
       },
     ),
     CarouselSlider.builder(

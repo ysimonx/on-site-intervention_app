@@ -1,13 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:camera/camera.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 
 import '../../models/model_user.dart';
 import '../../network/api/login_api.dart';
 import 'package:flutter/material.dart';
 
-import '../camera_page.dart';
 import '../lists_page.dart';
 import '../users_page.dart';
 import '../utils/i18n.dart';
@@ -31,7 +29,6 @@ class AuthentifiedBaseAppBar extends StatelessWidget
   static const int valueLIST = 1;
   static const int valueUSERS = 2;
   static const int valueACCOUNT = 4;
-  static const int valueCAMERA = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -77,10 +74,6 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                         child: Text(translateI18N("gestion des listes")
                             .toCapitalized()),
                       ),
-                  // PopupMenuItem<int>(
-                  //   value: valueCAMERA,
-                  //   child: Text(translateI18N("camera").toCapitalized()),
-                  // ),
                   PopupMenuItem<int>(
                     value: valueDECONNEXION,
                     child: Text(translateI18N("déconnexion").toCapitalized()),
@@ -113,21 +106,6 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                             site: site!,
                             tenants: user.tenants_administrator_of,
                             user: user);
-                      }));
-                    }
-                  }
-                }
-                if (value == valueCAMERA) {
-                  if (context.mounted) {
-                    if (site != null) {
-                      List<CameraDescription> camerasDescriptions =
-                          await availableCameras();
-
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return CameraPage(
-                            title: 'Prise de Photo',
-                            cameras: camerasDescriptions);
                       }));
                     }
                   }

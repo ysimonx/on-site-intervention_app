@@ -19,13 +19,13 @@ class CardSettingsSectionHeader {
     "canceled"
   ];
   CardSettingsSection render(
-      {required GlobalKey<FormState> key, required List<User> supervisors}) {
-    List<String> listSupervisorString = [];
+      {required GlobalKey<FormState> key, required List<User> coordinators}) {
+    List<String> listCoordinatorString = [];
     // et pour l'site
-    for (var i = 0; i < supervisors.length; i++) {
-      User u = supervisors[i];
+    for (var i = 0; i < coordinators.length; i++) {
+      User u = coordinators[i];
 
-      listSupervisorString.add("${u.lastname.toUpperCase()}, ${u.firstname}");
+      listCoordinatorString.add("${u.lastname.toUpperCase()}, ${u.firstname}");
     }
     return CardSettingsSection(
       /* header: CardSettingsHeader(
@@ -47,10 +47,10 @@ class CardSettingsSectionHeader {
           initialItem: listStatuses[1],
         ),
         CardSettingsListPicker(
-          label: "Supervisor",
-          items: listSupervisorString,
+          label: "Coordinator",
+          items: listCoordinatorString,
           initialItem:
-              listSupervisorString.isNotEmpty ? listSupervisorString[0] : "",
+              listCoordinatorString.isNotEmpty ? listCoordinatorString[0] : "",
         ),
       ],
     );

@@ -140,7 +140,7 @@ class UserApi {
     return forms;
   }
 
-  Future<List<User>> getSupervisorsList(
+  Future<List<User>> getCoordinatorsList(
       {required Site site, required User user}) async {
     List<User> res = [];
 
@@ -149,8 +149,8 @@ class UserApi {
       if (o.id == site.id) {
         for (var j = 0; j < o.roles.length; j++) {
           Map<String, dynamic> mapRoles = o.roles[j];
-          if (mapRoles.containsKey("supervisor")) {
-            Map<String, dynamic> mapRole = mapRoles["supervisor"];
+          if (mapRoles.containsKey("coordinator")) {
+            Map<String, dynamic> mapRole = mapRoles["coordinator"];
             List<dynamic> listUsers = mapRole["users"];
             for (var k = 0; k < listUsers.length; k++) {
               dynamic itemUser = listUsers[k];

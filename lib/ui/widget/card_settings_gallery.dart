@@ -13,12 +13,14 @@ import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter_cupertino_settings/flutter_cupertino_settings.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../../models/model_field.dart';
 import 'gallery.dart';
 
 /// This is a standard one line text entry  It's based on the [TextFormField] widget.
 class CardSettingsGallery extends FormField<String>
     implements ICommonFieldProperties, ITextFieldProperties {
   final Directory directory;
+  final Field field;
 
   CardSettingsGallery(
       {Key? key,
@@ -61,7 +63,8 @@ class CardSettingsGallery extends FormField<String>
       this.showClearButtonIOS = OverlayVisibilityMode.never,
       this.fieldPadding,
       this.contentPadding = const EdgeInsets.all(0.0),
-      required this.directory})
+      required this.directory,
+      required this.field})
       : assert(maxLength > 0),
         assert(controller == null || inputMask == null),
         super(
@@ -451,6 +454,7 @@ class _CardSettingsGalleryState extends FormFieldState<String> {
             initialValue: widget.initialValue ?? '',
             context: context,
             validator: widget.validator,
-            directory: widget.directory));
+            directory: widget.directory,
+            field: widget.field));
   }
 }

@@ -566,6 +566,7 @@ class InterventionPageState extends State<InterventionPage> {
       {required Directory directory}) {
     return CardSettingsGallery(
         directory: directory,
+        field: f,
         label: f.field_label,
         initialValue: initialValue,
         validator: (stringJsonListPictures) {

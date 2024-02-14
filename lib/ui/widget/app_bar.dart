@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:on_site_intervention_app/models/model_site.dart';
+import 'package:on_site_intervention_app/network/api/image.api.dart';
 
 import '../../models/model_user.dart';
 import '../../network/api/login_api.dart';
@@ -29,6 +30,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
   static const int valueLIST = 1;
   static const int valueUSERS = 2;
   static const int valueACCOUNT = 4;
+  static const int valueUPLOADIMAGES = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -75,11 +77,16 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                             .toCapitalized()),
                       ),
                   PopupMenuItem<int>(
+                      child: Text("upload images"), value: valueUPLOADIMAGES),
+                  PopupMenuItem<int>(
                     value: valueDECONNEXION,
                     child: Text(translateI18N("déconnexion").toCapitalized()),
                   ),
                 ];
               }, onSelected: (value) async {
+                if (value == valueUPLOADIMAGES) {
+                  await ImageApi.processUploadPendingImages();
+                }
                 if (value == valueDECONNEXION) {
                   LoginApi loginApi = LoginApi();
                   await loginApi.deleteTokens();

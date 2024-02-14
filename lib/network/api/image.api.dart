@@ -13,18 +13,21 @@ class ImageApi {
 
   ImageApi({required this.dioClient});
 
-  Future<Response?> uploadImage(
-      {required photo_uuid,
-      required filename,
+  static Future<Response?> uploadImage(
+      {required filename,
       required latitude,
-      required longitude}) async {
+      required longitude,
+      required photo_on_site_uuid,
+      required field_on_site_uuid}) async {
+    DioClient dioClient = DioClient(Dio());
     // TO DO : https://kashifchandio.medium.com/upload-images-to-rest-api-with-flutter-using-dio-package-421111389c27
     try {
-      var directory = await getApplicationDocumentsDirectory();
+      var directory = await ImageApi.getPendingUploadImageAbsoluteDirectory();
+      String filePath = "${directory.path}/$filename";
       var formData = FormData.fromMap({
-        "file": await MultipartFile.fromFile(getImagePath(directory, filename),
-            filename: filename),
-        "photo_uuid": photo_uuid,
+        "file": await MultipartFile.fromFile(filePath, filename: filename),
+        "photo_on_site_uuid": photo_on_site_uuid,
+        "field_on_site_uuid": field_on_site_uuid,
         "latitude": latitude,
         "longitude": longitude,
       });
@@ -47,9 +50,11 @@ class ImageApi {
     }
   }
 
-  Future<Response?> isReadyUploadImage() async {
+  static Future<Response?> isReadyUploadImage() async {
     // TO DO : https://kashifchandio.medium.com/upload-images-to-rest-api-with-flutter-using-dio-package-421111389c27
     try {
+      DioClient dioClient = DioClient(Dio());
+
       final Response response = await dioClient.get(
         Endpoints.readyuploadimage,
       );
@@ -61,7 +66,7 @@ class ImageApi {
 
   static const String localSubDirectoryUploadImages = 'uploadimages';
 
-  Future<void> processUploadPendingImages() async {
+  static Future<void> processUploadPendingImages() async {
     // VERIFICATION DE LA CONNEXION
     // au passage, si le token doit etre refresh, ca le rafraichit ...
     // parce qu'envoyer un fichier en multipart form data provoque des soucis
@@ -86,9 +91,14 @@ class ImageApi {
             "processUploadPendingImages pas de connexion : on n'essaye pas d'uploader");
         return;
       } finally {}
+    } else {
+      return;
     }
 
     for (var i = 0; i < files.length; i++) {
+      if (!files[i].path.endsWith(".json")) {
+        continue;
+      }
       var f = File(files[i].path);
       logger.d("uploadPendingImages found : ${f.path}");
       String content = f.readAsStringSync();
@@ -101,10 +111,14 @@ class ImageApi {
       }
       try {
         Response? resp = await uploadImage(
-            photo_uuid: mapPhoto["photo_uuid"],
-            filename: mapPhoto["fileName"],
-            latitude: mapPhoto["location"]["latitude"],
-            longitude: mapPhoto["location"]["longitude"]);
+            photo_on_site_uuid: mapPhoto["photo_on_site_uuid"],
+            field_on_site_uuid: mapPhoto["field_on_site_uuid"],
+            filename: mapPhoto["filename"],
+            /* latitude: mapPhoto["location"]["latitude"],
+            longitude: mapPhoto["location"]["longitude"]
+            */
+            latitude: 0.0,
+            longitude: 0.0);
 
         if (resp != null) {
           logger.d(resp.statusCode);
@@ -134,13 +148,15 @@ class ImageApi {
   static Future<void> addUploadPendingImage({
     // required Field field,
     // required Position position,
-    required String photo_uuid,
-    required pathImage,
+    required String photo_on_site_uuid,
+    required String filename,
+    required String field_on_site_uuid,
   }) async {
     final directory = await getPendingUploadImageAbsoluteDirectory();
     Map<String, dynamic> jsonContent = {
-      "photo_uuid": photo_uuid,
-      "fileName": pathImage,
+      "photo_on_site_uuid": photo_on_site_uuid,
+      "filename": filename,
+      "field_on_site_uuid": field_on_site_uuid
       /* "fieldName": field.field_name,
       "location": {
         "longitude": position.longitude,
@@ -150,7 +166,7 @@ class ImageApi {
     };
 
     String jsonContentAsString = jsonEncode(jsonContent);
-    String path = "${directory.path}/$photo_uuid.json";
+    String path = "${directory.path}/$photo_on_site_uuid.json";
     final file = File(path);
     await file.create();
     await file.writeAsString(jsonContentAsString);

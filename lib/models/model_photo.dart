@@ -2,24 +2,23 @@
 import 'package:uuid/uuid.dart';
 
 class Photo {
-  final String photo_uuid;
-  final String path;
-  final String status;
-  // final Location location;
+  final String photo_on_site_uuid;
+  final String field_on_site_uuid;
+  final String filename;
   late final DateTime created_date_utc;
 
   Photo(
-      {required this.path,
-      required this.photo_uuid,
-      this.status = "Pending",
+      {required this.filename,
+      required this.photo_on_site_uuid,
+      required this.field_on_site_uuid,
       //  required this.location,
       required this.created_date_utc});
 
   Map<String, dynamic> toJSON() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data["photo_uuid"] = photo_uuid;
-    data["path"] = path;
-    data["status"] = status;
+    data["photo_on_site_uuid"] = photo_on_site_uuid;
+    data["field_on_site_uuid"] = field_on_site_uuid;
+    data["filename"] = filename;
     // data["location"] = location.toJSON();
     data["created_date_utc"] = created_date_utc.toString();
     return data;

@@ -19,7 +19,8 @@ Widget widgetGallery(
     {required String initialValue,
     required BuildContext context,
     FormFieldValidator<String>? validator,
-    required Directory directory}) {
+    required Directory directory,
+    required Field field}) {
   /*
   List<String> listPictures = [
     "https://webapp.sandbox.fidwork.fr/api/request/images/picture_4398_visit_20230306165933.jpg",
@@ -52,14 +53,14 @@ Widget widgetGallery(
             return;
           }
 
-          String photoId = Photo.generateUUID();
+          String photoOnSiteUUID = Photo.generateUUID();
 
           Directory d = await ImageApi.getPendingUploadImageAbsoluteDirectory();
 
           File imageFileSource = File(pathImage);
 
           String fileExtension = pathImage.split('.').last;
-          String filename = "${photoId}.${fileExtension}";
+          String filename = "${photoOnSiteUUID}.${fileExtension}";
           String newAbsolutePathImage = "${d.path}/${filename}";
           await imageFileSource.copy(newAbsolutePathImage);
 
@@ -71,11 +72,12 @@ Widget widgetGallery(
           //
 
           ImageApi.addUploadPendingImage(
-            pathImage: filename,
-            photo_uuid: photoId,
-            // field: Field(),
-            // position: myLocation!,
-          );
+              filename: filename,
+              photo_on_site_uuid: photoOnSiteUUID,
+              field_on_site_uuid: field.field_on_site_uuid
+              // field: Field(),
+              // position: myLocation!,
+              );
 
           validator!(jsonEncode(listPictures));
 

@@ -7,6 +7,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../models/model_field.dart';
 import '../../models/model_photo.dart';
@@ -15,7 +16,10 @@ import '../camera_page.dart';
 import '../utils/logger.dart';
 
 Widget widgetGallery(
-    {required String initialValue, required BuildContext context}) {
+    {required String initialValue,
+    required BuildContext context,
+    FormFieldValidator<String>? validator,
+    required Directory directory}) {
   /*
   List<String> listPictures = [
     "https://webapp.sandbox.fidwork.fr/api/request/images/picture_4398_visit_20230306165933.jpg",
@@ -47,20 +51,33 @@ Widget widgetGallery(
           if (pathImage == null) {
             return;
           }
-          listPictures.add(pathImage);
+          Directory d = await ImageApi.getPendingUploadImageAbsoluteDirectory();
+          String sRelativeDirectoryPath =
+              ImageApi.getPendingUploadImageRelativeDirectoryPath();
 
-          logger.d(pathImage);
+          File imageFileSource = File(pathImage);
+          String filename = pathImage.split('/').last;
+          String newAbsolutePathImage = "${d.path}/${filename}";
+          String newRelativePathImage = "${sRelativeDirectoryPath}/${filename}";
+          await imageFileSource.copy(newAbsolutePathImage);
+
+          listPictures.add(newRelativePathImage);
+
+          logger.d(newRelativePathImage);
           // stocke un fichier json dédié
           // qui sera utilisé pour envoi d'image sur le serveur
           //
           String photoId = Photo.generateUUID();
 
           ImageApi.addUploadPendingImage(
-            pathImage: pathImage,
+            pathImage: newRelativePathImage,
             photo_uuid: photoId,
             // field: Field(),
             // position: myLocation!,
           );
+
+          validator!(jsonEncode(listPictures));
+
           setState(() {});
         },
       ),
@@ -75,8 +92,8 @@ Widget widgetGallery(
               enableInfiniteScroll: false),
           itemBuilder: (ctx, photoIndex, realIdx) {
             return widgetGalleryItem(
-                directory: Directory(""),
-                uriPicture: listPictures[photoIndex] as String);
+                uriPicture: listPictures[photoIndex] as String,
+                directory: directory);
           })
     ]);
   });
@@ -84,6 +101,10 @@ Widget widgetGallery(
 
 Widget widgetGalleryItem(
     {required String uriPicture, required Directory directory}) {
+  if (!uriPicture.startsWith("/")) {
+    uriPicture = "${directory.path}/${uriPicture}";
+  }
+
   return Container(
     margin: const EdgeInsets.all(5.0),
     child: ClipRRect(

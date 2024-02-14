@@ -1,6 +1,8 @@
 // Copyright (c) 2018, codegrue. All rights reserved. Use of this source code
 // is governed by the MIT license that can be found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:card_settings/card_settings.dart';
 import 'package:card_settings/helpers/platform_functions.dart';
 import 'package:card_settings/interfaces/common_field_properties.dart';
@@ -16,48 +18,51 @@ import 'gallery.dart';
 /// This is a standard one line text entry  It's based on the [TextFormField] widget.
 class CardSettingsGallery extends FormField<String>
     implements ICommonFieldProperties, ITextFieldProperties {
-  CardSettingsGallery({
-    Key? key,
-    String? initialValue,
-    bool autovalidate = false,
-    AutovalidateMode autovalidateMode = AutovalidateMode.onUserInteraction,
-    this.enabled = true,
-    this.onSaved,
-    this.validator,
-    this.onChanged,
-    this.controller,
-    this.textCapitalization = TextCapitalization.none,
-    this.keyboardType = TextInputType.text,
-    this.maxLengthEnforcement = MaxLengthEnforcement.enforced,
-    this.inputMask,
-    this.inputFormatters,
-    this.onFieldSubmitted,
-    this.style,
-    this.focusNode,
-    this.inputAction,
-    this.inputActionNode,
-    this.label = 'Label',
-    this.contentOnNewLine = false,
-    this.maxLength = 20,
-    this.numberOfLines = 1,
-    this.showCounter = false,
-    this.visible = true,
-    this.autocorrect = true,
-    this.obscureText = false,
-    this.autofocus = false,
-    this.contentAlign,
-    this.hintText,
-    this.icon,
-    this.labelAlign,
-    this.labelWidth,
-    this.prefixText,
-    this.requiredIndicator,
-    this.unitLabel,
-    this.showMaterialonIOS,
-    this.showClearButtonIOS = OverlayVisibilityMode.never,
-    this.fieldPadding,
-    this.contentPadding = const EdgeInsets.all(0.0),
-  })  : assert(maxLength > 0),
+  final Directory directory;
+
+  CardSettingsGallery(
+      {Key? key,
+      String? initialValue,
+      bool autovalidate = false,
+      AutovalidateMode autovalidateMode = AutovalidateMode.onUserInteraction,
+      this.enabled = true,
+      this.onSaved,
+      this.validator,
+      this.onChanged,
+      this.controller,
+      this.textCapitalization = TextCapitalization.none,
+      this.keyboardType = TextInputType.text,
+      this.maxLengthEnforcement = MaxLengthEnforcement.enforced,
+      this.inputMask,
+      this.inputFormatters,
+      this.onFieldSubmitted,
+      this.style,
+      this.focusNode,
+      this.inputAction,
+      this.inputActionNode,
+      this.label = 'Label',
+      this.contentOnNewLine = false,
+      this.maxLength = 20,
+      this.numberOfLines = 1,
+      this.showCounter = false,
+      this.visible = true,
+      this.autocorrect = true,
+      this.obscureText = false,
+      this.autofocus = false,
+      this.contentAlign,
+      this.hintText,
+      this.icon,
+      this.labelAlign,
+      this.labelWidth,
+      this.prefixText,
+      this.requiredIndicator,
+      this.unitLabel,
+      this.showMaterialonIOS,
+      this.showClearButtonIOS = OverlayVisibilityMode.never,
+      this.fieldPadding,
+      this.contentPadding = const EdgeInsets.all(0.0),
+      required this.directory})
+      : assert(maxLength > 0),
         assert(controller == null || inputMask == null),
         super(
           key: key,
@@ -443,6 +448,9 @@ class _CardSettingsGalleryState extends FormFieldState<String> {
         enabled: widget.enabled,
         fieldPadding: widget.fieldPadding,
         content: widgetGallery(
-            initialValue: widget.initialValue ?? '', context: context));
+            initialValue: widget.initialValue ?? '',
+            context: context,
+            validator: widget.validator,
+            directory: widget.directory));
   }
 }

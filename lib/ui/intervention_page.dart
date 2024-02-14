@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:card_settings/card_settings.dart';
 import 'package:intl/intl.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/ui/utils/mobilefirst.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../models/model_field.dart';
 import '../models/model_formulaire.dart';
@@ -66,6 +68,8 @@ class InterventionPageState extends State<InterventionPage> {
   Map<String, String> fieldsValue = {};
   Map<String, TextEditingController> fieldsController = {};
 
+  late Directory deviceApplicationDocumentsDirectory;
+
   // late Directory directory;
 
   void _onChangedText() {
@@ -119,6 +123,9 @@ class InterventionPageState extends State<InterventionPage> {
 
     String s = (_initialIndex + 1).toString();
     currentFormulaire = mapFormulaires[s] as Formulaire;
+
+    deviceApplicationDocumentsDirectory =
+        await getApplicationDocumentsDirectory();
 
     return usersCoordinators;
   }
@@ -399,12 +406,18 @@ class InterventionPageState extends State<InterventionPage> {
     }
 
     if (f.field_type == "gallery") {
-      List<String> listPictures = [
+      /* List<String> listPictures = [
         "https://webapp.sandbox.fidwork.fr/api/request/images/picture_4398_visit_20230306165933.jpg",
         "https://webapp.sandbox.fidwork.fr/api/request/images/picture_4398_visit_20221204154542.jpg"
-      ];
-
-      return genCardSettingsGallery(jsonEncode(listPictures), f);
+      ]; */
+      List<dynamic> listPictures = [];
+      try {
+        listPictures = jsonDecode(initialValue);
+      } catch (e) {
+        logger.e(e.toString());
+      }
+      return genCardSettingsGallery(jsonEncode(listPictures), f,
+          directory: deviceApplicationDocumentsDirectory);
     }
 
     return genCardSettingsInt(initialValue, s, f);
@@ -545,12 +558,18 @@ class InterventionPageState extends State<InterventionPage> {
     );
   }
 
-  CardSettingsWidget genCardSettingsGallery(String initialValue, Field f) {
+  CardSettingsWidget genCardSettingsGallery(String initialValue, Field f,
+      {required Directory directory}) {
     return CardSettingsGallery(
+        directory: directory,
         label: f.field_label,
         initialValue: initialValue,
-        validator: (value) {
-          logger.f(value);
+        validator: (stringJsonListPictures) {
+          logger.f(stringJsonListPictures);
+          fieldsController[f.field_on_site_uuid]!.text =
+              stringJsonListPictures as String;
+
+          fieldsValue[f.field_on_site_uuid] = stringJsonListPictures;
         });
   }
 }

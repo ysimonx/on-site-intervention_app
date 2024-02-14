@@ -68,7 +68,7 @@ class ImageApi {
     // si on relance la connexion apres un refresh token
 
     // on parcourt la liste des fichiers à traiter pour l'envoi de photo sur le serveur
-    final fileDirectory = await getPendingUploadImageDirectory();
+    final fileDirectory = await getPendingUploadImageAbsoluteDirectory();
 
     List<FileSystemEntity> files = fileDirectory.listSync();
 
@@ -137,7 +137,7 @@ class ImageApi {
     required String photo_uuid,
     required pathImage,
   }) async {
-    final directory = await getPendingUploadImageDirectory();
+    final directory = await getPendingUploadImageAbsoluteDirectory();
     Map<String, dynamic> jsonContent = {
       "photo_uuid": photo_uuid,
       "fileName": pathImage,
@@ -172,7 +172,12 @@ class ImageApi {
     return path;
   }
 
-  static Future<Directory> getPendingUploadImageDirectory() async {
+  static String getPendingUploadImageRelativeDirectoryPath() {
+    final String pathDirectory = "$localSubDirectoryUploadImages";
+    return pathDirectory;
+  }
+
+  static Future<Directory> getPendingUploadImageAbsoluteDirectory() async {
     final Directory localDirectory = await getApplicationDocumentsDirectory();
     final String pathDirectory =
         "${localDirectory.path}/$localSubDirectoryUploadImages";

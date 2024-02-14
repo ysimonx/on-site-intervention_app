@@ -51,26 +51,27 @@ Widget widgetGallery(
           if (pathImage == null) {
             return;
           }
+
+          String photoId = Photo.generateUUID();
+
           Directory d = await ImageApi.getPendingUploadImageAbsoluteDirectory();
-          String sRelativeDirectoryPath =
-              ImageApi.getPendingUploadImageRelativeDirectoryPath();
 
           File imageFileSource = File(pathImage);
-          String filename = pathImage.split('/').last;
+
+          String fileExtension = pathImage.split('.').last;
+          String filename = "${photoId}.${fileExtension}";
           String newAbsolutePathImage = "${d.path}/${filename}";
-          String newRelativePathImage = "${sRelativeDirectoryPath}/${filename}";
           await imageFileSource.copy(newAbsolutePathImage);
 
-          listPictures.add(newRelativePathImage);
+          listPictures.add(filename);
 
-          logger.d(newRelativePathImage);
+          logger.d(filename);
           // stocke un fichier json dédié
           // qui sera utilisé pour envoi d'image sur le serveur
           //
-          String photoId = Photo.generateUUID();
 
           ImageApi.addUploadPendingImage(
-            pathImage: newRelativePathImage,
+            pathImage: filename,
             photo_uuid: photoId,
             // field: Field(),
             // position: myLocation!,

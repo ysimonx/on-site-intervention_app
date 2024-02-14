@@ -13,6 +13,7 @@ import '../models/model_formulaire.dart';
 import '../models/model_intervention.dart';
 import '../models/model_section.dart';
 import '../models/model_user.dart';
+import '../network/api/image.api.dart';
 import '../network/api/intervention_api.dart';
 import '../network/api/user_api.dart';
 import 'utils/logger.dart';
@@ -416,8 +417,11 @@ class InterventionPageState extends State<InterventionPage> {
       } catch (e) {
         logger.e(e.toString());
       }
+
+      Directory directoryImageGallery = Directory(
+          "${deviceApplicationDocumentsDirectory.path}/${ImageApi.getPendingUploadImageRelativeDirectoryPath()}");
       return genCardSettingsGallery(jsonEncode(listPictures), f,
-          directory: deviceApplicationDocumentsDirectory);
+          directory: directoryImageGallery);
     }
 
     return genCardSettingsInt(initialValue, s, f);

@@ -419,7 +419,8 @@ class InterventionPageState extends State<InterventionPage> {
       }
 
       Directory directoryImageGallery = Directory(
-          "${deviceApplicationDocumentsDirectory.path}/${ImageApi.getPendingUploadImageRelativeDirectoryPath()}");
+          "${deviceApplicationDocumentsDirectory.path}/${ImageApi.getDownloadedImageRelativeDirectoryPath()}");
+
       return genCardSettingsGallery(jsonEncode(listPictures), f,
           directory: directoryImageGallery);
     }

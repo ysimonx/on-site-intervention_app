@@ -16,6 +16,8 @@ import 'constants.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+import 'image.api.dart';
+
 const String DIRINTERVENTIONUPDATED = "interventions_updated";
 
 class InterventionApi {
@@ -307,5 +309,54 @@ class InterventionApi {
     if (await file.exists()) {
       file.deleteSync();
     }
+  }
+
+  /*
+          [
+            {
+                "photos": [
+                    "f16153e0-e299-1eb7-946b-856e67bf256d.jpg"
+                ],
+                "site_id": "8abf0be4-e217-4678-9644-ed68e7b8b158"
+            },
+            {
+                "photos": [
+  */
+
+  void downloadPhotos({required Site site}) async {
+    List<String> photosToDownload = [];
+    try {
+      Map<String, String> qParams = {'site_id': site.id};
+
+      final Response response = await dioClient.get(
+          Endpoints.listInterventionsValuesPhotos,
+          queryParameters: qParams);
+
+      if (response.statusCode == 200) {
+        List<dynamic> list = response.data;
+        for (var i = 0; i < list.length; i++) {
+          Map<String, dynamic> jsonItem = list[i];
+          List<dynamic> photos = jsonItem["photos"];
+          for (var j = 0; j < photos.length; j++) {
+            String photo = photos[j];
+
+            photosToDownload.add(photo);
+          }
+        }
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        if (e.response!.statusCode == 401) {
+          return;
+        }
+        logger.e("downloadPhotos : ${e.response!.statusCode}");
+      }
+    } catch (e) {
+      logger.e(e.toString());
+    }
+
+    ImageApi.syncImages(list: photosToDownload);
+
+    print(photosToDownload);
   }
 }

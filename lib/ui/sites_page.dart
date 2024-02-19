@@ -54,6 +54,8 @@ class _SitePageState extends State<SitePage> {
 
   Future<List<Intervention>> getInterventions({required Site site}) async {
     List<Intervention> list = await interventionAPI.getList(site: site);
+    interventionAPI.downloadPhotos(site: site);
+
     return list;
   }
 

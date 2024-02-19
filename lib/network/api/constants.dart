@@ -15,6 +15,7 @@ class Endpoints {
 
   static const String uploadImage = '/api/v1/photo';
   static const String readyuploadimage = '/api/v1/photo/ready';
+  static const String downloadImage = '/static/photos/<image>';
 
   static const String login = '/api/v1/login';
   static const String refreshToken = "/api/v1/token/refresh";
@@ -26,6 +27,8 @@ class Endpoints {
 
   static const String listInterventionsValues = '/api/v1/intervention_values';
   static const String postInterventionValues = '/api/v1/intervention_values';
+  static const String listInterventionsValuesPhotos =
+      '/api/v1/intervention_values/photos';
 
   static const String postSite = '/api/v1/site';
   static const String siteRead = '/api/v1/site/<id>';

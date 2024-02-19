@@ -108,6 +108,22 @@ Widget widgetGalleryItem(
     uriPicture = "${directory.path}/${uriPicture}";
   }
 
+  Widget widgetChild = SizedBox(width: 1000, height: 1000, child: Text("no"));
+
+  if (uriPicture.startsWith("http")) {
+    widgetChild = CachedNetworkImage(
+        imageUrl: uriPicture, fit: BoxFit.cover, width: 1000.0, height: 1000.0);
+  } else {
+    File f = File(uriPicture);
+    if (f.existsSync()) {
+      widgetChild = Image.file(File(uriPicture),
+          alignment: Alignment.topCenter,
+          fit: BoxFit.fitWidth,
+          width: 1000.0,
+          height: 1000.0);
+    }
+  }
+
   return Container(
     margin: const EdgeInsets.all(5.0),
     child: ClipRRect(
@@ -115,17 +131,8 @@ Widget widgetGalleryItem(
         child: Stack(
           children: <Widget>[
             GestureDetector(
-                child: uriPicture.startsWith("http")
-                    ? CachedNetworkImage(
-                        imageUrl: uriPicture,
-                        fit: BoxFit.cover,
-                        width: 1000.0,
-                        height: 1000.0)
-                    : Image.file(File(uriPicture),
-                        alignment: Alignment.topCenter,
-                        fit: BoxFit.fitWidth,
-                        width: 1000.0,
-                        height: 1000.0)),
+              child: widgetChild,
+            ),
             Positioned(
                 top: 0.0,
                 right: 0.0,

@@ -65,6 +65,7 @@ class ImageApi {
   }
 
   static const String localSubDirectoryUploadImages = 'uploadimages';
+  static const String localSubDirectoryDownloadedImages = "downloadedimages";
 
   static Future<void> processUploadPendingImages() async {
     // VERIFICATION DE LA CONNEXION
@@ -193,6 +194,11 @@ class ImageApi {
     return pathDirectory;
   }
 
+  static String getDownloadedImageRelativeDirectoryPath() {
+    final String pathDirectory = "$localSubDirectoryDownloadedImages";
+    return pathDirectory;
+  }
+
   static Future<Directory> getPendingUploadImageAbsoluteDirectory() async {
     final Directory localDirectory = await getApplicationDocumentsDirectory();
     final String pathDirectory =
@@ -206,5 +212,68 @@ class ImageApi {
     }
 
     return directory;
+  }
+
+  static Future<Directory> getDownloadedImageAbsoluteDirectory() async {
+    final Directory localDirectory = await getApplicationDocumentsDirectory();
+    final String pathDirectory =
+        "${localDirectory.path}/$localSubDirectoryDownloadedImages";
+    final directory = Directory(pathDirectory);
+
+    if (!await directory.exists()) {
+      logger.d(
+          "getDownloadedImageAbsoluteDirectory : directoring not found, creating ..");
+      directory.createSync(recursive: true);
+      logger.d("getDownloadedImageAbsoluteDirectory : directoring created ..");
+    }
+
+    return directory;
+  }
+
+  static void syncImages({required List<String> list}) async {
+    print(list);
+    Directory d = await ImageApi.getDownloadedImageAbsoluteDirectory();
+    for (var i = 0; i < list.length; i++) {
+      String filename = list[i];
+      String path = "${d.path}/${filename}";
+      File f = File(path);
+      if (f.existsSync()) {
+        continue;
+      }
+      try {
+        Response? response =
+            await ImageApi.DownloadImage(filename: filename, path: path);
+        if (response != null) {
+          File file = File(path);
+          var raf = file.openSync(mode: FileMode.write);
+
+          raf.writeFromSync(response.data);
+          await raf.close();
+        }
+      } on Exception catch (e) {
+        print(e.toString());
+      }
+    }
+  }
+
+  static Future<Response?> DownloadImage(
+      {required String filename, required String path}) async {
+    try {
+      String url = Endpoints.downloadImage;
+      url = url.replaceAll("<image>", filename);
+      url = "${Endpoints.baseUrl}${url}";
+
+      var dio = Dio();
+
+      final Response response = await dio.get(url,
+          options: Options(
+              responseType: ResponseType.bytes, followRedirects: false));
+      return response;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      }
+      rethrow;
+    }
   }
 }

@@ -43,8 +43,6 @@ class InterventionPage extends StatefulWidget {
 
 // Create a corresponding State class.
 class InterventionPageState extends State<InterventionPage> {
-  // Note: This is a GlobalKey<FormState>,
-  // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
 
   late TextEditingController controllerInterventionName;
@@ -54,13 +52,11 @@ class InterventionPageState extends State<InterventionPage> {
   late List<User> usersCoordinators;
   late Map<String, Formulaire> mapFormulaires = {};
 
-  UserApi userAPI = UserApi();
-
   int _initialIndex = 0;
 
   late Formulaire currentFormulaire;
 
-  Map<String, String> fieldsValue = {};
+  //Map<String, String> fieldsValue = {};
   Map<String, TextEditingController> fieldsController = {};
 
   late Directory deviceApplicationDocumentsDirectory;
@@ -82,11 +78,11 @@ class InterventionPageState extends State<InterventionPage> {
     controllerInterventionName.addListener(_onChangedText);
   }
 
-  Future<List<User>> getMyConfig({required int dummy}) async {
+  Future<List<User>> getMyConfig() async {
     usersCoordinators =
-        await userAPI.getCoordinatorsList(user: widget.user, site: widget.site);
+        await UserApi.getCoordinatorsList(user: widget.user, site: widget.site);
 
-    mapFormulaires = await userAPI.getInterventionFormsFromTemplate(
+    mapFormulaires = await UserApi.getInterventionFormsFromTemplate(
         user: widget.user,
         site_name: widget.site.name,
         type_intervention_name: widget.intervention.type_intervention_name);
@@ -129,7 +125,7 @@ class InterventionPageState extends State<InterventionPage> {
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return FutureBuilder(
-        future: getMyConfig(dummy: _initialIndex),
+        future: getMyConfig(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return Scaffold(
@@ -445,7 +441,6 @@ class InterventionPageState extends State<InterventionPage> {
             newvalue = value;
           }
           fieldsController[f.field_on_site_uuid]!.text = newvalue;
-          fieldsValue[f.field_on_site_uuid] = newvalue;
         });
   }
 
@@ -455,7 +450,6 @@ class InterventionPageState extends State<InterventionPage> {
         initialItem: initialValue,
         label: f.field_label,
         items: f.field_possible_values,
-        // controller: fieldsController[f.field_on_site_uuid],
         validator: (value) {
           String newvalue;
           if (value == null) {
@@ -464,7 +458,6 @@ class InterventionPageState extends State<InterventionPage> {
             newvalue = value;
           }
           fieldsController[f.field_on_site_uuid]!.text = newvalue;
-          fieldsValue[f.field_on_site_uuid] = newvalue;
         });
   }
 
@@ -488,7 +481,7 @@ class InterventionPageState extends State<InterventionPage> {
         } else {
           newvalue = value.toString();
         }
-        fieldsValue[f.field_on_site_uuid] = newvalue;
+        fieldsController[f.field_on_site_uuid]!.text = newvalue;
       },
       onSaved: (value) {},
     );
@@ -508,7 +501,6 @@ class InterventionPageState extends State<InterventionPage> {
         final DateFormat formatter = DateFormat('yyyy-MM-dd');
         String newvalue = formatter.format(initialDateTimeValue);
         fieldsController[f.field_on_site_uuid]!.text = newvalue;
-        fieldsValue[f.field_on_site_uuid] = newvalue;
       }
     }
 
@@ -525,7 +517,6 @@ class InterventionPageState extends State<InterventionPage> {
           newvalue = formatter.format(value);
         }
         fieldsController[f.field_on_site_uuid]!.text = newvalue;
-        fieldsValue[f.field_on_site_uuid] = newvalue;
       },
       onSaved: (value) {},
     );
@@ -555,7 +546,6 @@ class InterventionPageState extends State<InterventionPage> {
             newvalue = f.field_switch_off;
           }
           fieldsController[f.field_on_site_uuid]!.text = newvalue;
-          fieldsValue[f.field_on_site_uuid] = newvalue;
         }
       },
       onSaved: (value) {},
@@ -573,8 +563,6 @@ class InterventionPageState extends State<InterventionPage> {
           logger.f(stringJsonListPictures);
           fieldsController[f.field_on_site_uuid]!.text =
               stringJsonListPictures as String;
-
-          fieldsValue[f.field_on_site_uuid] = stringJsonListPictures;
         });
   }
 
@@ -586,11 +574,6 @@ class InterventionPageState extends State<InterventionPage> {
         validator: (value) {
           if (value != null) {
             fieldsController[f.field_on_site_uuid]!.text = value;
-            fieldsValue[f.field_on_site_uuid] = value;
-
-            /* setState(() async {
-              saveIntervention(context);
-            });*/
           }
         });
   }

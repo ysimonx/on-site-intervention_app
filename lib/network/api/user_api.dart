@@ -123,7 +123,7 @@ class UserApi {
     }
   }
 
-  Future<Map<String, Formulaire>> getInterventionFormsFromTemplate(
+  static Future<Map<String, Formulaire>> getInterventionFormsFromTemplate(
       {required String site_name,
       required String type_intervention_name,
       required User user}) async {
@@ -142,7 +142,7 @@ class UserApi {
     return forms;
   }
 
-  Future<List<User>> getCoordinatorsList(
+  static Future<List<User>> getCoordinatorsList(
       {required Site site, required User user}) async {
     List<User> res = [];
 

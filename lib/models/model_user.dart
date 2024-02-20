@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:on_site_intervention_app/models/model_config.dart';
 
 import 'model_site.dart';

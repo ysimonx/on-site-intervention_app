@@ -61,8 +61,8 @@ Widget widgetGallery(
           File imageFileSource = File(pathImage);
 
           String fileExtension = pathImage.split('.').last;
-          String filename = "${photoOnSiteUUID}.${fileExtension}";
-          String newAbsolutePathImage = "${d.path}/${filename}";
+          String filename = "$photoOnSiteUUID.$fileExtension";
+          String newAbsolutePathImage = "${d.path}/$filename";
           await imageFileSource.copy(newAbsolutePathImage);
 
           listPictures.add(filename);
@@ -106,10 +106,11 @@ Widget widgetGallery(
 Widget widgetGalleryItem(
     {required String uriPicture, required Directory directory}) {
   if (!uriPicture.startsWith("/")) {
-    uriPicture = "${directory.path}/${uriPicture}";
+    uriPicture = "${directory.path}/$uriPicture";
   }
 
-  Widget widgetChild = SizedBox(width: 1000, height: 1000, child: Text("no"));
+  Widget widgetChild =
+      const SizedBox(width: 1000, height: 1000, child: Text("no"));
 
   if (uriPicture.startsWith("http")) {
     widgetChild = CachedNetworkImage(
@@ -388,15 +389,15 @@ class _CardSettingsGalleryState extends FormFieldState<String> {
   }
 
   void _onFieldSubmitted(String value) {
-    if (this.widget.focusNode != null) this.widget.focusNode!.unfocus();
+    if (widget.focusNode != null) widget.focusNode!.unfocus();
 
-    if (this.widget.inputActionNode != null) {
-      this.widget.inputActionNode!.requestFocus();
+    if (widget.inputActionNode != null) {
+      widget.inputActionNode!.requestFocus();
       return;
     }
 
-    if (this.widget.onFieldSubmitted != null) {
-      this.widget.onFieldSubmitted!(value);
+    if (widget.onFieldSubmitted != null) {
+      widget.onFieldSubmitted!(value);
     }
   }
 

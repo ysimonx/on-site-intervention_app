@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -190,7 +192,7 @@ class ImageApi {
   }
 
   static String getPendingUploadImageRelativeDirectoryPath() {
-    final String pathDirectory = "$localSubDirectoryUploadImages";
+    const String pathDirectory = "$localSubDirectoryUploadImages";
     return pathDirectory;
   }
 

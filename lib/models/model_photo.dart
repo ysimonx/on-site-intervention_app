@@ -1,4 +1,6 @@
 // import 'package:app_renovadmin/models/location.dart';
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:uuid/uuid.dart';
 
 class Photo {

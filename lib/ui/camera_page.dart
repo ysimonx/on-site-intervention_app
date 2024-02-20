@@ -161,11 +161,6 @@ class _CameraPageState extends State<CameraPage>
       }
 
       XFile picture = await _cameraController.takePicture();
-      // TODO
-      // je devrais faire un copyCrop ici pour ne garder que la partie haute de l'image
-      // cf : https://github.com/brendan-duncan/image/blob/main/doc/transform.md
-      // print(picture.path);
-      // ignore: use_build_context_synchronously
 
       Navigator.of(context).pop(picture.path);
     } on CameraException catch (e) {

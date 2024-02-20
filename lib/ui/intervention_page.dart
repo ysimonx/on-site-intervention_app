@@ -49,13 +49,6 @@ class InterventionPageState extends State<InterventionPage> {
 
   late TextEditingController controllerInterventionName;
 
-  late String title = "";
-  late String url = "";
-  late String email = "";
-  late int phone;
-  late DateTime date1stutil;
-  late int durationInDays;
-
   bool _needSave = false;
 
   late List<User> usersCoordinators;

@@ -43,7 +43,6 @@ class _widgetSignatureState extends State<widgetSignature> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     SvgPicture? svpP = null;
     try {
       svpP = SvgPicture.string(stringSVG);
@@ -59,7 +58,7 @@ class _widgetSignatureState extends State<widgetSignature> {
           if (context.mounted) {
             var stringReturnSVG = await Navigator.push(context,
                 MaterialPageRoute(builder: (context) {
-              return SignaturePage();
+              return const SignaturePage();
             }));
 
             if (stringReturnSVG == null) {
@@ -71,7 +70,7 @@ class _widgetSignatureState extends State<widgetSignature> {
           }
         },
       ),
-      (svpP != null) ? svpP : Text("no picture")
+      (svpP != null) ? svpP : const Text("no picture")
     ]);
   }
 }
@@ -304,15 +303,15 @@ class _CardSettingsSignatureState extends FormFieldState<String> {
   }
 
   void _onFieldSubmitted(String value) {
-    if (this.widget.focusNode != null) this.widget.focusNode!.unfocus();
+    if (widget.focusNode != null) widget.focusNode!.unfocus();
 
-    if (this.widget.inputActionNode != null) {
-      this.widget.inputActionNode!.requestFocus();
+    if (widget.inputActionNode != null) {
+      widget.inputActionNode!.requestFocus();
       return;
     }
 
-    if (this.widget.onFieldSubmitted != null) {
-      this.widget.onFieldSubmitted!(value);
+    if (widget.onFieldSubmitted != null) {
+      widget.onFieldSubmitted!(value);
     }
   }
 

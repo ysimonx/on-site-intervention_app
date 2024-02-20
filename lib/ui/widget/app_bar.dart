@@ -80,13 +80,13 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                         child: Text(translateI18N("gestion des listes")
                             .toCapitalized()),
                       ),
-                  PopupMenuItem<int>(
-                      child: Text("upload images"), value: valueUPLOADIMAGES),
-                  PopupMenuItem<int>(
-                      child: Text("remove local files"),
-                      value: valueREMOVEFILES),
-                  PopupMenuItem<int>(
-                      child: Text("signature"), value: valueSIGNATURE),
+                  const PopupMenuItem<int>(
+                      value: valueUPLOADIMAGES, child: Text("upload images")),
+                  const PopupMenuItem<int>(
+                      value: valueREMOVEFILES,
+                      child: Text("remove local files")),
+                  const PopupMenuItem<int>(
+                      value: valueSIGNATURE, child: Text("signature")),
                   PopupMenuItem<int>(
                     value: valueDECONNEXION,
                     child: Text(translateI18N("déconnexion").toCapitalized()),
@@ -120,7 +120,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                   if (context.mounted) {
                     var pathImage = await Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
-                      return SignaturePage();
+                      return const SignaturePage();
                     }));
 
                     if (pathImage == null) {

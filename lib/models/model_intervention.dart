@@ -51,7 +51,9 @@ class Intervention {
             : "",
         site_id = json.containsKey('site_id')
             ? json['site_id'] as String
-            : "826eaeb6-7180-443d-bce4-f1840079a54d",
+            : json.containsKey('site')
+                ? json['site']['id'] as String
+                : "826eaeb6-7180-443d-bce4-f1840079a54d",
         version = json.containsKey('version') ? json['version'] : 1,
         intervention_values_on_site_uuid =
             json.containsKey('intervention_values_on_site_uuid')
@@ -71,7 +73,9 @@ class Intervention {
             : Place.nowhere(
                 site_id: json.containsKey('site_id')
                     ? json['site_id'] as String
-                    : "826eaeb6-7180-443d-bce4-f1840079a54d");
+                    : json.containsKey('site')
+                        ? json['site']['id'] as String
+                        : "826eaeb6-7180-443d-bce4-f1840079a54d");
 
   // forms2 = {};
 }

@@ -4,6 +4,7 @@ import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/network/api/image.api.dart';
 
 import '../../models/model_user.dart';
+import '../../network/api/intervention_api.dart';
 import '../../network/api/login_api.dart';
 import 'package:flutter/material.dart';
 
@@ -31,6 +32,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
   static const int valueUSERS = 2;
   static const int valueACCOUNT = 4;
   static const int valueUPLOADIMAGES = 5;
+  static const int valueREMOVEFILES = 6;
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +81,9 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                   PopupMenuItem<int>(
                       child: Text("upload images"), value: valueUPLOADIMAGES),
                   PopupMenuItem<int>(
+                      child: Text("remove local files"),
+                      value: valueREMOVEFILES),
+                  PopupMenuItem<int>(
                     value: valueDECONNEXION,
                     child: Text(translateI18N("déconnexion").toCapitalized()),
                   ),
@@ -86,6 +91,9 @@ class AuthentifiedBaseAppBar extends StatelessWidget
               }, onSelected: (value) async {
                 if (value == valueUPLOADIMAGES) {
                   await ImageApi.processUploadPendingImages();
+                }
+                if (value == valueREMOVEFILES) {
+                  await InterventionApi.deleteLocalUpdatedFiles();
                 }
                 if (value == valueDECONNEXION) {
                   LoginApi loginApi = LoginApi();

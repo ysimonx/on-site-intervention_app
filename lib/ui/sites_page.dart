@@ -107,6 +107,7 @@ class _SitePageState extends State<SitePage> {
       List<Intervention> listInterventions, BuildContext context) {
     return RefreshIndicator(
         onRefresh: () async {
+          setState(() {});
           return;
         },
         child: ListTileTheme(

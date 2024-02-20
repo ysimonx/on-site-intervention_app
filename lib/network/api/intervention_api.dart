@@ -189,6 +189,29 @@ class InterventionApi {
   }
 
   //
+
+  static Future<List<FileSystemEntity>> deleteLocalUpdatedFiles() async {
+    String path = await localPath;
+
+    try {
+      Directory d = Directory("$path/$DIRINTERVENTIONUPDATED/");
+
+      List<FileSystemEntity> list = Directory(d.path).listSync();
+      for (var i = 0; i < list.length; i++) {
+        FileSystemEntity f = list[i];
+        if (f is File) {
+          f.deleteSync();
+          list.remove(f);
+        }
+      }
+      return list;
+      // return [];
+    } on Exception catch (_) {
+      List<FileSystemEntity> list = [];
+      return list;
+    }
+  }
+
   Future<List<FileSystemEntity>> getLocalUpdatedFiles() async {
     String path = await localPath;
 

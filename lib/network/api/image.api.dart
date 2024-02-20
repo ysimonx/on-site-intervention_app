@@ -192,12 +192,12 @@ class ImageApi {
   }
 
   static String getPendingUploadImageRelativeDirectoryPath() {
-    const String pathDirectory = "$localSubDirectoryUploadImages";
+    const String pathDirectory = localSubDirectoryUploadImages;
     return pathDirectory;
   }
 
   static String getDownloadedImageRelativeDirectoryPath() {
-    final String pathDirectory = "$localSubDirectoryDownloadedImages";
+    const String pathDirectory = localSubDirectoryDownloadedImages;
     return pathDirectory;
   }
 

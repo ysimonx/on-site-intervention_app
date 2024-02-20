@@ -328,7 +328,7 @@ class _CameraPageState extends State<CameraPage>
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  _currentZoomLevel.toStringAsFixed(1) + 'x',
+                  '${_currentZoomLevel.toStringAsFixed(1)}x',
                   style: const TextStyle(color: Colors.white),
                 ),
               ),

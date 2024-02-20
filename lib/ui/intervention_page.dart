@@ -18,6 +18,7 @@ import '../network/api/intervention_api.dart';
 import '../network/api/user_api.dart';
 import 'utils/logger.dart';
 import 'widget/card_settings_gallery.dart';
+import 'widget/card_settings_signature.dart';
 import 'widget/scaffold.dart';
 import 'widget/scaffold_supervisor.dart';
 import 'widget/scaffold_user.dart';
@@ -406,6 +407,11 @@ class InterventionPageState extends State<InterventionPage> {
       return genCardSettingsUserFromRole(initialValue, f);
     }
 
+    if (f.field_type == "signature") {
+      // return genCardSettingsInt(initialValue, s, f);
+      return genCardSettingsSignature(initialValue, f);
+    }
+
     if (f.field_type == "gallery") {
       /* List<String> listPictures = [
         "https://webapp.sandbox.fidwork.fr/api/request/images/picture_4398_visit_20230306165933.jpg",
@@ -576,6 +582,23 @@ class InterventionPageState extends State<InterventionPage> {
               stringJsonListPictures as String;
 
           fieldsValue[f.field_on_site_uuid] = stringJsonListPictures;
+        });
+  }
+
+  CardSettingsWidget genCardSettingsSignature(String initialValue, Field f) {
+    return CardSettingsSignature(
+        field: f,
+        label: f.field_label,
+        initialValue: initialValue,
+        validator: (value) {
+          if (value != null) {
+            fieldsController[f.field_on_site_uuid]!.text = value;
+            fieldsValue[f.field_on_site_uuid] = value;
+
+            /* setState(() async {
+              saveIntervention(context);
+            });*/
+          }
         });
   }
 }

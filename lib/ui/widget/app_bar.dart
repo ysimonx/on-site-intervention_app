@@ -9,6 +9,7 @@ import '../../network/api/login_api.dart';
 import 'package:flutter/material.dart';
 
 import '../lists_page.dart';
+import '../signature_page.dart';
 import '../users_page.dart';
 import '../utils/i18n.dart';
 
@@ -33,6 +34,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
   static const int valueACCOUNT = 4;
   static const int valueUPLOADIMAGES = 5;
   static const int valueREMOVEFILES = 6;
+  static const int valueSIGNATURE = 7;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +86,8 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                       child: Text("remove local files"),
                       value: valueREMOVEFILES),
                   PopupMenuItem<int>(
+                      child: Text("signature"), value: valueSIGNATURE),
+                  PopupMenuItem<int>(
                     value: valueDECONNEXION,
                     child: Text(translateI18N("déconnexion").toCapitalized()),
                   ),
@@ -110,6 +114,18 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                         MaterialPageRoute(builder: (context) {
                       return ListsPage(site: site, user: user);
                     }));
+                  }
+                }
+                if (value == valueSIGNATURE) {
+                  if (context.mounted) {
+                    var pathImage = await Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return SignaturePage();
+                    }));
+
+                    if (pathImage == null) {
+                      return;
+                    }
                   }
                 }
                 if (value == valueUSERS) {

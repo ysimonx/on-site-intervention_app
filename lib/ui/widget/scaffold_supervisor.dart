@@ -5,7 +5,8 @@ import 'package:card_settings/card_settings.dart';
 import 'package:intl/intl.dart';
 import 'package:on_site_intervention_app/models/model_user.dart';
 
-// ignore: must_be_immutable
+import '../utils/i18n.dart';
+
 class CardSettingsSectionHeader {
   late int phone;
   late String title;
@@ -42,12 +43,12 @@ class CardSettingsSectionHeader {
       ),*/
       children: <CardSettingsWidget>[
         CardSettingsListPicker(
-          label: "Status",
+          label: translateI18N("status").toCapitalized(),
           items: listStatuses,
           initialItem: listStatuses[1],
         ),
         CardSettingsListPicker(
-          label: "Coordinator",
+          label: translateI18N("assigné à").toCapitalized(),
           items: listCoordinatorString,
           initialItem:
               listCoordinatorString.isNotEmpty ? listCoordinatorString[0] : "",

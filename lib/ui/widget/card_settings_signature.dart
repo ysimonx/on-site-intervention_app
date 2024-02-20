@@ -1,8 +1,6 @@
 // Copyright (c) 2018, codegrue. All rights reserved. Use of this source code
 // is governed by the MIT license that can be found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:card_settings/card_settings.dart';
 import 'package:card_settings/helpers/platform_functions.dart';
 import 'package:card_settings/interfaces/common_field_properties.dart';
@@ -12,9 +10,71 @@ import 'package:flutter/services.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter_cupertino_settings/flutter_cupertino_settings.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../models/model_field.dart';
-import 'signature.dart';
+import '../signature_page.dart';
+
+class widgetSignature extends StatefulWidget {
+  final String initialValue;
+  final FormFieldValidator<String>? validator;
+  final Field field;
+  final BuildContext context;
+
+  const widgetSignature(
+      {super.key,
+      required this.initialValue,
+      required this.context,
+      required this.validator,
+      required this.field});
+
+  @override
+  State<widgetSignature> createState() => _widgetSignatureState();
+}
+
+class _widgetSignatureState extends State<widgetSignature> {
+  late String stringSVG;
+
+  @override
+  void initState() {
+    super.initState();
+    stringSVG = widget.initialValue;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    SvgPicture? svpP = null;
+    try {
+      svpP = SvgPicture.string(stringSVG);
+    } catch (e) {
+      print("error");
+    }
+    return Column(children: [
+      IconButton(
+        padding: EdgeInsets.zero,
+        iconSize: 50,
+        icon: const Icon(Icons.draw),
+        onPressed: () async {
+          if (context.mounted) {
+            var stringReturnSVG = await Navigator.push(context,
+                MaterialPageRoute(builder: (context) {
+              return SignaturePage();
+            }));
+
+            if (stringReturnSVG == null) {
+              return;
+            }
+            stringSVG = stringReturnSVG;
+            widget.validator!(stringReturnSVG);
+            setState(() {});
+          }
+        },
+      ),
+      (svpP != null) ? svpP : Text("no picture")
+    ]);
+  }
+}
 
 /// This is a standard one line text entry  It's based on the [TextFormField] widget.
 class CardSettingsSignature extends FormField<String>

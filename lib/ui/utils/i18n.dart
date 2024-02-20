@@ -8,7 +8,8 @@ String translateI18N(value) {
     "nouvelle intervention": {"en": "new request"},
     "veuillez choisir le type de chantier": {
       "en": "please choose the kind of request"
-    }
+    },
+    "assigné à": {"en": "assignee"},
   };
 
   if (trads.containsKey(value)) {

@@ -170,8 +170,9 @@ class _CameraPageState extends State<CameraPage>
   }
 
   Future initCamera(CameraDescription cameraDescription) async {
-    _cameraController =
-        CameraController(cameraDescription, ResolutionPreset.high);
+    _cameraController = CameraController(
+        cameraDescription, ResolutionPreset.high,
+        enableAudio: false);
     try {
       await _cameraController.initialize().then((_) {
         _cameraController

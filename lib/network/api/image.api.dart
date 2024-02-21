@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import '../../ui/utils/logger.dart';
 import '../dio_client.dart';
 import 'constants.dart';
+import 'package:geolocator/geolocator.dart';
 
 class ImageApi {
   final DioClient dioClient;
@@ -117,11 +118,8 @@ class ImageApi {
             photo_on_site_uuid: mapPhoto["photo_on_site_uuid"],
             field_on_site_uuid: mapPhoto["field_on_site_uuid"],
             filename: mapPhoto["filename"],
-            /* latitude: mapPhoto["location"]["latitude"],
-            longitude: mapPhoto["location"]["longitude"]
-            */
-            latitude: 0.0,
-            longitude: 0.0);
+            latitude: mapPhoto["location"]["latitude"],
+            longitude: mapPhoto["location"]["longitude"]);
 
         if (resp != null) {
           logger.d(resp.statusCode);
@@ -150,22 +148,25 @@ class ImageApi {
 
   static Future<void> addUploadPendingImage({
     // required Field field,
-    // required Position position,
+    required Position? position,
     required String photo_on_site_uuid,
     required String filename,
     required String field_on_site_uuid,
   }) async {
+    double longitude = 0.0;
+    double latitude = 0.0;
+    if (position != null) {
+      longitude = position.longitude;
+      latitude = position.latitude;
+    }
+
     final directory = await getPendingUploadImageAbsoluteDirectory();
     Map<String, dynamic> jsonContent = {
       "photo_on_site_uuid": photo_on_site_uuid,
       "filename": filename,
-      "field_on_site_uuid": field_on_site_uuid
-      /* "fieldName": field.field_name,
-      "location": {
-        "longitude": position.longitude,
-        "latitude": position.latitude
-      }
-      */
+      "field_on_site_uuid": field_on_site_uuid,
+      /* "fieldName": field.field_name,*/
+      "location": {"longitude": longitude, "latitude": latitude}
     };
 
     String jsonContentAsString = jsonEncode(jsonContent);

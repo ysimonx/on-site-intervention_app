@@ -19,6 +19,7 @@ class CardSettingsSectionHeader {
     "commissionned",
     "canceled"
   ];
+
   CardSettingsSection render(
       {required GlobalKey<FormState> key, required List<User> coordinators}) {
     List<String> listCoordinatorString = [];

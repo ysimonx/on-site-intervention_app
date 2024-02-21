@@ -154,10 +154,8 @@ class _SitePageState extends State<SitePage> {
   }
 
   void addIntervention(String typeInterventionName) async {
-    UserApi userAPI = UserApi();
-
     Map<String, Formulaire> initializedForms =
-        await userAPI.getInterventionFormsFromTemplate(
+        await UserApi.getInterventionFormsFromTemplate(
             user: widget.user,
             site_name: widget.site.name,
             type_intervention_name: typeInterventionName);

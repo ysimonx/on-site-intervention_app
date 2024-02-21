@@ -16,12 +16,23 @@ import 'package:flutter/services.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter_cupertino_settings/flutter_cupertino_settings.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../models/model_field.dart';
 import '../../models/model_photo.dart';
 import '../../network/api/image.api.dart';
 import '../camera_page.dart';
 import '../utils/logger.dart';
+import '../utils/tools.dart';
+
+Future<Position?> getLocation() async {
+  var isLocationPermissionGranted = (await requestPermission());
+  if (await isLocationPermissionGranted) {
+    Position? myLocation = await (Geolocator.getLastKnownPosition());
+    return myLocation;
+  }
+  return null;
+}
 
 Widget widgetGallery(
     {required String initialValue,
@@ -38,6 +49,8 @@ Widget widgetGallery(
         iconSize: 50,
         icon: const Icon(Icons.photo_camera),
         onPressed: () async {
+          Position? myLocation = await getLocation();
+
           List<CameraDescription> camerasDescriptions =
               await availableCameras();
 
@@ -73,12 +86,12 @@ Widget widgetGallery(
           //
 
           ImageApi.addUploadPendingImage(
-              filename: filename,
-              photo_on_site_uuid: photoOnSiteUUID,
-              field_on_site_uuid: field.field_on_site_uuid
-              // field: Field(),
-              // position: myLocation!,
-              );
+            filename: filename,
+            photo_on_site_uuid: photoOnSiteUUID,
+            field_on_site_uuid: field.field_on_site_uuid,
+            // field: Field(),
+            position: myLocation,
+          );
 
           validator!(jsonEncode(listPictures));
 

@@ -51,7 +51,8 @@
 	<string>Explanation on why the photo libraru access is needed.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
     <string>Cela permet d'afficher les chantiers en cours en fonction de votre position</string>
-    
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
 	
 
 </dict>

@@ -190,9 +190,10 @@ class InterventionPageState extends State<InterventionPage> {
             const Padding(
                 padding: EdgeInsets.symmetric(vertical: 2), child: Text(' ')),
             widgetBodyTabsFormulaires(intervention: widget.intervention),
-            _initialIndex == 0
-                ? widgetBodyFormulaire()
-                : widgetBodyFormulaireNG(_initialIndex),
+            //_initialIndex == 0
+            //    ? widgetBodyFormulaire()
+            //    : widgetBodyFormulaireNG(_initialIndex),
+            widgetBodyFormulaireNG(_initialIndex),
             const SizedBox(
               height: 200,
             ),
@@ -386,10 +387,20 @@ class InterventionPageState extends State<InterventionPage> {
       return genCardSettingsInt(initialValue, s, f);
     }
 
+    if (f.field_on_site_uuid == "e28cbc05-2f4b-46f5-acca-c147ae8a1db8") {
+      print("you");
+    }
+
     if (f.field_type == "list_from_mandatory_lists") {
-      if (f.field_default_value.isNotEmpty) {
+      if (f.field_possible_values.isNotEmpty) {
         String sList = f.field_possible_values[0];
-        f.field_possible_values = mapMandatoryLists[sList]["values"];
+        Map<String, dynamic> mapJsonList = mapMandatoryLists[sList];
+        if (mapJsonList["type"] == "fixed") {
+          f.field_possible_values = mapJsonList["values"];
+        }
+        if (mapJsonList["type"] == "administrable_by_site") {
+          f.field_possible_values = [];
+        }
         return genCardSettingsListPicker(initialValue, f);
       }
     }

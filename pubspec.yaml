@@ -55,6 +55,7 @@ dependencies:
   signature: ^5.4.1
   flutter_svg: ^2.0.9
   permission_handler: ^11.3.0
+  svg_path_parser: ^1.1.2
   
 
 dev_dependencies:

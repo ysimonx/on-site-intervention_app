@@ -11,8 +11,11 @@ import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter_cupertino_settings/flutter_cupertino_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:on_site_intervention_app/ui/utils/i18n.dart';
+import 'package:svg_path_parser/svg_path_parser.dart';
 
 import '../../models/model_field.dart';
+import '../../network/api/image.api.dart';
 import '../signature_page.dart';
 
 class widgetSignature extends StatefulWidget {
@@ -45,8 +48,11 @@ class _widgetSignatureState extends State<widgetSignature> {
   Widget build(BuildContext context) {
     SvgPicture? svpP = null;
     try {
-      svpP = SvgPicture.string(stringSVG);
+      if (ImageApi.isSvgPath(stringSVG)) {
+        svpP = SvgPicture.string(stringSVG);
+      }
     } catch (e) {
+      svpP = null;
       print("error");
     }
     return Column(children: [
@@ -70,7 +76,7 @@ class _widgetSignatureState extends State<widgetSignature> {
           }
         },
       ),
-      (svpP != null) ? svpP : const Text("no picture")
+      (svpP != null) ? svpP : Text(translateI18N("signature"))
     ]);
   }
 }

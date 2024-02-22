@@ -279,4 +279,13 @@ class ImageApi {
       rethrow;
     }
   }
+
+  static bool isSvgPath(String stringSVG) {
+    if (stringSVG.startsWith("<svg")) {
+      if (stringSVG.endsWith("/svg>")) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

@@ -37,24 +37,10 @@ class ListsPageState extends State<ListsPage> {
   Future<Map<String, dynamic>> getMyInformations() async {
     // complete le dictOfLists du site avec les listes obligatoires des types d'interventions du user
 
-    widget.user.myconfig.config_types_intervention
-        .forEach((type_intervention_name, dummy) async {
-      Map<String, dynamic> mapMandatoryList =
-          await UserApi.getMandatoryListFromTemplate(
-              user: widget.user,
-              type_intervention_name: type_intervention_name);
-      mapMandatoryList.forEach((key, value) {
-        if (value["type"] == "administrable_by_site") {
-          if (dictOfLists.containsKey(key)) {
-            print("good");
-          } else {
-            dictOfLists[key] = [];
-          }
-        }
-      });
-    });
-
-    return dictOfLists;
+    Map<String, dynamic> dictOfList_updated =
+        UserApi.CompleteDictOfListWithMandatory(
+            user: widget.user, dictOfLists: dictOfLists);
+    return dictOfList_updated;
   }
 
   @override

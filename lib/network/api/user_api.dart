@@ -147,11 +147,10 @@ class UserApi {
     Map<String, dynamic> type_intervention =
         await user.myconfig.config_types_intervention[type_intervention_name];
 
-    Map<String, dynamic> mapMandatoryLists={}
+    Map<String, dynamic> mapMandatoryLists = {};
     if (type_intervention.containsKey("mandatory_lists")) {
-      mapMandatoryLists =
-          type_intervention["mandatory_lists"];
-    } 
+      mapMandatoryLists = type_intervention["mandatory_lists"];
+    }
 
     return mapMandatoryLists;
   }
@@ -197,5 +196,25 @@ class UserApi {
       return userMe;
     }
     return User.nobody();
+  }
+
+  static CompleteDictOfListWithMandatory(
+      {required User user, required Map<String, dynamic> dictOfLists}) {
+    user.myconfig.config_types_intervention
+        .forEach((type_intervention_name, dummy) async {
+      Map<String, dynamic> mapMandatoryList =
+          await UserApi.getMandatoryListFromTemplate(
+              user: user, type_intervention_name: type_intervention_name);
+      mapMandatoryList.forEach((key, value) {
+        if (value["type"] == "administrable_by_site") {
+          if (dictOfLists.containsKey(key)) {
+            print("good");
+          } else {
+            dictOfLists[key] = [];
+          }
+        }
+      });
+    });
+    return dictOfLists;
   }
 }

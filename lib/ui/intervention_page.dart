@@ -43,8 +43,9 @@ class InterventionPage extends StatefulWidget {
 
 // Create a corresponding State class.
 class InterventionPageState extends State<InterventionPage> {
-  final _formKey = GlobalKey<FormState>();
+  // final _formKey = GlobalKey<FormState>();
 
+  late List<GlobalKey<FormState>> _formsKey = [];
   late TextEditingController controllerInterventionName;
 
   bool _needSave = false;
@@ -95,7 +96,9 @@ class InterventionPageState extends State<InterventionPage> {
 
     // Chargement des données initiales de chaque "Field"
     // dans des TextEditingController
+    _formsKey = [];
     mapFormulaires.forEach((key, formulaire) {
+      _formsKey.add(GlobalKey<FormState>());
       formulaire.sections.forEach((key, section) {
         section.fields.forEach((key, f) {
           if (fieldsController.containsKey(f.field_on_site_uuid)) {
@@ -179,7 +182,7 @@ class InterventionPageState extends State<InterventionPage> {
   Widget widgetBodyForm(BuildContext context) {
     return Wrap(children: [
       Form(
-          key: _formKey,
+          key: _formsKey[_initialIndex],
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Padding(
@@ -190,30 +193,12 @@ class InterventionPageState extends State<InterventionPage> {
             const Padding(
                 padding: EdgeInsets.symmetric(vertical: 2), child: Text(' ')),
             widgetBodyTabsFormulaires(intervention: widget.intervention),
-            //_initialIndex == 0
-            //    ? widgetBodyFormulaire()
-            //    : widgetBodyFormulaireNG(_initialIndex),
             widgetBodyFormulaireNG(_initialIndex),
             const SizedBox(
               height: 200,
             ),
           ])),
     ]);
-  }
-
-  CardSettings widgetBodyFormulaire() {
-    var scaffoldUser = CardSettingsSectionScaffoldUser();
-    var scaffold = CardSettingsSectionScaffold();
-
-    return CardSettings(
-      labelWidth: 200.0,
-      showMaterialonIOS: true, // default is false
-      cardless: true, // default is false
-      children: <CardSettingsSection>[
-        scaffoldUser.render(key: _formKey),
-        scaffold.render(key: _formKey),
-      ],
-    );
   }
 
   CardSettings widgetHeaderFormulaire() {
@@ -224,7 +209,7 @@ class InterventionPageState extends State<InterventionPage> {
       cardless: true, // default is fals
       children: <CardSettingsSection>[
         scaffoldSupervisor.render(
-            key: _formKey, coordinators: usersCoordinators),
+            key: _formsKey[_initialIndex], coordinators: usersCoordinators),
       ],
     );
   }
@@ -352,12 +337,13 @@ class InterventionPageState extends State<InterventionPage> {
     sections
         .forEach((k, s) => lCardSettingsSection.add(sectionCardSettings(s)));
 
-    return CardSettings(
+    return Form(
+        child: CardSettings(
       labelWidth: 200.0,
       showMaterialonIOS: true, // default is false
       cardless: true, // default is fals
       children: lCardSettingsSection,
-    );
+    ));
   }
 
   CardSettingsSection sectionCardSettings(Section s) {
@@ -400,6 +386,11 @@ class InterventionPageState extends State<InterventionPage> {
         }
         if (mapJsonList["type"] == "administrable_by_site") {
           f.field_possible_values = [];
+          if (widget.site.dictOfLists.containsKey(sList)) {
+            f.field_possible_values = widget.site.dictOfLists[sList];
+          } else {
+            f.field_possible_values = [];
+          }
         }
         return genCardSettingsListPicker(initialValue, f);
       }

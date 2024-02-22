@@ -51,6 +51,7 @@ class InterventionPageState extends State<InterventionPage> {
 
   late List<User> usersCoordinators;
   late Map<String, Formulaire> mapFormulaires = {};
+  late Map<String, dynamic> mapMandatoryLists = {};
 
   int _initialIndex = 0;
 
@@ -86,6 +87,11 @@ class InterventionPageState extends State<InterventionPage> {
         user: widget.user,
         site_name: widget.site.name,
         type_intervention_name: widget.intervention.type_intervention_name);
+
+    mapMandatoryLists = await UserApi.getMandatoryListFromTemplate(
+        user: widget.user,
+        type_intervention_name: widget.intervention.type_intervention_name);
+    print(mapMandatoryLists.toString());
 
     // Chargement des données initiales de chaque "Field"
     // dans des TextEditingController
@@ -378,6 +384,22 @@ class InterventionPageState extends State<InterventionPage> {
 
     if (f.field_type == "integer") {
       return genCardSettingsInt(initialValue, s, f);
+    }
+
+    /*
+    {
+      ...
+          "field_type": "list_from_mandatory_list",
+          "values": [
+              "scaffold_type" => Take a look at "mandatory list for this kind on intervention"
+          ]
+      },
+    */
+    if (f.field_type == "list_from_mandatory_list") {
+      print(mapMandatoryLists.toString());
+      String sList = f.field_possible_values[0];
+      f.field_possible_values = mapMandatoryLists[sList]["values"];
+      return genCardSettingsListPicker(initialValue, f);
     }
 
     if (f.field_type == "list") {

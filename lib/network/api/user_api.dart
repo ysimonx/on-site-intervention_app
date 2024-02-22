@@ -142,6 +142,17 @@ class UserApi {
     return forms;
   }
 
+  static Future<Map<String, dynamic>> getMandatoryListFromTemplate(
+      {required String type_intervention_name, required User user}) async {
+    Map<String, dynamic> type_intervention =
+        await user.myconfig.config_types_intervention[type_intervention_name];
+
+    Map<String, dynamic> mapMandatoryLists =
+        type_intervention["mandatory_lists"];
+
+    return mapMandatoryLists;
+  }
+
   static Future<List<User>> getCoordinatorsList(
       {required Site site, required User user}) async {
     List<User> res = [];

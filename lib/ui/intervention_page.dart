@@ -389,13 +389,13 @@ class InterventionPageState extends State<InterventionPage> {
     /*
     {
       ...
-          "field_type": "list_from_mandatory_list",
+          "field_type": "list_from_mandatory_lists",
           "values": [
               "scaffold_type" => Take a look at "mandatory list for this kind on intervention"
           ]
       },
     */
-    if (f.field_type == "list_from_mandatory_list") {
+    if (f.field_type == "list_from_mandatory_lists") {
       print(mapMandatoryLists.toString());
       String sList = f.field_possible_values[0];
       f.field_possible_values = mapMandatoryLists[sList]["values"];

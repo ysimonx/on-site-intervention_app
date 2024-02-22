@@ -408,6 +408,10 @@ class InterventionPageState extends State<InterventionPage> {
       return genCardSettingsSwitch(initialValue, f);
     }
 
+    if (f.field_type == "text") {
+      return genCardSettingsText(initialValue, f);
+    }
+
     if (f.field_type == "user_from_role") {
       return genCardSettingsUserFromRole(initialValue, f);
     }
@@ -536,6 +540,16 @@ class InterventionPageState extends State<InterventionPage> {
       },
       onSaved: (value) {},
     );
+  }
+
+  CardSettingsText genCardSettingsText(String initialValue, Field f) {
+    return CardSettingsText(
+        label: f.field_label,
+        initialValue: initialValue,
+        validator: (value) {
+          logger.f(value);
+          fieldsController[f.field_on_site_uuid]!.text = value as String;
+        });
   }
 
   CardSettingsSwitch genCardSettingsSwitch(String initialValue, Field f) {

@@ -7,6 +7,7 @@ import 'package:on_site_intervention_app/models/model_tenant.dart';
 import 'package:on_site_intervention_app/models/model_user.dart';
 
 import '../network/api/site_api.dart';
+import '../network/api/user_api.dart';
 import 'utils/i18n.dart';
 import 'widget/app_bar.dart';
 
@@ -34,6 +35,25 @@ class ListsPageState extends State<ListsPage> {
   }
 
   Future<Map<String, dynamic>> getMyInformations() async {
+    // complete le dictOfLists du site avec les listes obligatoires des types d'interventions du user
+
+    widget.user.myconfig.config_types_intervention
+        .forEach((type_intervention_name, dummy) async {
+      Map<String, dynamic> mapMandatoryList =
+          await UserApi.getMandatoryListFromTemplate(
+              user: widget.user,
+              type_intervention_name: type_intervention_name);
+      mapMandatoryList.forEach((key, value) {
+        if (value["type"] == "administrable_by_site") {
+          if (dictOfLists.containsKey(key)) {
+            print("good");
+          } else {
+            dictOfLists[key] = [];
+          }
+        }
+      });
+    });
+
     return dictOfLists;
   }
 

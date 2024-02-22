@@ -147,8 +147,11 @@ class UserApi {
     Map<String, dynamic> type_intervention =
         await user.myconfig.config_types_intervention[type_intervention_name];
 
-    Map<String, dynamic> mapMandatoryLists =
-        type_intervention["mandatory_lists"];
+    Map<String, dynamic> mapMandatoryLists={}
+    if (type_intervention.containsKey("mandatory_lists")) {
+      mapMandatoryLists =
+          type_intervention["mandatory_lists"];
+    } 
 
     return mapMandatoryLists;
   }

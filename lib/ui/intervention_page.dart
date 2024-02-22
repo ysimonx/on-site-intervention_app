@@ -386,20 +386,12 @@ class InterventionPageState extends State<InterventionPage> {
       return genCardSettingsInt(initialValue, s, f);
     }
 
-    /*
-    {
-      ...
-          "field_type": "list_from_mandatory_lists",
-          "values": [
-              "scaffold_type" => Take a look at "mandatory list for this kind on intervention"
-          ]
-      },
-    */
     if (f.field_type == "list_from_mandatory_lists") {
-      print(mapMandatoryLists.toString());
-      String sList = f.field_possible_values[0];
-      f.field_possible_values = mapMandatoryLists[sList]["values"];
-      return genCardSettingsListPicker(initialValue, f);
+      if (f.field_default_value.isNotEmpty) {
+        String sList = f.field_possible_values[0];
+        f.field_possible_values = mapMandatoryLists[sList]["values"];
+        return genCardSettingsListPicker(initialValue, f);
+      }
     }
 
     if (f.field_type == "list") {

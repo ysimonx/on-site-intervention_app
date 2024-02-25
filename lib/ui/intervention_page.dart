@@ -412,6 +412,14 @@ class InterventionPageState extends State<InterventionPage> {
       return genCardSettingsText(initialValue, f);
     }
 
+    if (f.field_type == "email") {
+      return genCardSettingsEmail(initialValue, f);
+    }
+
+    if (f.field_type == "phone") {
+      return genCardSettingsPhone(initialValue, f);
+    }
+
     if (f.field_type == "user_from_role") {
       return genCardSettingsUserFromRole(initialValue, f);
     }
@@ -542,10 +550,37 @@ class InterventionPageState extends State<InterventionPage> {
     );
   }
 
+  CardSettingsEmail genCardSettingsEmail(String initialValue, Field f) {
+    return CardSettingsEmail(
+        label: f.field_label,
+        initialValue: initialValue,
+        validator: (value) {
+          logger.f(value);
+          fieldsController[f.field_on_site_uuid]!.text = value as String;
+        });
+  }
+
   CardSettingsText genCardSettingsText(String initialValue, Field f) {
     return CardSettingsText(
         label: f.field_label,
         initialValue: initialValue,
+        validator: (value) {
+          logger.f(value);
+          fieldsController[f.field_on_site_uuid]!.text = value as String;
+        });
+  }
+
+  CardSettingsPhone genCardSettingsPhone(String initialValue, Field f) {
+    int initialIntValue;
+    try {
+      initialIntValue = int.parse(initialValue);
+    } catch (e) {
+      initialIntValue = 0;
+    }
+
+    return CardSettingsPhone(
+        label: f.field_label,
+        initialValue: initialIntValue,
         validator: (value) {
           logger.f(value);
           fieldsController[f.field_on_site_uuid]!.text = value as String;

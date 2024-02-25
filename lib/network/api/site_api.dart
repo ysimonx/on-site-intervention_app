@@ -169,4 +169,40 @@ class SiteApi {
       rethrow;
     }
   }
+
+  Future<Response> updateSiteListsForPlaces(
+      {required String idSite,
+      required Map<String, dynamic> dictOfListsForPlaces}) async {
+    try {
+      var formData = {"dict_of_lists_for_places": dictOfListsForPlaces};
+      String json = jsonEncode(formData);
+
+      String s = Endpoints.updateListsForPlaces.replaceAll("<site_id>", idSite);
+
+      final Response response = await dioClient.post(
+        s,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: json,
+      );
+
+      if (response.statusCode == 200) {
+        logger.d("toutes les listes for places ont été mises à jour :)");
+      }
+
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        logger.e(e.response!.statusCode);
+        if (e.response!.statusCode == 401) {
+          return e.response!;
+        }
+        if (e.response!.statusCode == 400) {
+          return e.response!;
+        }
+      }
+      rethrow;
+    }
+  }
 }

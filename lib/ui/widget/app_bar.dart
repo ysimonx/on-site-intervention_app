@@ -8,6 +8,7 @@ import '../../network/api/intervention_api.dart';
 import '../../network/api/login_api.dart';
 import 'package:flutter/material.dart';
 
+import '../lists_for_places_page.dart';
 import '../lists_page.dart';
 import '../signature_page.dart';
 import '../users_page.dart';
@@ -35,6 +36,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
   static const int valueUPLOADIMAGES = 5;
   static const int valueREMOVEFILES = 6;
   static const int valueSIGNATURE = 7;
+  static const int valueLISTFORPLACES = 8;
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +82,13 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                         child: Text(translateI18N("gestion des listes")
                             .toCapitalized()),
                       ),
+                  if (site != null)
+                    if (site!.getRoleNamesForUser(user).contains("admin"))
+                      PopupMenuItem<int>(
+                        value: valueLISTFORPLACES,
+                        child: Text(translateI18N("gestion des emplacements")
+                            .toCapitalized()),
+                      ),
                   const PopupMenuItem<int>(
                       value: valueUPLOADIMAGES, child: Text("upload images")),
                   const PopupMenuItem<int>(
@@ -116,6 +125,15 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                     }));
                   }
                 }
+                if (value == valueLISTFORPLACES) {
+                  if (context.mounted) {
+                    await Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return ListsForPlacesPage(site: site, user: user);
+                    }));
+                  }
+                }
+
                 if (value == valueSIGNATURE) {
                   if (context.mounted) {
                     var pathImage = await Navigator.push(context,

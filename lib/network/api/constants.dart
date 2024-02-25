@@ -35,4 +35,6 @@ class Endpoints {
   static const String addUserRoles = '/api/v1/site/<site_id>/user';
   static const String removeUserRoles = '/api/v1/site/<site_id>/user';
   static const String updateLists = '/api/v1/site/<site_id>/lists';
+  static const String updateListsForPlaces =
+      '/api/v1/site/<site_id>/lists_for_places';
 }

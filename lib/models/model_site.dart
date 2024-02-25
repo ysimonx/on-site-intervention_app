@@ -7,6 +7,8 @@ class Site {
   String name;
   List<dynamic> roles = [];
   Map<String, dynamic> dictOfLists = {};
+  Map<String, dynamic> dictOfListsForPlaces = {};
+
   late Tenant tenant;
 
   Site({required this.id, required this.name});
@@ -17,6 +19,7 @@ class Site {
     data['name'] = name;
     data['roles'] = roles;
     data['dictOfLists'] = jsonEncode(dictOfLists);
+    data['dictOfListsForPlaces'] = jsonEncode(dictOfListsForPlaces);
     return data;
   }
 
@@ -26,6 +29,9 @@ class Site {
         roles = json.containsKey('roles') ? json['roles'] : [],
         dictOfLists =
             json.containsKey('dict_of_lists') ? json['dict_of_lists'] : {},
+        dictOfListsForPlaces = json.containsKey('dict_of_lists_for_places')
+            ? json['dict_of_lists_for_placess']
+            : {},
         tenant = Tenant.fromJson(json['tenant']);
 
   List<String> getRoleNamesForUser(User u) {

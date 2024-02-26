@@ -30,7 +30,7 @@ class Site {
         dictOfLists =
             json.containsKey('dict_of_lists') ? json['dict_of_lists'] : {},
         dictOfListsForPlaces = json.containsKey('dict_of_lists_for_places')
-            ? json['dict_of_lists_for_placess']
+            ? json['dict_of_lists_for_places']
             : {},
         tenant = Tenant.fromJson(json['tenant']);
 

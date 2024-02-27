@@ -276,7 +276,8 @@ class InterventionPageState extends State<InterventionPage> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Processing Data')),
+      const SnackBar(
+          content: Text('Processing Data'), duration: Duration(seconds: 1)),
     );
 
     InterventionApi interventionApi = InterventionApi();
@@ -356,6 +357,15 @@ class InterventionPageState extends State<InterventionPage> {
     return CardSettingsSection(
         header: CardSettingsHeader(
           label: s.section_name,
+          /* child: Container(
+                color: Colors.grey,
+                child: Column(children: [
+                  SizedBox(height: 100),
+                  Row(children: [
+                    Text(s.section_name, style: TextStyle(fontSize: 18))
+                  ])
+                ])),
+                */
         ),
         children: lCardSettingsWidget);
   }

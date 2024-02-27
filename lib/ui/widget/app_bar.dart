@@ -69,21 +69,30 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                     child: Text(user.email.toLowerCase()),
                   ),
                   if (site != null)
-                    if (site!.getRoleNamesForUser(user).contains("admin"))
+                    if (site!.getRoleNamesForUser(user).contains("admin") ||
+                        site!
+                            .getRoleNamesForUser(user)
+                            .contains("site administrator"))
                       PopupMenuItem<int>(
                         value: valueUSERS,
                         child: Text(translateI18N("gestion des utilisateurs")
                             .toCapitalized()),
                       ),
                   if (site != null)
-                    if (site!.getRoleNamesForUser(user).contains("admin"))
+                    if (site!.getRoleNamesForUser(user).contains("admin") ||
+                        site!
+                            .getRoleNamesForUser(user)
+                            .contains("site administrator"))
                       PopupMenuItem<int>(
                         value: valueLIST,
                         child: Text(translateI18N("gestion des listes")
                             .toCapitalized()),
                       ),
                   if (site != null)
-                    if (site!.getRoleNamesForUser(user).contains("admin"))
+                    if (site!.getRoleNamesForUser(user).contains("admin") ||
+                        site!
+                            .getRoleNamesForUser(user)
+                            .contains("site administrator"))
                       PopupMenuItem<int>(
                         value: valueLISTFORPLACES,
                         child: Text(translateI18N("gestion des emplacements")

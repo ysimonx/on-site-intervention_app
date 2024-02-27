@@ -167,6 +167,7 @@ class InterventionPageState extends State<InterventionPage> {
     return PopScope(
         canPop: false,
         onPopInvoked: (bool didPop) {
+          saveIntervention(context);
           if (didPop) {
             return;
           }
@@ -254,7 +255,7 @@ class InterventionPageState extends State<InterventionPage> {
         child: TabBar(
             isScrollable: true,
             onTap: (selectedTabIndex) async {
-              await saveIntervention(context);
+              saveIntervention(context);
               setState(() {
                 _initialIndex = selectedTabIndex;
                 String s = (_initialIndex + 1).toString();
@@ -412,6 +413,10 @@ class InterventionPageState extends State<InterventionPage> {
       return genCardSettingsText(initialValue, f);
     }
 
+    if (f.field_type == "paragraph") {
+      return genCardSettingsParagraph(initialValue, f);
+    }
+
     if (f.field_type == "email") {
       return genCardSettingsEmail(initialValue, f);
     }
@@ -562,6 +567,16 @@ class InterventionPageState extends State<InterventionPage> {
 
   CardSettingsText genCardSettingsText(String initialValue, Field f) {
     return CardSettingsText(
+        label: f.field_label,
+        initialValue: initialValue,
+        validator: (value) {
+          logger.f(value);
+          fieldsController[f.field_on_site_uuid]!.text = value as String;
+        });
+  }
+
+  CardSettingsParagraph genCardSettingsParagraph(String initialValue, Field f) {
+    return CardSettingsParagraph(
         label: f.field_label,
         initialValue: initialValue,
         validator: (value) {

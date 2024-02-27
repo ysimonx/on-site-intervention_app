@@ -196,7 +196,7 @@ class InterventionPageState extends State<InterventionPage> {
             widgetBodyTabsFormulaires(intervention: widget.intervention),
             widgetBodyFormulaireNG(_initialIndex),
             const SizedBox(
-              height: 200,
+              height: 600,
             ),
           ])),
     ]);

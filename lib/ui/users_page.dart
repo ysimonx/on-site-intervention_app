@@ -282,7 +282,7 @@ class UsersPageState extends State<UsersPage> {
               ),
               child: const Text('Ok'),
               onPressed: () async {
-                String email = textEmailController.text;
+                String email = textEmailController.text.toLowerCase();
                 List<String> idsRole = [];
 
                 dictSiteRoles.forEach((key, value) {

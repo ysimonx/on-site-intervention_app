@@ -549,6 +549,8 @@ class InterventionPageState extends State<InterventionPage> {
 
     return CardSettingsDatePicker(
       dateFormat: DateFormat('dd/MM/yyyy'),
+      firstDate: DateTime(2001, 1, 1, 0, 0),
+      lastDate: DateTime(2030, 1, 1, 0, 0),
       label: f.field_label,
       initialValue: initialDateTimeValue,
       validator: (value) {

@@ -37,20 +37,36 @@ class _SitePageState extends State<SitePage> {
 
   Timer? timer;
 
+  late Future<String> myFuture;
+
+  late List<Intervention> list;
+
   @override
   void initState() {
     super.initState();
     interventionAPI = InterventionApi();
     userAPI = UserApi();
-    initTimer();
+    myFuture = Future<String>.delayed(
+      const Duration(seconds: 1),
+      () => getListInterventions(),
+    );
+    // initTimer();
+  }
+
+  void refreshUI() {
+    setState(() {
+      myFuture = Future<String>.delayed(
+        const Duration(seconds: 1),
+        () => getListInterventions(),
+      );
+    });
   }
 
   void initTimer() {
     if (timer != null && timer!.isActive) return;
-
     timer = Timer.periodic(const Duration(seconds: 10), (timer) {
       //job
-      // setState(() {});
+      refreshUI();
     });
   }
 
@@ -73,13 +89,12 @@ class _SitePageState extends State<SitePage> {
             : BaseAppBar(title: title));
   }
 
-  Future<List<Intervention>> getListInterventions({required Site site}) async {
+  Future<String> getListInterventions() async {
     logger.i("ta da getListInterventions debut");
-    List<Intervention> list =
-        await interventionAPI.getListInterventions(site: site);
+    list = await interventionAPI.getListInterventions(site: widget.site);
     list.sort((i, j) => int.parse(j.hashtag).compareTo(int.parse(i.hashtag)));
     logger.i("ta da getListInterventions fin");
-    return list;
+    return "ok";
   }
 
   @override
@@ -88,10 +103,11 @@ class _SitePageState extends State<SitePage> {
         appBar: widgetAppBar(
             title: widget.site.name, user: widget.user, site: widget.site),
         body: FutureBuilder(
-            future: getListInterventions(site: widget.site),
+            future: myFuture,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                List<Intervention> listInterventions = snapshot.data;
+                // List<Intervention> listInterventions = snapshot.data;
+                List<Intervention> listInterventions = list;
                 if (listInterventions.isNotEmpty) {
                   logger.i("ta da builder ${listInterventions.length}");
                   return Padding(
@@ -127,7 +143,8 @@ class _SitePageState extends State<SitePage> {
       List<Intervention> listInterventions, BuildContext context) {
     return RefreshIndicator(
         onRefresh: () async {
-          setState(() {});
+          refreshUI();
+
           return;
         },
         child: ListTileTheme(
@@ -173,7 +190,7 @@ class _SitePageState extends State<SitePage> {
                                 intervention: intervention,
                                 site: widget.site);
                           })).then((intervention) => setState(() {
-                                listInterventions[index] = intervention;
+                                list[index] = intervention;
                                 logger.i(
                                     "ta da apres push ${intervention.field_on_site_uuid_values['36448a1b-3f11-463a-bf60-7668f32da094']}");
                               }));

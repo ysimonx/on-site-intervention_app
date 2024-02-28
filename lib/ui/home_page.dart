@@ -55,14 +55,14 @@ class _HomePageState extends State<HomePage> {
 
     timerIsRunning = true;
 
-    // await ImageApi.uploadPhotos();
-    // await interventionAPI.uploadInterventions();
+    await ImageApi.uploadPhotos();
+    await interventionAPI.uploadInterventions();
 
     List<Site> list = user.sites;
     try {
       list.forEach((site) async {
-        // await interventionAPI.getListInterventions(site: site);
-        // await interventionAPI.downloadPhotos(site: site);
+        await interventionAPI.getListInterventions(site: site);
+        await interventionAPI.downloadPhotos(site: site);
       });
     } catch (e) {
       logger.e(e.toString());

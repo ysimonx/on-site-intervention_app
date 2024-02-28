@@ -338,6 +338,7 @@ class InterventionApi {
   localUpdatedFileDelete({required Intervention intervention}) async {
     final file = await getlocalUpdatedFile(intervention: intervention);
     if (await file.exists()) {
+      logger.i("ta da efface local file ${file.path}");
       file.deleteSync();
     }
   }

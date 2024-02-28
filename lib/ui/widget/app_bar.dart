@@ -112,7 +112,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                 ];
               }, onSelected: (value) async {
                 if (value == valueUPLOADIMAGES) {
-                  await ImageApi.processUploadPendingImages();
+                  ImageApi.processUploadPendingImages();
                 }
                 if (value == valueREMOVEFILES) {
                   await InterventionApi.deleteLocalUpdatedFiles();

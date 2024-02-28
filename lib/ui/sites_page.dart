@@ -1,4 +1,5 @@
 // ignore_for_file: empty_statements, unused_import
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
@@ -32,11 +33,30 @@ class _SitePageState extends State<SitePage> {
   late UserApi userAPI;
   late InterventionApi interventionAPI;
   bool isDark = false;
+
+  Timer? timer;
+
   @override
   void initState() {
     super.initState();
     interventionAPI = InterventionApi();
     userAPI = UserApi();
+    initTimer();
+  }
+
+  void initTimer() {
+    if (timer != null && timer!.isActive) return;
+
+    timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      //job
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   PreferredSize widgetAppBar(
@@ -55,7 +75,6 @@ class _SitePageState extends State<SitePage> {
   Future<List<Intervention>> getInterventions({required Site site}) async {
     List<Intervention> list = await interventionAPI.getList(site: site);
     interventionAPI.downloadPhotos(site: site);
-
     return list;
   }
 

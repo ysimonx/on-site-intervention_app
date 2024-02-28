@@ -217,4 +217,25 @@ class UserApi {
     });
     return dictOfLists;
   }
+
+  static String getDefaultStatusFromTemplate(
+      {required User user,
+      required String type_intervention_name,
+      required Site site}) {
+    Map<String, dynamic> formsTemplates =
+        user.myconfig.config_types_intervention[type_intervention_name];
+    String result = formsTemplates["mandatory_lists"]["status"]["values"][0];
+    return result;
+  }
+
+  static List<dynamic> getListStatusFromTemplate(
+      {required User user,
+      required String type_intervention_name,
+      required Site site}) {
+    Map<String, dynamic> formsTemplates =
+        user.myconfig.config_types_intervention[type_intervention_name];
+    List<dynamic> result =
+        formsTemplates["mandatory_lists"]["status"]["values"];
+    return result;
+  }
 }

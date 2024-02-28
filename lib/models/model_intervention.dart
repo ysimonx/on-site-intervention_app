@@ -11,6 +11,8 @@ class Intervention {
   String site_id;
   String type_intervention_id;
   String type_intervention_name;
+  String status;
+  String hashtag = "";
   int version = 1;
   Map<String, Formulaire> forms = {};
   Map<String, dynamic> field_on_site_uuid_values = {};
@@ -25,6 +27,7 @@ class Intervention {
       required this.type_intervention_id,
       required this.type_intervention_name,
       required this.forms,
+      required this.status,
       required this.place});
 
   Map<String, dynamic> toJSON() {
@@ -40,6 +43,8 @@ class Intervention {
     data['place_id'] = place.id;
     data['place_name'] = place.name;
     data['place_on_site_uuid'] = place.place_on_site_uuid;
+    data['status'] = status;
+    data['hashtag'] = hashtag;
     return data;
   }
 
@@ -75,7 +80,13 @@ class Intervention {
                     ? json['site_id'] as String
                     : json.containsKey('site')
                         ? json['site']['id'] as String
-                        : "826eaeb6-7180-443d-bce4-f1840079a54d");
+                        : "826eaeb6-7180-443d-bce4-f1840079a54d"),
+        status = json.containsKey('status')
+            ? json['status'] != null
+                ? json['status']
+                : ""
+            : "",
+        hashtag = json.containsKey('hashtag') ? "${json['hashtag']}" : "";
 
   // forms2 = {};
 }

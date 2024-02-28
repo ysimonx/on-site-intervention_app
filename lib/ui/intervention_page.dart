@@ -43,7 +43,7 @@ class InterventionPage extends StatefulWidget {
 
 // Create a corresponding State class.
 class InterventionPageState extends State<InterventionPage> {
-  // final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   late List<GlobalKey<FormState>> _formsKey = [];
   late TextEditingController controllerInterventionName;
@@ -63,6 +63,8 @@ class InterventionPageState extends State<InterventionPage> {
 
   late Directory deviceApplicationDocumentsDirectory;
 
+  late String intervention_status;
+
   // late Directory directory;
 
   void _onChangedText() {
@@ -78,6 +80,7 @@ class InterventionPageState extends State<InterventionPage> {
         TextEditingController(text: widget.intervention.intervention_name);
     // Start listening to changes.
     controllerInterventionName.addListener(_onChangedText);
+    intervention_status = widget.intervention.status;
   }
 
   Future<List<User>> getMyConfig() async {
@@ -132,7 +135,6 @@ class InterventionPageState extends State<InterventionPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
     return FutureBuilder(
         future: getMyConfig(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -202,7 +204,24 @@ class InterventionPageState extends State<InterventionPage> {
     ]);
   }
 
-  CardSettings widgetHeaderFormulaire() {
+  Widget widgetHeaderFormulaire() {
+    List<dynamic> listStatus = UserApi.getListStatusFromTemplate(
+        user: widget.user,
+        site: widget.site,
+        type_intervention_name: widget.intervention.type_intervention_name);
+
+    List<DropdownMenuItem<String>> dmis = [];
+
+    for (var i = 0; i < listStatus.length; i++) {
+      dmis.add(
+          DropdownMenuItem(child: Text(listStatus[i]), value: listStatus[i]));
+    }
+
+    return DropdownButton<String>(
+        value: intervention_status, items: dmis, onChanged: dropdownCallback);
+  }
+
+  /*  CardSettings widgetHeaderFormulaire() {
     var scaffoldSupervisor = CardSettingsSectionHeader();
     return CardSettings(
       labelWidth: 200.0,
@@ -214,6 +233,7 @@ class InterventionPageState extends State<InterventionPage> {
       ],
     );
   }
+  */
 
   Padding widgetBodyFormInterventionName() {
     return Padding(
@@ -389,26 +409,27 @@ class InterventionPageState extends State<InterventionPage> {
     }
 
     if (f.field_type == "list_from_mandatory_lists") {
+      List<dynamic> possible_values = [];
+
       if (f.field_possible_values.isNotEmpty) {
         String sList = f.field_possible_values[0];
         Map<String, dynamic> mapJsonList = mapMandatoryLists[sList];
         if (mapJsonList["type"] == "fixed") {
-          f.field_possible_values = mapJsonList["values"];
+          possible_values = mapJsonList["values"];
         }
         if (mapJsonList["type"] == "administrable_by_site") {
-          f.field_possible_values = [];
           if (widget.site.dictOfLists.containsKey(sList)) {
-            f.field_possible_values = widget.site.dictOfLists[sList];
-          } else {
-            f.field_possible_values = [];
+            possible_values = widget.site.dictOfLists[sList];
           }
         }
-        return genCardSettingsListPicker(initialValue, f);
+        return genCardSettingsListPicker(initialValue, f,
+            possible_values: possible_values);
       }
     }
 
     if (f.field_type == "list") {
-      return genCardSettingsListPicker(initialValue, f);
+      return genCardSettingsListPicker(initialValue, f,
+          possible_values: f.field_possible_values);
     }
 
     if (f.field_type == "date") {
@@ -451,7 +472,9 @@ class InterventionPageState extends State<InterventionPage> {
       ]; */
       List<dynamic> listPictures = [];
       try {
-        listPictures = jsonDecode(initialValue);
+        if (initialValue != "") {
+          listPictures = jsonDecode(initialValue);
+        }
       } catch (e) {
         logger.e(e.toString());
       }
@@ -488,11 +511,12 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   CardSettingsListPicker<dynamic> genCardSettingsListPicker(
-      String initialValue, Field f) {
+      String initialValue, Field f,
+      {required List<dynamic> possible_values}) {
     return CardSettingsListPicker(
         initialItem: initialValue,
         label: f.field_label,
-        items: f.field_possible_values,
+        items: possible_values,
         validator: (value) {
           String newvalue;
           if (value == null) {
@@ -668,5 +692,14 @@ class InterventionPageState extends State<InterventionPage> {
             fieldsController[f.field_on_site_uuid]!.text = value;
           }
         });
+  }
+
+  void dropdownCallback(String? value) {
+    setState(() {
+      if (value is String) {
+        intervention_status = value;
+        widget.intervention.status = intervention_status;
+      }
+    });
   }
 }

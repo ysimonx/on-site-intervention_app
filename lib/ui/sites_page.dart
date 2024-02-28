@@ -142,9 +142,18 @@ class _SitePageState extends State<SitePage> {
                         "calorifuge")
                     ? const Icon(Icons.local_fire_department)
                     : const Icon(Icons.foundation),
-                title: Text(
-                    listInterventions[index].intervention_name.toUpperCase()),
-                subtitle: Text(listInterventions[index].type_intervention_name),
+                title: Row(children: [
+                  SizedBox(
+                      width: 50,
+                      child: Text("#${listInterventions[index].hashtag}")),
+                  Text(listInterventions[index].intervention_name.toUpperCase())
+                ]),
+                subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(listInterventions[index].status),
+                      Text(listInterventions[index].type_intervention_name)
+                    ]),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -179,18 +188,24 @@ class _SitePageState extends State<SitePage> {
             site_name: widget.site.name,
             type_intervention_name: typeInterventionName);
 
+    String defaultStatus = UserApi.getDefaultStatusFromTemplate(
+        user: widget.user,
+        site: widget.site,
+        type_intervention_name: typeInterventionName);
+
     Place nowhere = Place.nowhere(site_id: widget.site.id);
 
     Intervention newIntervention = Intervention(
-      id: "new_${generateUUID()}",
-      intervention_name: "nouvelle",
-      site_id: widget.site.id,
-      intervention_values_on_site_uuid: generateUUID(),
-      type_intervention_id: typeInterventionName, // let's consider it is an ID
-      type_intervention_name: typeInterventionName,
-      forms: initializedForms,
-      place: nowhere,
-    );
+        id: "new_${generateUUID()}",
+        intervention_name: "nouvelle",
+        site_id: widget.site.id,
+        intervention_values_on_site_uuid: generateUUID(),
+        type_intervention_id:
+            typeInterventionName, // let's consider it is an ID
+        type_intervention_name: typeInterventionName,
+        forms: initializedForms,
+        place: nowhere,
+        status: defaultStatus);
 
     if (!context.mounted) {
       return;

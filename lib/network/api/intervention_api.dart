@@ -314,10 +314,11 @@ class InterventionApi {
 
       // Read the file
       if (f is File) {
-        String contents = await f.readAsString();
-        Map<String, dynamic> contentJson = jsonDecode(contents);
-        Intervention i = Intervention.fromJson(contentJson);
         try {
+          String contents = await f.readAsString();
+          Map<String, dynamic> contentJson = jsonDecode(contents);
+          Intervention i = Intervention.fromJson(contentJson);
+
           var r = await postInterventionValuesOnServer(i);
           logger.d(r.toString());
         } catch (e) {

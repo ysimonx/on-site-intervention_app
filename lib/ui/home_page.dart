@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import, avoid_function_literals_in_foreach_calls
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -7,9 +9,11 @@ import '../models/model_user.dart';
 import '../network/api/image.api.dart';
 import '../network/api/intervention_api.dart';
 import '../network/api/user_api.dart';
+import 'utils/logger.dart';
 import 'widget/_home_page_authentified_content.dart';
 import 'widget/_home_page_unauthentified_content.dart';
 import 'widget/app_bar.dart';
+import 'widget/common_widgets.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,8 +25,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final String _title = 'sites';
   late User user;
-
+  InterventionApi interventionAPI = InterventionApi();
   Timer? timer;
+  bool timerIsRunning = false;
 
   @override
   void initState() {
@@ -38,28 +43,32 @@ class _HomePageState extends State<HomePage> {
 
   void initTimer() {
     if (timer != null && timer!.isActive) return;
-
     timer = Timer.periodic(const Duration(seconds: 30), (timer) {
       functionTimer();
     });
   }
 
-  void functionTimer() {
-    ImageApi.processUploadPendingImages();
+  void functionTimer() async {
+    if (timerIsRunning) {
+      return;
+    }
 
-    var interventionAPI = InterventionApi();
+    timerIsRunning = true;
+
+    // await ImageApi.uploadPhotos();
+    // await interventionAPI.uploadInterventions();
 
     List<Site> list = user.sites;
     try {
       list.forEach((site) async {
-        print("sync site : ${site.name}");
-        await interventionAPI.syncLocalUpdatedFiles();
-        await interventionAPI.getList(site: site);
-        interventionAPI.downloadPhotos(site: site);
+        // await interventionAPI.getListInterventions(site: site);
+        // await interventionAPI.downloadPhotos(site: site);
       });
     } catch (e) {
-      print(e.toString());
+      logger.e(e.toString());
     }
+
+    timerIsRunning = false;
   }
 
   @override
@@ -79,7 +88,7 @@ class _HomePageState extends State<HomePage> {
             }
             return widgetError();
           } else {
-            return widgetWaiting();
+            return pageWaiting();
           }
         });
   }
@@ -114,18 +123,11 @@ class _HomePageState extends State<HomePage> {
                 context: context, onConnexion: (value) => setState(() {})));
   }
 
-  Scaffold widgetWaiting() {
-    return Scaffold(
-        appBar: widgetAppBar(null),
-        body: const Center(
-            child: SizedBox(
-          width: 60,
-          height: 60,
-          child: CircularProgressIndicator(),
-        )));
+  Scaffold pageWaiting() {
+    return Scaffold(appBar: widgetAppBar(null), body: widgetWaiting());
   }
 
   Scaffold widgetError() {
-    return Scaffold(appBar: widgetAppBar(null), body: const Text("error"));
+    return Scaffold(appBar: widgetAppBar(null), body: widgetError());
   }
 }

@@ -37,10 +37,10 @@ class ListsPageState extends State<ListsPage> {
   Future<Map<String, dynamic>> getMyInformations() async {
     // complete le dictOfLists du site avec les listes obligatoires des types d'interventions du user
 
-    Map<String, dynamic> dictOfList_updated =
+    Map<String, dynamic> dictOfListUpdated =
         UserApi.CompleteDictOfListWithMandatory(
             user: widget.user, dictOfLists: dictOfLists);
-    return dictOfList_updated;
+    return dictOfListUpdated;
   }
 
   @override

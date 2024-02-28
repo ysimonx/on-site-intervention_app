@@ -27,7 +27,7 @@ import '../utils/tools.dart';
 
 Future<Position?> getLocation() async {
   var isLocationPermissionGranted = (await requestPermission());
-  if (await isLocationPermissionGranted) {
+  if (isLocationPermissionGranted) {
     Position? myLocation = await (Geolocator.getLastKnownPosition());
     return myLocation;
   }

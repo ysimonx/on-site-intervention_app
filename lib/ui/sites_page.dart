@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:on_site_intervention_app/ui/intervention_page.dart';
+import 'package:on_site_intervention_app/ui/widget/common_widgets.dart';
 
 import '../models/model_formulaire.dart';
 import '../models/model_intervention.dart';
@@ -49,7 +50,7 @@ class _SitePageState extends State<SitePage> {
 
     timer = Timer.periodic(const Duration(seconds: 10), (timer) {
       //job
-      setState(() {});
+      // setState(() {});
     });
   }
 
@@ -72,9 +73,12 @@ class _SitePageState extends State<SitePage> {
             : BaseAppBar(title: title));
   }
 
-  Future<List<Intervention>> getInterventions({required Site site}) async {
-    List<Intervention> list = await interventionAPI.getList(site: site);
-    interventionAPI.downloadPhotos(site: site);
+  Future<List<Intervention>> getListInterventions({required Site site}) async {
+    logger.i("ta da getListInterventions debut");
+    List<Intervention> list =
+        await interventionAPI.getListInterventions(site: site);
+    list.sort((i, j) => int.parse(j.hashtag).compareTo(int.parse(i.hashtag)));
+    logger.i("ta da getListInterventions fin");
     return list;
   }
 
@@ -84,11 +88,12 @@ class _SitePageState extends State<SitePage> {
         appBar: widgetAppBar(
             title: widget.site.name, user: widget.user, site: widget.site),
         body: FutureBuilder(
-            future: getInterventions(site: widget.site),
+            future: getListInterventions(site: widget.site),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 List<Intervention> listInterventions = snapshot.data;
                 if (listInterventions.isNotEmpty) {
+                  logger.i("ta da builder ${listInterventions.length}");
                   return Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(children: <Widget>[
@@ -109,13 +114,9 @@ class _SitePageState extends State<SitePage> {
                   );
                 }
               } else if (snapshot.hasError) {
-                return const Text("error");
+                return widgetError();
               } else {
-                return const SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: CircularProgressIndicator(),
-                );
+                return widgetWaiting();
               }
             }),
         floatingActionButton:
@@ -159,8 +160,9 @@ class _SitePageState extends State<SitePage> {
                   children: [
                     IconButton(
                         onPressed: () async {
-                          Intervention i = listInterventions[index];
-
+                          Intervention intervention = listInterventions[index];
+                          logger.i(
+                              "ta da avant push ${intervention.field_on_site_uuid_values['36448a1b-3f11-463a-bf60-7668f32da094']}");
                           if (!context.mounted) {
                             return;
                           }
@@ -168,9 +170,13 @@ class _SitePageState extends State<SitePage> {
                               MaterialPageRoute(builder: (context) {
                             return InterventionPage(
                                 user: widget.user,
-                                intervention: i,
+                                intervention: intervention,
                                 site: widget.site);
-                          })).then((value) => setState(() {}));
+                          })).then((intervention) => setState(() {
+                                listInterventions[index] = intervention;
+                                logger.i(
+                                    "ta da apres push ${intervention.field_on_site_uuid_values['36448a1b-3f11-463a-bf60-7668f32da094']}");
+                              }));
                         },
                         icon: const Icon(Icons.navigate_next)),
                   ],

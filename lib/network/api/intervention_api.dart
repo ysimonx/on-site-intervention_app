@@ -25,9 +25,10 @@ class InterventionApi {
 
   DioClient dioClient = DioClient(Dio());
 
-  Future<List<Intervention>> getList({required Site site}) async {
+  Future<List<Intervention>> getListInterventions({required Site site}) async {
     dynamic content = null;
 
+    logger.i("ta da getListInterventions 10");
     try {
       Map<String, String> qParams = {'site_id': site.id};
 
@@ -48,6 +49,7 @@ class InterventionApi {
       logger.e(e.toString());
     }
 
+    logger.i("ta da getListInterventions 20");
     if (!isMobileFirst()) {
       List<Intervention> listInterventionValues = [];
       List<dynamic> arrayJson = jsonDecode(content);
@@ -60,12 +62,15 @@ class InterventionApi {
       return listInterventionValues;
     }
 
+    logger.i("ta da getListInterventions 30");
     // mobile first ! : save content from API if not empty
     if (content != null) {
       await writeListInterventionValues(site: site, data: content);
     } else {
       content = await readListInterventionValues(site: site);
     }
+
+    logger.i("ta da getListInterventions 40");
 
     List<Intervention> listInterventionValues = [];
 
@@ -93,6 +98,8 @@ class InterventionApi {
           // l'intervention en local est plus récente que celle du serveur
           // je peux écraser celle du serveur par celle en local
           intervention = interventionNew;
+          logger.i(
+              "ta da ${intervention.field_on_site_uuid_values['36448a1b-3f11-463a-bf60-7668f32da094']} vs ${interventionNew.field_on_site_uuid_values['36448a1b-3f11-463a-bf60-7668f32da094']}");
         }
 
         // Enfin je supprime l'entrée dans listLocalFiles
@@ -111,12 +118,13 @@ class InterventionApi {
 
       listInterventionValues.add(intervention);
     }
-
+    logger.i("ta da getListInterventions 50");
     listInterventionValues = completeListWithLocalUpdatedFiles(
         list: listInterventionValues,
         localFiles: listLocalUpdatedFiles,
         site: site);
 
+    logger.i("ta da getListInterventions 60");
     return listInterventionValues;
   }
 
@@ -306,7 +314,7 @@ class InterventionApi {
     return list;
   }
 
-  syncLocalUpdatedFiles() async {
+  uploadInterventions() async {
     List<FileSystemEntity> listLocalUpdatedFiles = await getLocalUpdatedFiles();
 
     for (var j = 0; j < listLocalUpdatedFiles.length; j++) {
@@ -318,7 +326,6 @@ class InterventionApi {
           String contents = await f.readAsString();
           Map<String, dynamic> contentJson = jsonDecode(contents);
           Intervention i = Intervention.fromJson(contentJson);
-
           var r = await postInterventionValuesOnServer(i);
           logger.d(r.toString());
         } catch (e) {
@@ -347,7 +354,7 @@ class InterventionApi {
                 "photos": [
   */
 
-  void downloadPhotos({required Site site}) async {
+  Future<void> downloadPhotos({required Site site}) async {
     List<String> photosToDownload = [];
     try {
       Map<String, String> qParams = {'site_id': site.id};

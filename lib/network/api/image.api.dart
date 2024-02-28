@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps
 
 import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
@@ -11,8 +11,6 @@ import 'package:geolocator/geolocator.dart';
 
 class ImageApi {
   final DioClient dioClient;
-
-  bool isProcessingUpload = false;
 
   ImageApi({required this.dioClient});
 
@@ -70,7 +68,7 @@ class ImageApi {
   static const String localSubDirectoryUploadImages = 'uploadimages';
   static const String localSubDirectoryDownloadedImages = "downloadedimages";
 
-  static Future<void> processUploadPendingImages() async {
+  static Future<void> uploadPhotos() async {
     // VERIFICATION DE LA CONNEXION
     // au passage, si le token doit etre refresh, ca le rafraichit ...
     // parce qu'envoyer un fichier en multipart form data provoque des soucis
@@ -177,10 +175,6 @@ class ImageApi {
     return;
   }
 
-  bool isProcessingUploadPendingImages() {
-    return isProcessingUpload;
-  }
-
   static String getImagePath(Directory directory, String pathOrigin) {
     const String localSubDirectoryCameraPictures = 'camera/pictures';
     final String pathDirectory =
@@ -234,7 +228,6 @@ class ImageApi {
   }
 
   static void syncImages({required List<String> list}) async {
-    print(list);
     Directory d = await ImageApi.getDownloadedImageAbsoluteDirectory();
     for (var i = 0; i < list.length; i++) {
       String filename = list[i];
@@ -254,7 +247,7 @@ class ImageApi {
           await raf.close();
         }
       } on Exception catch (e) {
-        print(e.toString());
+        logger.e(e.toString());
       }
     }
   }

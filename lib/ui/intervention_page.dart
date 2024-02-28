@@ -19,9 +19,6 @@ import '../network/api/user_api.dart';
 import 'utils/logger.dart';
 import 'widget/card_settings_gallery.dart';
 import 'widget/card_settings_signature.dart';
-import 'widget/scaffold.dart';
-import 'widget/scaffold_supervisor.dart';
-import 'widget/scaffold_user.dart';
 
 // Create a Form widget.
 class InterventionPage extends StatefulWidget {
@@ -43,8 +40,6 @@ class InterventionPage extends StatefulWidget {
 
 // Create a corresponding State class.
 class InterventionPageState extends State<InterventionPage> {
-  final _formKey = GlobalKey<FormState>();
-
   late List<GlobalKey<FormState>> _formsKey = [];
   late TextEditingController controllerInterventionName;
 
@@ -95,7 +90,6 @@ class InterventionPageState extends State<InterventionPage> {
     mapMandatoryLists = await UserApi.getMandatoryListFromTemplate(
         user: widget.user,
         type_intervention_name: widget.intervention.type_intervention_name);
-    print(mapMandatoryLists.toString());
 
     // Chargement des données initiales de chaque "Field"
     // dans des TextEditingController
@@ -168,15 +162,16 @@ class InterventionPageState extends State<InterventionPage> {
   Widget widgetMainBody(BuildContext context) {
     return PopScope(
         canPop: false,
-        onPopInvoked: (bool didPop) {
-          saveIntervention(context);
+        onPopInvoked: (bool didPop) async {
           if (didPop) {
             return;
           }
+          await saveIntervention(context);
+
           if (_needSave) {
             _showBackDialog();
           } else {
-            Navigator.pop(context);
+            Navigator.pop(context, widget.intervention);
           }
         },
         child: SingleChildScrollView(child: widgetBodyForm(context)));
@@ -214,7 +209,7 @@ class InterventionPageState extends State<InterventionPage> {
 
     for (var i = 0; i < listStatus.length; i++) {
       dmis.add(
-          DropdownMenuItem(child: Text(listStatus[i]), value: listStatus[i]));
+          DropdownMenuItem(value: listStatus[i], child: Text(listStatus[i])));
     }
 
     return DropdownButton<String>(
@@ -275,7 +270,7 @@ class InterventionPageState extends State<InterventionPage> {
         child: TabBar(
             isScrollable: true,
             onTap: (selectedTabIndex) async {
-              saveIntervention(context);
+              await saveIntervention(context);
               setState(() {
                 _initialIndex = selectedTabIndex;
                 String s = (_initialIndex + 1).toString();
@@ -306,7 +301,7 @@ class InterventionPageState extends State<InterventionPage> {
       await interventionApi.localUpdatedFileSave(
           intervention: widget.intervention);
 
-      await interventionApi.syncLocalUpdatedFiles();
+      // await interventionApi.uploadInterventions();
     } else {
       var r = await interventionApi
           .postInterventionValuesOnServer(widget.intervention);
@@ -404,10 +399,6 @@ class InterventionPageState extends State<InterventionPage> {
       return genCardSettingsInt(initialValue, s, f);
     }
 
-    if (f.field_on_site_uuid == "e28cbc05-2f4b-46f5-acca-c147ae8a1db8") {
-      print("you");
-    }
-
     if (f.field_type == "list_from_mandatory_lists") {
       List<dynamic> possible_values = [];
 
@@ -500,13 +491,12 @@ class InterventionPageState extends State<InterventionPage> {
         items: possibleValues,
         // controller: fieldsController[f.field_on_site_uuid],
         validator: (value) {
-          String newvalue;
-          if (value == null) {
-            newvalue = "";
-          } else {
+          String newvalue = "";
+          if (value is String) {
             newvalue = value;
           }
           fieldsController[f.field_on_site_uuid]!.text = newvalue;
+          return null;
         });
   }
 
@@ -525,6 +515,7 @@ class InterventionPageState extends State<InterventionPage> {
             newvalue = value;
           }
           fieldsController[f.field_on_site_uuid]!.text = newvalue;
+          return null;
         });
   }
 
@@ -549,6 +540,7 @@ class InterventionPageState extends State<InterventionPage> {
           newvalue = value.toString();
         }
         fieldsController[f.field_on_site_uuid]!.text = newvalue;
+        return null;
       },
       onSaved: (value) {},
     );
@@ -586,6 +578,7 @@ class InterventionPageState extends State<InterventionPage> {
           newvalue = formatter.format(value);
         }
         fieldsController[f.field_on_site_uuid]!.text = newvalue;
+        return null;
       },
       onSaved: (value) {},
     );
@@ -598,6 +591,7 @@ class InterventionPageState extends State<InterventionPage> {
         validator: (value) {
           logger.f(value);
           fieldsController[f.field_on_site_uuid]!.text = value as String;
+          return null;
         });
   }
 
@@ -608,6 +602,7 @@ class InterventionPageState extends State<InterventionPage> {
         validator: (value) {
           logger.f(value);
           fieldsController[f.field_on_site_uuid]!.text = value as String;
+          return null;
         });
   }
 
@@ -618,6 +613,7 @@ class InterventionPageState extends State<InterventionPage> {
         validator: (value) {
           logger.f(value);
           fieldsController[f.field_on_site_uuid]!.text = value as String;
+          return null;
         });
   }
 
@@ -635,6 +631,7 @@ class InterventionPageState extends State<InterventionPage> {
         validator: (value) {
           logger.f(value);
           fieldsController[f.field_on_site_uuid]!.text = value as String;
+          return null;
         });
   }
 
@@ -663,6 +660,7 @@ class InterventionPageState extends State<InterventionPage> {
           }
           fieldsController[f.field_on_site_uuid]!.text = newvalue;
         }
+        return null;
       },
       onSaved: (value) {},
     );
@@ -679,6 +677,7 @@ class InterventionPageState extends State<InterventionPage> {
           logger.f(stringJsonListPictures);
           fieldsController[f.field_on_site_uuid]!.text =
               stringJsonListPictures as String;
+          return null;
         });
   }
 
@@ -691,6 +690,7 @@ class InterventionPageState extends State<InterventionPage> {
           if (value != null) {
             fieldsController[f.field_on_site_uuid]!.text = value;
           }
+          return null;
         });
   }
 

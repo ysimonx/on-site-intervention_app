@@ -212,6 +212,10 @@ class InterventionPageState extends State<InterventionPage> {
           DropdownMenuItem(value: listStatus[i], child: Text(listStatus[i])));
     }
 
+    if (dmis.contains(intervention_status) == false) {
+      intervention_status = listStatus[0];
+    }
+
     return DropdownButton<String>(
         value: intervention_status, items: dmis, onChanged: dropdownCallback);
   }

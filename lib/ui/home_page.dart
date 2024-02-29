@@ -58,8 +58,8 @@ class _HomePageState extends State<HomePage> {
     await ImageApi.uploadPhotos();
     await interventionAPI.uploadInterventions();
 
-    List<Site> list = user.sites;
     try {
+      List<Site> list = user.sites;
       list.forEach((site) async {
         await interventionAPI.getListInterventions(site: site);
         await interventionAPI.downloadPhotos(site: site);

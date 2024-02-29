@@ -64,7 +64,7 @@ class _SitePageState extends State<SitePage> {
 
   void initTimer() {
     if (timer != null && timer!.isActive) return;
-    timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 60), (timer) {
       //job
       refreshUI();
     });

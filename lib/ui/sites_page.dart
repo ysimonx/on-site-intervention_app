@@ -91,7 +91,8 @@ class _SitePageState extends State<SitePage> {
 
   Future<String> getListInterventions() async {
     logger.i("ta da getListInterventions debut");
-    list = await interventionAPI.getListInterventions(site: widget.site);
+    list = await interventionAPI.getListInterventions(
+        site: widget.site, realtime: false);
     list.sort((i, j) => int.parse(j.hashtag).compareTo(int.parse(i.hashtag)));
     logger.i("ta da getListInterventions fin");
     return "ok";

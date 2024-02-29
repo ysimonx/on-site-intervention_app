@@ -25,48 +25,40 @@ class InterventionApi {
 
   DioClient dioClient = DioClient(Dio());
 
-  Future<List<Intervention>> getListInterventions({required Site site}) async {
+  Future<List<Intervention>> getListInterventions(
+      {required Site site, required bool realtime}) async {
     dynamic content = null;
 
     logger.i("ta da getListInterventions 10");
-    try {
-      Map<String, String> qParams = {'site_id': site.id};
 
-      final Response response = await dioClient
-          .get(Endpoints.listInterventionsValues, queryParameters: qParams);
+    if (!isMobileFirst() || realtime == true) {
+      try {
+        Map<String, String> qParams = {'site_id': site.id};
 
-      if (response.statusCode == 200) {
-        content = jsonEncode(response.data);
-      }
-    } on DioException catch (e) {
-      if (e.response != null) {
-        if (e.response!.statusCode == 401) {
-          return [];
+        final Response response = await dioClient
+            .get(Endpoints.listInterventionsValues, queryParameters: qParams);
+
+        if (response.statusCode == 200) {
+          content = jsonEncode(response.data);
         }
-        logger.e("getList : ${e.response!.statusCode}");
+      } on DioException catch (e) {
+        if (e.response != null) {
+          if (e.response!.statusCode == 401) {
+            return [];
+          }
+          logger.e("getList : ${e.response!.statusCode}");
+        }
+      } catch (e) {
+        logger.e(e.toString());
       }
-    } catch (e) {
-      logger.e(e.toString());
-    }
-
-    logger.i("ta da getListInterventions 20");
-    if (!isMobileFirst()) {
-      List<Intervention> listInterventionValues = [];
-      List<dynamic> arrayJson = jsonDecode(content);
-      for (var i = 0; i < arrayJson.length; i++) {
-        Map<String, dynamic> itemJson = arrayJson[i];
-
-        Intervention intervention = Intervention.fromJson(itemJson);
-        listInterventionValues.add(intervention);
-      }
-      return listInterventionValues;
     }
 
     logger.i("ta da getListInterventions 30");
-    // mobile first ! : save content from API if not empty
     if (content != null) {
+      logger.i("ta da getListInterventions 35 -> realtime = true");
       await writeListInterventionValues(site: site, data: content);
     } else {
+      logger.i("ta da getListInterventions 35 -> realtime = false");
       content = await readListInterventionValues(site: site);
     }
 
@@ -76,6 +68,15 @@ class InterventionApi {
 
     List<dynamic> arrayJsonMobileFirst = jsonDecode(content);
 
+    if (isMobileFirst() == false) {
+      for (int j = 0; j < arrayJsonMobileFirst.length; j = j + 1) {
+        Map<String, dynamic> itemJson = arrayJsonMobileFirst[j];
+        Intervention intervention = Intervention.fromJson(itemJson);
+        listInterventionValues.add(intervention);
+      }
+      return listInterventionValues;
+    }
+
     List<FileSystemEntity> listLocalUpdatedFiles = await getLocalUpdatedFiles();
 
     for (var i = 0; i < arrayJsonMobileFirst.length; i++) {
@@ -84,6 +85,7 @@ class InterventionApi {
 
       // au cas où une intervention EXISTANTE est aussi sauvegardée en local
       // elle doit écraser celle qui a été téléchargée du web
+
       if (await localUpdatedFileExists(intervention: intervention)) {
         Intervention interventionNew =
             await localUpdatedFileRead(intervention: intervention);
@@ -94,12 +96,17 @@ class InterventionApi {
           // l'intervention en local est plus ancienne que celle du serveur
           // je peux supprimer l'intervention enregistrée en local
           await localUpdatedFileDelete(intervention: intervention);
+          logger.i(
+              "ta da intervention.version > interventionNew.version deleting local file");
         } else {
           // l'intervention en local est plus récente que celle du serveur
           // je peux écraser celle du serveur par celle en local
           intervention = interventionNew;
           logger.i(
-              "ta da ${intervention.field_on_site_uuid_values['36448a1b-3f11-463a-bf60-7668f32da094']} vs ${interventionNew.field_on_site_uuid_values['36448a1b-3f11-463a-bf60-7668f32da094']}");
+              "ta da ${intervention.intervention_name} -> ${interventionNew.intervention_name}");
+
+          // logger.i(
+          //     "ta da ${intervention.field_on_site_uuid_values['36448a1b-3f11-463a-bf60-7668f32da094']} vs ${interventionNew.field_on_site_uuid_values['36448a1b-3f11-463a-bf60-7668f32da094']}");
         }
 
         // Enfin je supprime l'entrée dans listLocalFiles
@@ -328,7 +335,9 @@ class InterventionApi {
           Intervention i = Intervention.fromJson(contentJson);
           var r = await postInterventionValuesOnServer(i);
           logger.d(r.toString());
+          logger.i("ta da uploadInterventions done");
         } catch (e) {
+          logger.i("ta da uploadInterventions failed, deleting file");
           await f.delete();
         }
       }

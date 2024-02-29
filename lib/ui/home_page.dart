@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
     try {
       List<Site> list = user.sites;
       list.forEach((site) async {
-        await interventionAPI.getListInterventions(site: site);
+        await interventionAPI.getListInterventions(site: site, realtime: true);
         await interventionAPI.downloadPhotos(site: site);
       });
     } catch (e) {

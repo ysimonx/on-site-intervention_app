@@ -55,6 +55,7 @@ class InterventionPageState extends State<InterventionPage> {
 
   //Map<String, String> fieldsValue = {};
   Map<String, TextEditingController> fieldsController = {};
+  List<String> listFieldsUUIDUpdated = [];
 
   late Directory deviceApplicationDocumentsDirectory;
 
@@ -220,20 +221,6 @@ class InterventionPageState extends State<InterventionPage> {
         value: intervention_status, items: dmis, onChanged: dropdownCallback);
   }
 
-  /*  CardSettings widgetHeaderFormulaire() {
-    var scaffoldSupervisor = CardSettingsSectionHeader();
-    return CardSettings(
-      labelWidth: 200.0,
-      showMaterialonIOS: true, // default is false
-      cardless: true, // default is fals
-      children: <CardSettingsSection>[
-        scaffoldSupervisor.render(
-            key: _formsKey[_initialIndex], coordinators: usersCoordinators),
-      ],
-    );
-  }
-  */
-
   Padding widgetBodyFormInterventionName() {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -287,6 +274,9 @@ class InterventionPageState extends State<InterventionPage> {
   Future<void> saveIntervention(BuildContext context) async {
     // sauvegarde du nom
     widget.intervention.intervention_name = controllerInterventionName.text;
+
+    // TODO : ici, on n'a QUE la liste des champs qui ont été modifiés en local
+    print(listFieldsUUIDUpdated.toString());
 
     // sauvegarde des valeurs textes des formulaires
     // widget.intervention.field_on_site_uuid_values = {};
@@ -500,6 +490,14 @@ class InterventionPageState extends State<InterventionPage> {
             newvalue = value;
           }
           fieldsController[f.field_on_site_uuid]!.text = newvalue;
+
+          // keep track of real updates
+          if (newvalue != initialValue) {
+            if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+              listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+            }
+          }
+
           return null;
         });
   }
@@ -519,6 +517,14 @@ class InterventionPageState extends State<InterventionPage> {
             newvalue = value;
           }
           fieldsController[f.field_on_site_uuid]!.text = newvalue;
+
+          // keep track of real updates
+          if (newvalue != initialValue) {
+            if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+              listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+            }
+          }
+
           return null;
         });
   }
@@ -544,6 +550,13 @@ class InterventionPageState extends State<InterventionPage> {
           newvalue = value.toString();
         }
         fieldsController[f.field_on_site_uuid]!.text = newvalue;
+
+        // keep track of real updates
+        if (newvalue != initialValue) {
+          if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+            listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+          }
+        }
         return null;
       },
       onSaved: (value) {},
@@ -582,6 +595,13 @@ class InterventionPageState extends State<InterventionPage> {
           newvalue = formatter.format(value);
         }
         fieldsController[f.field_on_site_uuid]!.text = newvalue;
+
+        // keep track of real updates
+        if (newvalue != initialValue) {
+          if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+            listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+          }
+        }
         return null;
       },
       onSaved: (value) {},
@@ -595,6 +615,14 @@ class InterventionPageState extends State<InterventionPage> {
         validator: (value) {
           logger.f(value);
           fieldsController[f.field_on_site_uuid]!.text = value as String;
+
+          // keep track of real updates
+          if (value != initialValue) {
+            if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+              listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+            }
+          }
+
           return null;
         });
   }
@@ -606,6 +634,14 @@ class InterventionPageState extends State<InterventionPage> {
         validator: (value) {
           logger.f(value);
           fieldsController[f.field_on_site_uuid]!.text = value as String;
+
+          // keep track of real updates
+          if (value != initialValue) {
+            if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+              listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+            }
+          }
+
           return null;
         });
   }
@@ -617,6 +653,13 @@ class InterventionPageState extends State<InterventionPage> {
         validator: (value) {
           logger.f(value);
           fieldsController[f.field_on_site_uuid]!.text = value as String;
+
+          // keep track of real updates
+          if (value != initialValue) {
+            if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+              listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+            }
+          }
           return null;
         });
   }
@@ -635,6 +678,14 @@ class InterventionPageState extends State<InterventionPage> {
         validator: (value) {
           logger.f(value);
           fieldsController[f.field_on_site_uuid]!.text = value as String;
+
+          // keep track of real updates
+          if (value as String != initialValue) {
+            if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+              listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+            }
+          }
+
           return null;
         });
   }
@@ -663,6 +714,13 @@ class InterventionPageState extends State<InterventionPage> {
             newvalue = f.field_switch_off;
           }
           fieldsController[f.field_on_site_uuid]!.text = newvalue;
+
+          // keep track of real updates
+          if (newvalue != initialValue) {
+            if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+              listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+            }
+          }
         }
         return null;
       },
@@ -681,6 +739,14 @@ class InterventionPageState extends State<InterventionPage> {
           logger.f(stringJsonListPictures);
           fieldsController[f.field_on_site_uuid]!.text =
               stringJsonListPictures as String;
+
+          // keep track of real updates
+          if (stringJsonListPictures != initialValue) {
+            if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+              listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+            }
+          }
+
           return null;
         });
   }
@@ -693,6 +759,13 @@ class InterventionPageState extends State<InterventionPage> {
         validator: (value) {
           if (value != null) {
             fieldsController[f.field_on_site_uuid]!.text = value;
+
+            // keep track of real updates
+            if (value != initialValue) {
+              if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+                listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+              }
+            }
           }
           return null;
         });

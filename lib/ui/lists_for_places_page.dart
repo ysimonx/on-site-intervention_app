@@ -22,16 +22,68 @@ class ListsForPlacesPage extends StatefulWidget {
   }
 }
 
+class ListForPlaces {
+  String list_name;
+  List<String> values;
+  ListForPlaces({required this.list_name, required this.values});
+
+  ListForPlaces.fromJson(Map<String, dynamic> json)
+      : list_name = "nom",
+        values = ["a", "b"];
+
+  Map<String, dynamic> toJSON() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['list_name'] = this.list_name;
+    data['values'] = this.values;
+    return data;
+  }
+}
+
+class ListsForPlaces {
+  Map<int, ListForPlaces> mapLists;
+
+  ListsForPlaces({required this.mapLists});
+
+  static ListsForPlaces fromJSON(Map<String, dynamic> json) {
+    Map<int, ListForPlaces> result = {};
+
+    json.forEach((key, item) {
+      List<dynamic> item_values = item["values"];
+
+      List<String> values =
+          (item_values as List).map((item) => item as String).toList();
+
+      result[int.parse(key)] =
+          ListForPlaces(list_name: item["list_name"], values: values);
+    });
+    ListsForPlaces lfp = ListsForPlaces(mapLists: result);
+    return lfp;
+  }
+
+  Map<String, dynamic> toJSON() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    this.mapLists.forEach((order, lfp) {
+      data[order.toString()] = lfp.toJSON();
+    });
+    return data;
+  }
+}
+
 // Create a corresponding State class.
 class ListsForPlacesPageState extends State<ListsForPlacesPage> {
   late String _title = 'lists';
   late Map<String, dynamic> dictOfListsForPlaces = {};
+  late ListsForPlaces lists_for_places;
 
   @override
   void initState() {
     super.initState();
     _title = "${widget.site!.name} : lists for places";
     dictOfListsForPlaces = widget.site!.dictOfListsForPlaces;
+
+    lists_for_places = ListsForPlaces.fromJSON(dictOfListsForPlaces);
+
+    print(lists_for_places.toString());
   }
 
   Future<Map<String, dynamic>> getMyInformations() async {
@@ -46,7 +98,9 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
           if (snapshot.hasData) {
             dictOfListsForPlaces = snapshot.data;
             return widgetBody(
-                user: widget.user, dictOfListsForPlaces: dictOfListsForPlaces);
+                user: widget.user,
+                dictOfListsForPlaces: dictOfListsForPlaces,
+                lists_for_places: lists_for_places);
           } else if (snapshot.hasError) {
             return widgetError(widget.user);
           } else {
@@ -66,12 +120,13 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
 
   Widget widgetBody(
       {required User user,
-      required Map<String, dynamic> dictOfListsForPlaces}) {
+      required Map<String, dynamic> dictOfListsForPlaces,
+      required ListsForPlaces lists_for_places}) {
     return Scaffold(
       appBar: widgetAppBar(user),
       body: widgetListOfListContent(
         user: user,
-        dictOfListsForPlaces: dictOfListsForPlaces,
+        lists_for_places: lists_for_places,
         onRefresh: (valueint, valueString) => setState(() {
           if (valueString != "") {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -102,7 +157,11 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
       // onPressed: {},
       onPressed: () async {
         //  _showDialog(callback);
-        _showDialog(callback: callback, site: widget.site, listname: null);
+        _showDialog(
+            callback: callback,
+            site: widget.site,
+            listname: null,
+            order: lists_for_places.mapLists.length); // ajoute à la fin
       },
       child: const Icon(Icons.add),
     );
@@ -126,38 +185,32 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
   Widget widgetListOfListContent(
       {required User user,
       required void Function(dynamic valueint, dynamic valueString) onRefresh,
-      required Map<String, dynamic> dictOfListsForPlaces}) {
-    List<String> list = [];
-    dictOfListsForPlaces.forEach((key, value) {
-      list.add(key);
-    });
-    list.sort();
-
+      required ListsForPlaces lists_for_places}) {
     return ListTileTheme(
         contentPadding: const EdgeInsets.all(15),
         style: ListTileStyle.list,
         dense: true,
         child: ListView.builder(
             padding: const EdgeInsets.all(8),
-            itemCount: list.length,
+            itemCount: lists_for_places.mapLists.length,
             itemBuilder: (BuildContext context, int index) {
-              var x = dictOfListsForPlaces[list[index]];
+              ListForPlaces lfp = lists_for_places.mapLists[index]!;
 
               int max = 5;
-              if (max > x.length) {
-                max = x.length;
+              if (max > lfp.values.length) {
+                max = lfp.values.length;
               }
 
-              var subvalues = x.sublist(0, max);
+              var subvalues = lfp.values.sublist(0, max);
               subvalues.sort();
 
               return Card(
                   margin: const EdgeInsets.all(10),
                   child: ListTile(
                     leading: const Icon(Icons.list),
-                    title: Text(list[index]),
+                    title: Text(lfp.list_name),
                     subtitle: Text(
-                        "${subvalues.join(", ")} ... (${x.length} items) "),
+                        "${subvalues.join(", ")} ... (${lfp.values.length} items) "),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -166,8 +219,8 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
                           onPressed: () {
                             _showDialog(
                                 callback: callBack,
-                                site: widget.site,
-                                listname: list[index]);
+                                listname: lfp.list_name,
+                                order: index);
                           },
                         ),
                       ],
@@ -181,22 +234,22 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
             {required String message,
             required Map<String, dynamic> dictOfListsForPlaces})
         callback,
-    required Site? site,
+    // required Site? site,
     required String? listname,
+    required int order,
   }) {
     late TextEditingController controllerListName = TextEditingController();
     late TextEditingController controllerValues = TextEditingController();
 
     List<dynamic> listValues = [];
 
-    if (listname != null) {
-      controllerListName.text = listname;
-
-      if (site!.dictOfListsForPlaces.keys.contains(listname)) {
-        listValues = site.dictOfListsForPlaces[listname];
-      }
-
+    if (lists_for_places.mapLists.containsKey(order)) {
+      ListForPlaces lfp = lists_for_places.mapLists[order]!;
+      controllerListName.text = lfp.list_name;
+      listValues = lfp.values;
       listValues.sort();
+    } else {
+      controllerListName.text = "";
     }
 
     controllerValues.text = listValues.join("\n");
@@ -259,17 +312,19 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
                       ),
                       child: const Text('Ok'),
                       onPressed: () async {
-                        dictOfListsForPlaces.remove(listname);
-                        dictOfListsForPlaces[controllerListName.text] =
-                            controllerValues.text.split("\n");
+                        ListForPlaces lfp = ListForPlaces(
+                            list_name: controllerListName.text,
+                            values: controllerValues.text.split("\n"));
 
-                        SiteApi siteApi = SiteApi();
+                        lists_for_places.mapLists[order] = lfp;
+
+                        print(lists_for_places.toString());
 
                         try {
                           Response response =
-                              await siteApi.updateSiteListsForPlaces(
+                              await SiteApi.updateSiteListsForPlaces(
                                   idSite: widget.site!.id,
-                                  dictOfListsForPlaces: dictOfListsForPlaces);
+                                  lists_for_places: lists_for_places);
 
                           if (response.statusCode == 200) {
                             Navigator.pop(context);

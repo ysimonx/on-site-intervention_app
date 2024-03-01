@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:on_site_intervention_app/ui/lists_for_places_page.dart';
 
 import '../../models/model_site.dart';
 import '../../ui/utils/logger.dart';
@@ -170,11 +171,13 @@ class SiteApi {
     }
   }
 
-  Future<Response> updateSiteListsForPlaces(
+  static Future<Response> updateSiteListsForPlaces(
       {required String idSite,
-      required Map<String, dynamic> dictOfListsForPlaces}) async {
+      required ListsForPlaces lists_for_places}) async {
     try {
-      var formData = {"dict_of_lists_for_places": dictOfListsForPlaces};
+      DioClient dioClient = DioClient(Dio());
+
+      var formData = {"dict_of_lists_for_places": lists_for_places.toJSON()};
       String json = jsonEncode(formData);
 
       String s = Endpoints.updateListsForPlaces.replaceAll("<site_id>", idSite);

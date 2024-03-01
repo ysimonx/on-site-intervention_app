@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import '../models/model_field.dart';
 import '../models/model_formulaire.dart';
 import '../models/model_intervention.dart';
+import '../models/model_lists_for_places.dart';
 import '../models/model_section.dart';
 import '../models/model_user.dart';
 import '../network/api/image.api.dart';
@@ -49,6 +50,7 @@ class InterventionPageState extends State<InterventionPage> {
   late Map<String, Formulaire> mapFormulaires = {};
   late Map<String, dynamic> mapMandatoryLists = {};
 
+  String placename = "";
   int _initialIndex = 0;
 
   late Formulaire currentFormulaire;
@@ -58,6 +60,8 @@ class InterventionPageState extends State<InterventionPage> {
   List<String> listFieldsUUIDUpdated = [];
 
   late Directory deviceApplicationDocumentsDirectory;
+
+  Map<String, String> dataForPlaces = {};
 
   late String intervention_status;
 
@@ -77,6 +81,13 @@ class InterventionPageState extends State<InterventionPage> {
     // Start listening to changes.
     controllerInterventionName.addListener(_onChangedText);
     intervention_status = widget.intervention.status;
+
+    ListsForPlaces l = widget.site.listsForPlaces;
+    l.mapLists.forEach((key, lfp) {
+      lfp.values.forEach((element) {
+        dataForPlaces[lfp.list_name] = "-";
+      });
+    });
   }
 
   Future<List<User>> getMyConfig() async {
@@ -186,7 +197,7 @@ class InterventionPageState extends State<InterventionPage> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: widgetBodyFormLocation()),
+                child: widgetChoosePlace()),
             widgetHeaderFormulaire(),
             widgetBodyFormInterventionName(),
             const Padding(
@@ -236,20 +247,52 @@ class InterventionPageState extends State<InterventionPage> {
         ));
   }
 
-  Padding widgetBodyFormLocation() {
-    return const Padding(
+  Padding widgetChoosePlace() {
+    ListsForPlaces l = widget.site.listsForPlaces;
+    List<Widget> childrenW = [];
+
+    l.mapLists.forEach((key, lfp) {
+      List<DropdownMenuItem> dropdownItems = [
+        DropdownMenuItem(child: Text("-"), value: "-")
+      ];
+
+      lfp.values.forEach((element) {
+        dropdownItems
+            .add(DropdownMenuItem(child: Text(element), value: element));
+      });
+
+      childrenW.add(Row(children: [
+        SizedBox(width: 100, child: Text(lfp.list_name)),
+        DropdownButton(
+            items: dropdownItems,
+            value: dataForPlaces[lfp.list_name],
+            onChanged: (cvalue) {
+              setState(() {
+                if (cvalue is String) {
+                  dataForPlaces[lfp.list_name] = cvalue;
+                }
+              });
+            })
+      ]));
+    });
+
+    return Padding(
         padding: EdgeInsets.symmetric(vertical: 16),
-        child: SizedBox(
-            height: 100,
+        child: /*SizedBox(
+            height: 300,
             width: double.infinity,
-            child: Card(
-              elevation: 10,
-              child: ListTile(
-                  leading: Icon(Icons.room),
-                  subtitle: Text("batiment: B1, level: L2, room: R3"),
-                  title: Text("Emplacement"),
-                  trailing: Icon(Icons.travel_explore)),
-            )));
+            child: */
+            Card(
+          elevation: 10,
+          child: ListTile(
+              leading: Icon(Icons.room),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: childrenW,
+              ),
+              title: Text("Emplacement"),
+              trailing: Icon(Icons.travel_explore)),
+        ));
   }
 
   Widget widgetBodyTabsFormulaires({required Intervention intervention}) {

@@ -6,6 +6,7 @@ import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/models/model_tenant.dart';
 import 'package:on_site_intervention_app/models/model_user.dart';
 
+import '../models/model_lists_for_places.dart';
 import '../network/api/site_api.dart';
 import '../network/api/user_api.dart';
 import 'utils/i18n.dart';
@@ -22,72 +23,20 @@ class ListsForPlacesPage extends StatefulWidget {
   }
 }
 
-class ListForPlaces {
-  String list_name;
-  List<String> values;
-  ListForPlaces({required this.list_name, required this.values});
-
-  ListForPlaces.fromJson(Map<String, dynamic> json)
-      : list_name = "nom",
-        values = ["a", "b"];
-
-  Map<String, dynamic> toJSON() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['list_name'] = this.list_name;
-    data['values'] = this.values;
-    return data;
-  }
-}
-
-class ListsForPlaces {
-  Map<int, ListForPlaces> mapLists;
-
-  ListsForPlaces({required this.mapLists});
-
-  static ListsForPlaces fromJSON(Map<String, dynamic> json) {
-    Map<int, ListForPlaces> result = {};
-
-    json.forEach((key, item) {
-      List<dynamic> item_values = item["values"];
-
-      List<String> values =
-          (item_values as List).map((item) => item as String).toList();
-
-      result[int.parse(key)] =
-          ListForPlaces(list_name: item["list_name"], values: values);
-    });
-    ListsForPlaces lfp = ListsForPlaces(mapLists: result);
-    return lfp;
-  }
-
-  Map<String, dynamic> toJSON() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    this.mapLists.forEach((order, lfp) {
-      data[order.toString()] = lfp.toJSON();
-    });
-    return data;
-  }
-}
-
 // Create a corresponding State class.
 class ListsForPlacesPageState extends State<ListsForPlacesPage> {
   late String _title = 'lists';
-  late Map<String, dynamic> dictOfListsForPlaces = {};
   late ListsForPlaces lists_for_places;
 
   @override
   void initState() {
     super.initState();
     _title = "${widget.site!.name} : lists for places";
-    dictOfListsForPlaces = widget.site!.dictOfListsForPlaces;
-
-    lists_for_places = ListsForPlaces.fromJSON(dictOfListsForPlaces);
-
-    print(lists_for_places.toString());
+    lists_for_places = widget.site!.listsForPlaces;
   }
 
-  Future<Map<String, dynamic>> getMyInformations() async {
-    return widget.site!.dictOfListsForPlaces;
+  Future<ListsForPlaces> getMyInformations() async {
+    return lists_for_places;
   }
 
   @override
@@ -96,11 +45,8 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
         future: getMyInformations(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            dictOfListsForPlaces = snapshot.data;
             return widgetBody(
-                user: widget.user,
-                dictOfListsForPlaces: dictOfListsForPlaces,
-                lists_for_places: lists_for_places);
+                user: widget.user, lists_for_places: lists_for_places);
           } else if (snapshot.hasError) {
             return widgetError(widget.user);
           } else {
@@ -119,9 +65,7 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
   }
 
   Widget widgetBody(
-      {required User user,
-      required Map<String, dynamic> dictOfListsForPlaces,
-      required ListsForPlaces lists_for_places}) {
+      {required User user, required ListsForPlaces lists_for_places}) {
     return Scaffold(
       appBar: widgetAppBar(user),
       body: widgetListOfListContent(
@@ -141,13 +85,12 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
     );
   }
 
-  void callBack(
-      {required String message,
-      required Map<String, dynamic> dictOfListsForPlaces}) {
+  void callBack({
+    required String message,
+  }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
-    widget.site!.dictOfListsForPlaces = dictOfListsForPlaces;
     setState(() {});
   }
 
@@ -159,7 +102,6 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
         //  _showDialog(callback);
         _showDialog(
             callback: callback,
-            site: widget.site,
             listname: null,
             order: lists_for_places.mapLists.length); // ajoute à la fin
       },
@@ -230,10 +172,9 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
   }
 
   void _showDialog({
-    required void Function(
-            {required String message,
-            required Map<String, dynamic> dictOfListsForPlaces})
-        callback,
+    required void Function({
+      required String message,
+    }) callback,
     // required Site? site,
     required String? listname,
     required int order,
@@ -330,21 +271,21 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
                             Navigator.pop(context);
 
                             callback(
-                                message: "Processing Data",
-                                dictOfListsForPlaces: dictOfListsForPlaces);
+                              message: "Processing Data",
+                            );
                             return;
                           }
                           if (response.statusCode == 400) {
                             callback(
-                                message:
-                                    "Processing Data Error ${response.data["error"]}",
-                                dictOfListsForPlaces: dictOfListsForPlaces);
+                              message:
+                                  "Processing Data Error ${response.data["error"]}",
+                            );
                             return;
                           }
                         } catch (e) {
                           callback(
-                              message: e.toString(),
-                              dictOfListsForPlaces: dictOfListsForPlaces);
+                            message: e.toString(),
+                          );
                         }
                       },
                     ),

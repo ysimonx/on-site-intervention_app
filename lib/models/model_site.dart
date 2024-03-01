@@ -1,3 +1,4 @@
+import 'model_lists_for_places.dart';
 import 'model_tenant.dart';
 import 'model_user.dart';
 import 'dart:convert';
@@ -8,6 +9,7 @@ class Site {
   List<dynamic> roles = [];
   Map<String, dynamic> dictOfLists = {};
   Map<String, dynamic> dictOfListsForPlaces = {};
+  late ListsForPlaces listsForPlaces;
 
   late Tenant tenant;
 
@@ -19,7 +21,8 @@ class Site {
     data['name'] = name;
     data['roles'] = roles;
     data['dictOfLists'] = jsonEncode(dictOfLists);
-    data['dictOfListsForPlaces'] = jsonEncode(dictOfListsForPlaces);
+    // data['dictOfListsForPlaces'] = jsonEncode(dictOfListsForPlaces);
+    data['dictOfListsForPlaces'] = listsForPlaces.toJSON();
     return data;
   }
 
@@ -32,6 +35,9 @@ class Site {
         dictOfListsForPlaces = json.containsKey('dict_of_lists_for_places')
             ? json['dict_of_lists_for_places']
             : {},
+        listsForPlaces = json.containsKey('dict_of_lists_for_places')
+            ? ListsForPlaces.fromJSON(json['dict_of_lists_for_places'])
+            : ListsForPlaces.fromJSON({}),
         tenant = Tenant.fromJson(json['tenant']);
 
   List<String> getRoleNamesForUser(User u) {

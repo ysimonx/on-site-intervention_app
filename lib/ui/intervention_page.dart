@@ -20,6 +20,7 @@ import '../network/api/user_api.dart';
 import 'utils/logger.dart';
 import 'widget/card_settings_gallery.dart';
 import 'widget/card_settings_signature.dart';
+import 'widget/choose_place.dart';
 
 // Create a Form widget.
 class InterventionPage extends StatefulWidget {
@@ -61,8 +62,6 @@ class InterventionPageState extends State<InterventionPage> {
 
   late Directory deviceApplicationDocumentsDirectory;
 
-  Map<String, String> dataForPlaces = {};
-
   late String intervention_status;
 
   // late Directory directory;
@@ -81,13 +80,6 @@ class InterventionPageState extends State<InterventionPage> {
     // Start listening to changes.
     controllerInterventionName.addListener(_onChangedText);
     intervention_status = widget.intervention.status;
-
-    ListsForPlaces l = widget.site.listsForPlaces;
-    l.mapLists.forEach((key, lfp) {
-      lfp.values.forEach((element) {
-        dataForPlaces[lfp.list_name] = "-";
-      });
-    });
   }
 
   Future<List<User>> getMyConfig() async {
@@ -189,6 +181,10 @@ class InterventionPageState extends State<InterventionPage> {
         child: SingleChildScrollView(child: widgetBodyForm(context)));
   }
 
+  void onPlaceChanged(value) {
+    print(value.toString());
+  }
+
   Widget widgetBodyForm(BuildContext context) {
     return Wrap(children: [
       Form(
@@ -197,12 +193,13 @@ class InterventionPageState extends State<InterventionPage> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: widgetChoosePlace()),
+                child: ChoosePlaceWidget(
+                    site: widget.site, onChanged: onPlaceChanged)),
             widgetHeaderFormulaire(),
             widgetBodyFormInterventionName(),
             const Padding(
                 padding: EdgeInsets.symmetric(vertical: 2), child: Text(' ')),
-            widgetBodyTabsFormulaires(intervention: widget.intervention),
+            widgetBodyTabsFormulaires(),
             widgetBodyFormulaireNG(_initialIndex),
             const SizedBox(
               height: 600,
@@ -247,60 +244,7 @@ class InterventionPageState extends State<InterventionPage> {
         ));
   }
 
-  Padding widgetChoosePlace() {
-    ListsForPlaces l = widget.site.listsForPlaces;
-    List<Widget> childrenW = [];
-
-    l.mapLists.forEach((key, lfp) {
-      List<DropdownMenuItem> dropdownItems = [
-        DropdownMenuItem(child: Text("-"), value: "-")
-      ];
-
-      lfp.values.forEach((element) {
-        dropdownItems
-            .add(DropdownMenuItem(child: Text(element), value: element));
-      });
-
-      childrenW.add(Wrap(
-          direction: Axis.vertical,
-          spacing: 1.0,
-          runSpacing: 1.0,
-          children: [
-            SizedBox(width: 100, child: Text(lfp.list_name)),
-            DropdownButton(
-                items: dropdownItems,
-                value: dataForPlaces[lfp.list_name],
-                onChanged: (cvalue) {
-                  setState(() {
-                    if (cvalue is String) {
-                      dataForPlaces[lfp.list_name] = cvalue;
-                    }
-                  });
-                })
-          ]));
-    });
-
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 16),
-        child: /*SizedBox(
-            height: 300,
-            width: double.infinity,
-            child: */
-            Card(
-          elevation: 10,
-          child: ListTile(
-              leading: Icon(Icons.room),
-              //subtitle:
-              title: Wrap(
-                runSpacing: 1.0,
-                spacing: 30.0,
-                children: childrenW,
-              ),
-              trailing: Icon(Icons.travel_explore)),
-        ));
-  }
-
-  Widget widgetBodyTabsFormulaires({required Intervention intervention}) {
+  Widget widgetBodyTabsFormulaires() {
     List<Tab> tabs = [];
     mapFormulaires.forEach((k, f) => tabs.add(Tab(child: Text(f.form_name))));
     return DefaultTabController(

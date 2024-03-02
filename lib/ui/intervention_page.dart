@@ -261,19 +261,21 @@ class InterventionPageState extends State<InterventionPage> {
             .add(DropdownMenuItem(child: Text(element), value: element));
       });
 
-      childrenW.add(Row(children: [
-        SizedBox(width: 100, child: Text(lfp.list_name)),
-        DropdownButton(
-            items: dropdownItems,
-            value: dataForPlaces[lfp.list_name],
-            onChanged: (cvalue) {
-              setState(() {
-                if (cvalue is String) {
-                  dataForPlaces[lfp.list_name] = cvalue;
-                }
-              });
-            })
-      ]));
+      childrenW.add(SizedBox(
+          width: 200,
+          child: Wrap(direction: Axis.vertical, children: [
+            SizedBox(width: 100, child: Text(lfp.list_name)),
+            DropdownButton(
+                items: dropdownItems,
+                value: dataForPlaces[lfp.list_name],
+                onChanged: (cvalue) {
+                  setState(() {
+                    if (cvalue is String) {
+                      dataForPlaces[lfp.list_name] = cvalue;
+                    }
+                  });
+                })
+          ])));
     });
 
     return Padding(
@@ -286,8 +288,9 @@ class InterventionPageState extends State<InterventionPage> {
           elevation: 10,
           child: ListTile(
               leading: Icon(Icons.room),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              subtitle: Wrap(
+                runSpacing: 5.0,
+                spacing: 5.0,
                 children: childrenW,
               ),
               title: Text("Emplacement"),

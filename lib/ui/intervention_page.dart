@@ -261,9 +261,11 @@ class InterventionPageState extends State<InterventionPage> {
             .add(DropdownMenuItem(child: Text(element), value: element));
       });
 
-      childrenW.add(SizedBox(
-          width: 200,
-          child: Wrap(direction: Axis.vertical, children: [
+      childrenW.add(Wrap(
+          direction: Axis.vertical,
+          spacing: 1.0,
+          runSpacing: 1.0,
+          children: [
             SizedBox(width: 100, child: Text(lfp.list_name)),
             DropdownButton(
                 items: dropdownItems,
@@ -275,7 +277,7 @@ class InterventionPageState extends State<InterventionPage> {
                     }
                   });
                 })
-          ])));
+          ]));
     });
 
     return Padding(
@@ -288,12 +290,12 @@ class InterventionPageState extends State<InterventionPage> {
           elevation: 10,
           child: ListTile(
               leading: Icon(Icons.room),
-              subtitle: Wrap(
-                runSpacing: 5.0,
-                spacing: 5.0,
+              //subtitle:
+              title: Wrap(
+                runSpacing: 1.0,
+                spacing: 30.0,
                 children: childrenW,
               ),
-              title: Text("Emplacement"),
               trailing: Icon(Icons.travel_explore)),
         ));
   }

@@ -1,3 +1,5 @@
+import '../ui/utils/logger.dart';
+
 class ListForPlaces {
   String list_name;
   List<String> values;
@@ -43,5 +45,24 @@ class ListsForPlaces {
       data[order.toString()] = lfp.toJSON();
     });
     return data;
+  }
+
+  void removeFromList({required int index}) {
+    logger.i("${index}");
+    mapLists.remove(index);
+    fixOrderOfList();
+  }
+
+  void fixOrderOfList() {
+    List<int> keys = mapLists.keys.toList();
+    keys.sort();
+    Map<int, ListForPlaces> newmapLists = {};
+
+    int j = 0;
+    keys.forEach((element) {
+      newmapLists[j] = mapLists[element] as ListForPlaces;
+      j++;
+    });
+    mapLists = newmapLists;
   }
 }

@@ -157,6 +157,15 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            _showDialogDelete(
+                                callback: callBack,
+                                listname: lfp.list_name,
+                                order: index);
+                          },
+                        ),
+                        IconButton(
                           icon: const Icon(Icons.manage_search),
                           onPressed: () {
                             _showDialog(
@@ -169,6 +178,53 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
                     ),
                   ));
             }));
+  }
+
+  void _showDialogDelete({
+    required void Function({
+      required String message,
+    }) callback,
+    // required Site? site,
+    required String? listname,
+    required int order,
+  }) {
+    showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            title:
+                Text("Confirmez-vous la suppression de la liste '${listname}'"),
+            actions: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  textStyle: Theme.of(context).textTheme.labelLarge,
+                ),
+                child: Text(translateI18N("annuler").toTitleCase()),
+                onPressed: () async {
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  textStyle: Theme.of(context).textTheme.labelLarge,
+                ),
+                child: Text(translateI18N("supprimer").toTitleCase()),
+                onPressed: () async {
+                  lists_for_places.removeFromList(index: order);
+                  saveListForPlaces(callback: callback);
+                },
+              ),
+            ],
+          );
+        }).then((exit) {
+      if (exit == null) return;
+
+      if (exit) {
+        // user pressed Yes button
+      } else {
+        // user pressed No button
+      }
+    });
   }
 
   void _showDialog({
@@ -258,40 +314,40 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
                             values: controllerValues.text.split("\n"));
 
                         lists_for_places.mapLists[order] = lfp;
-
                         print(lists_for_places.toString());
-
-                        try {
-                          Response response =
-                              await SiteApi.updateSiteListsForPlaces(
-                                  idSite: widget.site!.id,
-                                  lists_for_places: lists_for_places);
-
-                          if (response.statusCode == 200) {
-                            Navigator.pop(context);
-
-                            callback(
-                              message: "Processing Data",
-                            );
-                            return;
-                          }
-                          if (response.statusCode == 400) {
-                            callback(
-                              message:
-                                  "Processing Data Error ${response.data["error"]}",
-                            );
-                            return;
-                          }
-                        } catch (e) {
-                          callback(
-                            message: e.toString(),
-                          );
-                        }
+                        saveListForPlaces(callback: callback);
                       },
                     ),
                   ],
                 ));
       },
     );
+  }
+
+  void saveListForPlaces(
+      {required void Function({required String message}) callback}) async {
+    try {
+      Response response = await SiteApi.updateSiteListsForPlaces(
+          idSite: widget.site!.id, lists_for_places: lists_for_places);
+
+      if (response.statusCode == 200) {
+        Navigator.pop(context);
+
+        callback(
+          message: "Processing Data",
+        );
+        return;
+      }
+      if (response.statusCode == 400) {
+        callback(
+          message: "Processing Data Error ${response.data["error"]}",
+        );
+        return;
+      }
+    } catch (e) {
+      callback(
+        message: e.toString(),
+      );
+    }
   }
 }

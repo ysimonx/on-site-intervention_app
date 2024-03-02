@@ -21,17 +21,17 @@ class ChoosePlaceWidget extends StatefulWidget {
 // Create a corresponding State class.
 class ChoosePlaceWidgetState extends State<ChoosePlaceWidget> {
   Map<String, String> dataForPlaces = {};
-  late ListsForPlaces l;
+  late ListsForPlaces listsForPlaces;
 
   @override
   void initState() {
     super.initState();
 
     // initiation des valeurs des listes
-    l = widget.site!.listsForPlaces;
-    l.mapLists.forEach((key, lfp) {
-      lfp.values.forEach((element) {
-        dataForPlaces[lfp.list_name] = "-";
+    listsForPlaces = widget.site!.listsForPlaces;
+    listsForPlaces.mapLists.forEach((key, listForPlaces) {
+      listForPlaces.values.forEach((element) {
+        dataForPlaces[listForPlaces.list_name] = "-";
       });
     });
   }
@@ -40,14 +40,14 @@ class ChoosePlaceWidgetState extends State<ChoosePlaceWidget> {
   Widget build(BuildContext context) {
     List<Widget> childrenW = [];
 
-    l.mapLists.forEach((key, lfp) {
+    listsForPlaces.mapLists.forEach((key, listForPlaces) {
       // valeur "nc" de chaque liste
       List<DropdownMenuItem> dropdownItems = [
         const DropdownMenuItem(value: "-", child: Text("-"))
       ];
 
       // remplit chaque liste avec les valeurs possibles
-      lfp.values.forEach((element) {
+      listForPlaces.values.forEach((element) {
         dropdownItems
             .add(DropdownMenuItem(value: element, child: Text(element)));
       });
@@ -57,16 +57,16 @@ class ChoosePlaceWidgetState extends State<ChoosePlaceWidget> {
           spacing: 1.0,
           runSpacing: 1.0,
           children: [
-            SizedBox(width: 100, child: Text(lfp.list_name)),
+            SizedBox(width: 100, child: Text(listForPlaces.list_name)),
             DropdownButton(
                 items: dropdownItems,
 
                 // ici : spécifie la valeur actuelle
-                value: dataForPlaces[lfp.list_name],
+                value: dataForPlaces[listForPlaces.list_name],
                 onChanged: (cvalue) {
                   setState(() {
                     if (cvalue is String) {
-                      dataForPlaces[lfp.list_name] = cvalue;
+                      dataForPlaces[listForPlaces.list_name] = cvalue;
                       widget.onChanged(dataForPlaces);
                     }
                   });

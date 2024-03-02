@@ -41,10 +41,12 @@ class ChoosePlaceWidgetState extends State<ChoosePlaceWidget> {
     List<Widget> childrenW = [];
 
     l.mapLists.forEach((key, lfp) {
+      // valeur "nc" de chaque liste
       List<DropdownMenuItem> dropdownItems = [
         const DropdownMenuItem(value: "-", child: Text("-"))
       ];
 
+      // remplit chaque liste avec les valeurs possibles
       lfp.values.forEach((element) {
         dropdownItems
             .add(DropdownMenuItem(value: element, child: Text(element)));
@@ -58,6 +60,8 @@ class ChoosePlaceWidgetState extends State<ChoosePlaceWidget> {
             SizedBox(width: 100, child: Text(lfp.list_name)),
             DropdownButton(
                 items: dropdownItems,
+
+                // ici : spécifie la valeur actuelle
                 value: dataForPlaces[lfp.list_name],
                 onChanged: (cvalue) {
                   setState(() {
@@ -72,11 +76,7 @@ class ChoosePlaceWidgetState extends State<ChoosePlaceWidget> {
 
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 16),
-        child: /*SizedBox(
-            height: 300,
-            width: double.infinity,
-            child: */
-            Card(
+        child: Card(
           elevation: 10,
           child: ListTile(
               leading: const Icon(Icons.room),

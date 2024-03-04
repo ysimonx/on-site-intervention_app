@@ -465,8 +465,12 @@ class InterventionPageState extends State<InterventionPage> {
       Directory directoryImageGallery = Directory(
           "${deviceApplicationDocumentsDirectory.path}/${ImageApi.getDownloadedImageRelativeDirectoryPath()}");
 
+      Directory directoryPendingUploadImageGallery = Directory(
+          "${deviceApplicationDocumentsDirectory.path}/${ImageApi.getPendingUploadImageRelativeDirectoryPath()}");
+
       return genCardSettingsGallery(jsonEncode(listPictures), f,
-          directory: directoryImageGallery);
+          directory: directoryImageGallery,
+          directoryPendingUpload: directoryPendingUploadImageGallery);
     }
 
     return genCardSettingsInt(initialValue, s, f);
@@ -727,9 +731,11 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   CardSettingsWidget genCardSettingsGallery(String initialValue, Field f,
-      {required Directory directory}) {
+      {required Directory directory,
+      required Directory directoryPendingUpload}) {
     return CardSettingsGallery(
         directory: directory,
+        directoryPendingUpload: directoryPendingUpload,
         field: f,
         label: f.field_label,
         initialValue: initialValue,

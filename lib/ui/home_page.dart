@@ -62,6 +62,9 @@ class _HomePageState extends State<HomePage> {
       List<Site> list = user.sites;
       list.forEach((site) async {
         await interventionAPI.getListInterventions(site: site, realtime: true);
+        if (site.id == "5dc837b9-9678-494c-9b1a-78ff1bf4a17b") {
+          print("yo");
+        }
         await interventionAPI.downloadPhotos(site: site);
       });
     } catch (e) {

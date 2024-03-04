@@ -39,7 +39,8 @@ Widget widgetGallery(
     required BuildContext context,
     FormFieldValidator<String>? validator,
     required Directory directory,
-    required Field field}) {
+    required Field field,
+    required Directory directoryPendingUpload}) {
   List<dynamic> listPictures = jsonDecode(initialValue);
 
   return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
@@ -110,16 +111,21 @@ Widget widgetGallery(
           itemBuilder: (ctx, photoIndex, realIdx) {
             return widgetGalleryItem(
                 uriPicture: listPictures[photoIndex] as String,
-                directory: directory);
+                directory: directory,
+                directoryPendingUpload: directoryPendingUpload);
           })
     ]);
   });
 }
 
 Widget widgetGalleryItem(
-    {required String uriPicture, required Directory directory}) {
+    {required String uriPicture,
+    required Directory directory,
+    required Directory directoryPendingUpload}) {
+  String localuriPicture = "";
+
   if (!uriPicture.startsWith("/")) {
-    uriPicture = "${directory.path}/$uriPicture";
+    localuriPicture = "${directory.path}/$uriPicture";
   }
 
   Widget widgetChild =
@@ -129,14 +135,26 @@ Widget widgetGalleryItem(
     widgetChild = CachedNetworkImage(
         imageUrl: uriPicture, fit: BoxFit.cover, width: 1000.0, height: 1000.0);
   } else {
-    File f = File(uriPicture);
+    File f = File(localuriPicture);
     if (f.existsSync()) {
-      widgetChild = Image.file(File(uriPicture),
+      widgetChild = Image.file(f,
           alignment: Alignment.topCenter,
           fit: BoxFit.fitWidth,
           width: 1000.0,
           height: 1000.0);
+    } else {
+      localuriPicture = "${directoryPendingUpload.path}/$uriPicture";
+      File f = File(localuriPicture);
+      if (f.existsSync()) {
+        widgetChild = Image.file(f,
+            alignment: Alignment.topCenter,
+            fit: BoxFit.fitWidth,
+            width: 1000.0,
+            height: 1000.0);
+      }
     }
+
+    return widgetChild;
   }
 
   return Container(
@@ -176,6 +194,7 @@ Widget widgetGalleryItem(
 class CardSettingsGallery extends FormField<String>
     implements ICommonFieldProperties, ITextFieldProperties {
   final Directory directory;
+  final Directory directoryPendingUpload;
   final Field field;
 
   CardSettingsGallery(
@@ -220,7 +239,8 @@ class CardSettingsGallery extends FormField<String>
       this.fieldPadding,
       this.contentPadding = const EdgeInsets.all(0.0),
       required this.directory,
-      required this.field})
+      required this.field,
+      required this.directoryPendingUpload})
       : assert(maxLength > 0),
         assert(controller == null || inputMask == null),
         super(
@@ -611,6 +631,7 @@ class _CardSettingsGalleryState extends FormFieldState<String> {
             context: context,
             validator: widget.validator,
             directory: widget.directory,
+            directoryPendingUpload: widget.directoryPendingUpload,
             field: widget.field));
   }
 }

@@ -90,11 +90,27 @@ class _SitePageState extends State<SitePage> {
   }
 
   Future<String> getListInterventions() async {
-    logger.i("ta da getListInterventions debut");
+    logger.d("ta da getListInterventions debut");
     list = await interventionAPI.getListInterventions(
         site: widget.site, realtime: false);
-    list.sort((i, j) => int.parse(j.hashtag).compareTo(int.parse(i.hashtag)));
-    logger.i("ta da getListInterventions fin");
+    print(list.toString());
+    list.sort((i, j) {
+      int indiceI;
+      int indiceJ;
+
+      if (i.hashtag == "") {
+        indiceI = 9999999;
+      } else {
+        indiceI = int.parse(i.hashtag);
+      }
+      if (j.hashtag == "") {
+        indiceJ = 9999999;
+      } else {
+        indiceJ = int.parse(j.hashtag);
+      }
+      return indiceJ.compareTo(indiceI);
+    });
+    logger.d("ta da getListInterventions fin");
     return "ok";
   }
 
@@ -110,7 +126,7 @@ class _SitePageState extends State<SitePage> {
                 // List<Intervention> listInterventions = snapshot.data;
                 List<Intervention> listInterventions = list;
                 if (listInterventions.isNotEmpty) {
-                  logger.i("ta da builder ${listInterventions.length}");
+                  logger.d("ta da builder ${listInterventions.length}");
                   return Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(children: <Widget>[
@@ -179,7 +195,7 @@ class _SitePageState extends State<SitePage> {
                     IconButton(
                         onPressed: () async {
                           Intervention intervention = listInterventions[index];
-                          logger.i(
+                          logger.d(
                               "ta da avant push ${intervention.field_on_site_uuid_values['36448a1b-3f11-463a-bf60-7668f32da094']}");
                           if (!context.mounted) {
                             return;
@@ -192,7 +208,7 @@ class _SitePageState extends State<SitePage> {
                                 site: widget.site);
                           })).then((intervention) => setState(() {
                                 list[index] = intervention;
-                                logger.i(
+                                logger.d(
                                     "ta da apres push ${intervention.field_on_site_uuid_values['36448a1b-3f11-463a-bf60-7668f32da094']}");
                               }));
                         },

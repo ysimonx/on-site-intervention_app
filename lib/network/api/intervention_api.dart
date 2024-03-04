@@ -29,7 +29,7 @@ class InterventionApi {
       {required Site site, required bool realtime}) async {
     dynamic content = null;
 
-    logger.i("ta da getListInterventions 10");
+    logger.d("ta da getListInterventions 10");
 
     if (!isMobileFirst() || realtime == true) {
       try {
@@ -53,16 +53,16 @@ class InterventionApi {
       }
     }
 
-    logger.i("ta da getListInterventions 30");
+    logger.d("ta da getListInterventions 30");
     if (content != null) {
-      logger.i("ta da getListInterventions 35 -> realtime = true");
+      logger.d("ta da getListInterventions 35 -> realtime = true");
       await writeListInterventionValues(site: site, data: content);
     } else {
-      logger.i("ta da getListInterventions 35 -> realtime = false");
+      logger.d("ta da getListInterventions 35 -> realtime = false");
       content = await readListInterventionValues(site: site);
     }
 
-    logger.i("ta da getListInterventions 40");
+    logger.d("ta da getListInterventions 40");
 
     List<Intervention> listInterventionValues = [];
 
@@ -96,13 +96,13 @@ class InterventionApi {
           // l'intervention en local est plus ancienne que celle du serveur
           // je peux supprimer l'intervention enregistrée en local
           await localUpdatedFileDelete(intervention: intervention);
-          logger.i(
+          logger.d(
               "ta da intervention.version > interventionNew.version deleting local file");
         } else {
           // l'intervention en local est plus récente que celle du serveur
           // je peux écraser celle du serveur par celle en local
           intervention = interventionNew;
-          logger.i(
+          logger.d(
               "ta da ${intervention.intervention_name} -> ${interventionNew.intervention_name}");
 
           // logger.i(
@@ -125,13 +125,13 @@ class InterventionApi {
 
       listInterventionValues.add(intervention);
     }
-    logger.i("ta da getListInterventions 50");
+    logger.d("ta da getListInterventions 50");
     listInterventionValues = completeListWithLocalUpdatedFiles(
         list: listInterventionValues,
         localFiles: listLocalUpdatedFiles,
         site: site);
 
-    logger.i("ta da getListInterventions 60");
+    logger.d("ta da getListInterventions 60");
     return listInterventionValues;
   }
 
@@ -335,9 +335,9 @@ class InterventionApi {
           Intervention i = Intervention.fromJson(contentJson);
           var r = await postInterventionValuesOnServer(i);
           logger.d(r.toString());
-          logger.i("ta da uploadInterventions done");
+          logger.d("ta da uploadInterventions done");
         } catch (e) {
-          logger.i("ta da uploadInterventions failed, deleting file");
+          logger.d("ta da uploadInterventions failed, deleting file");
           await f.delete();
         }
       }
@@ -347,7 +347,7 @@ class InterventionApi {
   localUpdatedFileDelete({required Intervention intervention}) async {
     final file = await getlocalUpdatedFile(intervention: intervention);
     if (await file.exists()) {
-      logger.i("ta da efface local file ${file.path}");
+      logger.d("ta da efface local file ${file.path}");
       file.deleteSync();
     }
   }

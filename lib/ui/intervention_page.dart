@@ -197,7 +197,9 @@ class InterventionPageState extends State<InterventionPage> {
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: ChoosePlaceWidget(
-                    site: widget.site, onChanged: onPlaceChanged)),
+                    site: widget.site,
+                    onChanged: onPlaceChanged,
+                    place: widget.intervention.place)),
             widgetHeaderFormulaire(),
             widgetBodyFormInterventionName(),
             const Padding(

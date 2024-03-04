@@ -1,19 +1,18 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 
 import '../../models/model_lists_for_places.dart';
 import '../../models/model_place.dart';
-import '../utils/uuid.dart';
 
 class ChoosePlaceWidget extends StatefulWidget {
   final Site? site;
   final void Function(dynamic value) onChanged;
+  final Place? place;
   const ChoosePlaceWidget({
     super.key,
     required this.site,
     required this.onChanged,
+    required this.place,
   });
 
   @override
@@ -33,10 +32,19 @@ class ChoosePlaceWidgetState extends State<ChoosePlaceWidget> {
 
     // initiation des valeurs des listes
     listsForPlaces = widget.site!.listsForPlaces;
+    print(widget.place.toString());
     listsForPlaces.mapLists.forEach((key, listForPlaces) {
-      listForPlaces.values.forEach((element) {
-        dataForPlaces[listForPlaces.list_name] = "-";
-      });
+      dataForPlaces[listForPlaces.list_name] = "-"; // valeur par defaut
+
+      if (widget.place!.place_json.containsKey(listForPlaces.list_name)) {
+        // si les données en entrée contiennent bien une valeur pour la liste
+        String initial_value =
+            widget.place!.place_json[listForPlaces.list_name]; //  b1, l1, r1
+        if (listForPlaces.values.contains(initial_value)) {
+          // si la valeur fait bien partie des valeurs possibles
+          dataForPlaces[listForPlaces.list_name] = initial_value;
+        }
+      }
     });
   }
 

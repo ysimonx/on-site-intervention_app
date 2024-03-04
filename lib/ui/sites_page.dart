@@ -207,10 +207,12 @@ class _SitePageState extends State<SitePage> {
                                 intervention: intervention,
                                 site: widget.site);
                           })).then((intervention) => setState(() {
-                                list[index] = intervention;
                                 logger.d(
                                     "ta da apres push ${intervention.field_on_site_uuid_values['36448a1b-3f11-463a-bf60-7668f32da094']}");
                               }));
+                          setState(() {
+                            list[index] = intervention;
+                          });
                         },
                         icon: const Icon(Icons.navigate_next)),
                   ],
@@ -256,8 +258,7 @@ class _SitePageState extends State<SitePage> {
             builder: (context) => InterventionPage(
                 user: widget.user,
                 intervention: newIntervention,
-                site: widget.site))).then((value) => setState(() {}));
-    ;
+                site: widget.site))).then((value) => refreshUI());
   }
 
   FloatingActionButton fabNewScaff(

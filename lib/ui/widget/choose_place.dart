@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 
 import '../../models/model_lists_for_places.dart';
+import '../../models/model_place.dart';
+import '../utils/uuid.dart';
 
 class ChoosePlaceWidget extends StatefulWidget {
   final Site? site;
@@ -67,7 +71,22 @@ class ChoosePlaceWidgetState extends State<ChoosePlaceWidget> {
                   setState(() {
                     if (cvalue is String) {
                       dataForPlaces[listForPlaces.list_name] = cvalue;
-                      widget.onChanged(dataForPlaces);
+
+                      List<String> names = [];
+                      listsForPlaces.mapLists.forEach((key, listForPlaces) {
+                        if (dataForPlaces[listForPlaces.list_name]! == "-") {
+                          names.add("[${listForPlaces.list_name}]");
+                        } else {
+                          names.add(dataForPlaces[listForPlaces.list_name]!);
+                        }
+                      });
+
+                      Place p = Place.newPlace(
+                          place_json: dataForPlaces,
+                          site_id: widget.site!.id,
+                          place_name: names.join("-"));
+
+                      widget.onChanged(p);
                     }
                   });
                 })

@@ -184,6 +184,7 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   void onPlaceChanged(value) {
+    widget.intervention.place = value;
     print(value.toString());
   }
 

@@ -41,7 +41,9 @@ class Intervention {
     data['type_intervention_id'] = type_intervention_id;
     data['forms'] = ConvertMapFormulairesToJson(forms);
     data['place_id'] = place.id;
+    data['place'] = place.toJSON();
     data['place_name'] = place.name;
+    data['place_json'] = place.place_json;
     data['place_on_site_uuid'] = place.place_on_site_uuid;
     data['status'] = status;
     data['hashtag'] = hashtag;

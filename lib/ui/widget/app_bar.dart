@@ -2,6 +2,7 @@
 
 import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/network/api/image.api.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../models/model_user.dart';
 import '../../network/api/intervention_api.dart';
@@ -37,6 +38,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
   static const int valueREMOVEFILES = 6;
   static const int valueSIGNATURE = 7;
   static const int valueLISTFORPLACES = 8;
+  static const int valueINFOAPP = 9;
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +69,10 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                   PopupMenuItem<int>(
                     value: valueACCOUNT,
                     child: Text(user.email.toLowerCase()),
+                  ),
+                  PopupMenuItem<int>(
+                    value: valueINFOAPP,
+                    child: Text(translateI18N("App info").toCapitalized()),
                   ),
                   if (site != null)
                     if (site!.getRoleNamesForUser(user).contains("admin") ||
@@ -167,6 +173,16 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                       }));
                     }
                   }
+                }
+                if (value == valueINFOAPP) {
+                  final info = await PackageInfo.fromPlatform();
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content:
+                            Text('${info.appName} version ${info.version}'),
+                        duration: Duration(seconds: 5)),
+                  );
                 }
               })
             : const Text(''),

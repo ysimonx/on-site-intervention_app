@@ -13,6 +13,8 @@ class Intervention {
   String type_intervention_name;
   String status;
   String hashtag = "";
+  String? numChrono = "[numchrono]";
+  String? indice = "A";
   int version = 1;
   Map<String, Formulaire> forms = {};
   Map<String, dynamic> field_on_site_uuid_values = {};
@@ -91,6 +93,10 @@ class Intervention {
         hashtag = json.containsKey('hashtag') ? "${json['hashtag']}" : "";
 
   // forms2 = {};
+  String BuildNumRegistre() {
+    String s = "${place.name}-${numChrono}-${indice}";
+    return s;
+  }
 }
 
 Map<String, Formulaire> ConvertJsonToMapFormulaires(map) {

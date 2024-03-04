@@ -68,7 +68,7 @@ class InterventionPageState extends State<InterventionPage> {
 
   // late Directory directory;
 
-  void _onChangedText() {
+  void _onChangedInterventionName() {
     final text = controllerInterventionName.text;
     logger.d(" new size of : '$text' (${text.characters.length})");
     _needSave = true;
@@ -80,7 +80,7 @@ class InterventionPageState extends State<InterventionPage> {
     controllerInterventionName =
         TextEditingController(text: widget.intervention.intervention_name);
     // Start listening to changes.
-    controllerInterventionName.addListener(_onChangedText);
+    controllerInterventionName.addListener(_onChangedInterventionName);
     intervention_status = widget.intervention.status;
   }
 
@@ -183,9 +183,10 @@ class InterventionPageState extends State<InterventionPage> {
         child: SingleChildScrollView(child: widgetBodyForm(context)));
   }
 
-  void onPlaceChanged(value) {
-    widget.intervention.place = value;
-    print(value.toString());
+  void onChangedPlace(place) {
+    widget.intervention.place = place;
+    controllerInterventionName.text = widget.intervention.BuildNumRegistre();
+    print(place.toString());
   }
 
   Widget widgetBodyForm(BuildContext context) {
@@ -198,7 +199,7 @@ class InterventionPageState extends State<InterventionPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: ChoosePlaceWidget(
                     site: widget.site,
-                    onChanged: onPlaceChanged,
+                    onChanged: onChangedPlace,
                     place: widget.intervention.place)),
             widgetHeaderFormulaire(),
             widgetBodyFormInterventionName(),
@@ -226,7 +227,7 @@ class InterventionPageState extends State<InterventionPage> {
           DropdownMenuItem(value: listStatus[i], child: Text(listStatus[i])));
     }
 
-    if (dmis.contains(intervention_status) == false) {
+    if (listStatus.contains(intervention_status) == false) {
       intervention_status = listStatus[0];
     }
 

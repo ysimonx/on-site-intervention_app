@@ -3,6 +3,7 @@
 import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/network/api/image.api.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/model_user.dart';
 import '../../network/api/intervention_api.dart';
@@ -39,6 +40,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
   static const int valueSIGNATURE = 7;
   static const int valueLISTFORPLACES = 8;
   static const int valueINFOAPP = 9;
+  static const int valueGOOGLESTORE = 10;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +76,11 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                     value: valueINFOAPP,
                     child: Text(translateI18N("App info").toCapitalized()),
                   ),
+                  PopupMenuItem<int>(
+                    value: valueGOOGLESTORE,
+                    child:
+                        Text(translateI18N("App Google Store").toCapitalized()),
+                  ),
                   if (site != null)
                     if (site!.getRoleNamesForUser(user).contains("admin") ||
                         site!
@@ -105,12 +112,8 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                             .toCapitalized()),
                       ),
                   const PopupMenuItem<int>(
-                      value: valueUPLOADIMAGES, child: Text("upload images")),
-                  const PopupMenuItem<int>(
                       value: valueREMOVEFILES,
                       child: Text("remove local files")),
-                  const PopupMenuItem<int>(
-                      value: valueSIGNATURE, child: Text("signature")),
                   PopupMenuItem<int>(
                     value: valueDECONNEXION,
                     child: Text(translateI18N("déconnexion").toCapitalized()),
@@ -149,18 +152,6 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                   }
                 }
 
-                if (value == valueSIGNATURE) {
-                  if (context.mounted) {
-                    var pathImage = await Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return const SignaturePage();
-                    }));
-
-                    if (pathImage == null) {
-                      return;
-                    }
-                  }
-                }
                 if (value == valueUSERS) {
                   if (context.mounted) {
                     if (site != null) {
@@ -183,6 +174,14 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                             Text('${info.appName} version ${info.version}'),
                         duration: Duration(seconds: 5)),
                   );
+                }
+                if (value == valueGOOGLESTORE) {
+                  //
+                  final Uri _url = Uri.parse(
+                      'https://play.google.com/store/apps/details?id=fr.fidwork.app&hl=fr-FR');
+                  if (!await launchUrl(_url)) {
+                    throw Exception('Could not launch $_url');
+                  }
                 }
               })
             : const Text(''),

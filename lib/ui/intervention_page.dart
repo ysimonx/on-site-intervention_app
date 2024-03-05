@@ -49,7 +49,6 @@ class InterventionPageState extends State<InterventionPage> {
 
   bool _needSave = false;
 
-  late List<User> usersCoordinators;
   late Map<String, Formulaire> mapFormulaires = {};
   late Map<String, dynamic> mapMandatoryLists = {};
 
@@ -65,6 +64,8 @@ class InterventionPageState extends State<InterventionPage> {
   late Directory deviceApplicationDocumentsDirectory;
 
   late String intervention_status;
+  late User userCoordinator;
+  late List<User> usersCoordinators;
 
   // late Directory directory;
 
@@ -82,12 +83,20 @@ class InterventionPageState extends State<InterventionPage> {
     // Start listening to changes.
     controllerInterventionName.addListener(_onChangedInterventionName);
     intervention_status = widget.intervention.status;
+
+    usersCoordinators =
+        UserApi.getCoordinatorsList(user: widget.user, site: widget.site);
+    usersCoordinators.insert(0, User.nobody());
+    userCoordinator = usersCoordinators[0];
+    print(widget.intervention.assignee_user_id);
+    for (var i = 0; i < usersCoordinators.length; i++) {
+      if (usersCoordinators[i].id == widget.intervention.assignee_user_id) {
+        userCoordinator = usersCoordinators[i];
+      }
+    }
   }
 
   Future<List<User>> getMyConfig() async {
-    usersCoordinators =
-        await UserApi.getCoordinatorsList(user: widget.user, site: widget.site);
-
     mapFormulaires = await UserApi.getInterventionFormsFromTemplate(
         user: widget.user,
         site_name: widget.site.name,
@@ -130,7 +139,7 @@ class InterventionPageState extends State<InterventionPage> {
     deviceApplicationDocumentsDirectory =
         await getApplicationDocumentsDirectory();
 
-    return usersCoordinators;
+    return [];
   }
 
   @override
@@ -201,8 +210,12 @@ class InterventionPageState extends State<InterventionPage> {
                     site: widget.site,
                     onChanged: onChangedPlace,
                     place: widget.intervention.place)),
-            widgetHeaderFormulaire(),
-            widgetBodyFormInterventionName(),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: widgetHeaderFormulaire()),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: widgetBodyFormInterventionName()),
             const Padding(
                 padding: EdgeInsets.symmetric(vertical: 2), child: Text(' ')),
             widgetBodyTabsFormulaires(),
@@ -220,19 +233,42 @@ class InterventionPageState extends State<InterventionPage> {
         site: widget.site,
         type_intervention_name: widget.intervention.type_intervention_name);
 
-    List<DropdownMenuItem<String>> dmis = [];
+    List<DropdownMenuItem<String>> listStatusDropdownMenuItems = [];
+
+    List<DropdownMenuItem<User>> listDropdownMenuItemsUsers = [];
 
     for (var i = 0; i < listStatus.length; i++) {
-      dmis.add(
+      listStatusDropdownMenuItems.add(
           DropdownMenuItem(value: listStatus[i], child: Text(listStatus[i])));
     }
 
+    for (var i = 0; i < usersCoordinators.length; i++) {
+      User u = usersCoordinators[i];
+      listDropdownMenuItemsUsers
+          .add(DropdownMenuItem(value: u, child: Text(u.email)));
+    }
     if (listStatus.contains(intervention_status) == false) {
       intervention_status = listStatus[0];
     }
 
-    return DropdownButton<String>(
-        value: intervention_status, items: dmis, onChanged: dropdownCallback);
+    return Row(children: [
+      DropdownButton<String>(
+          value: intervention_status,
+          items: listStatusDropdownMenuItems,
+          onChanged: dropdownCallback),
+      DropdownButton<User>(
+        value: userCoordinator,
+        items: listDropdownMenuItemsUsers,
+        onChanged: (value) {
+          if (value is User) {
+            setState(() {
+              widget.intervention.assignee_user_id = value.id;
+              userCoordinator = value;
+            });
+          }
+        },
+      )
+    ]);
   }
 
   Padding widgetBodyFormInterventionName() {

@@ -155,8 +155,8 @@ class UserApi {
     return mapMandatoryLists;
   }
 
-  static Future<List<User>> getCoordinatorsList(
-      {required Site site, required User user}) async {
+  static List<User> getCoordinatorsList(
+      {required Site site, required User user}) {
     List<User> res = [];
 
     for (var i = 0; i < user.sites.length; i++) {

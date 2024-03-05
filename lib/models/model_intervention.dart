@@ -3,6 +3,7 @@
 import '../ui/utils/uuid.dart';
 import 'model_formulaire.dart';
 import 'model_place.dart';
+import 'model_user.dart';
 
 class Intervention {
   String id;
@@ -18,8 +19,8 @@ class Intervention {
   int version = 1;
   Map<String, Formulaire> forms = {};
   Map<String, dynamic> field_on_site_uuid_values = {};
-
   Place place;
+  String? assignee_user_id;
 
   Intervention(
       {required this.id,
@@ -48,6 +49,7 @@ class Intervention {
     data['place_json'] = place.place_json;
     data['place_on_site_uuid'] = place.place_on_site_uuid;
     data['status'] = status;
+    data['assignee_user_id'] = assignee_user_id;
     data['hashtag'] = hashtag;
     return data;
   }
@@ -90,6 +92,11 @@ class Intervention {
                 ? json['status']
                 : ""
             : "",
+        assignee_user_id = json.containsKey('assignee_user_id')
+            ? json['assignee_user_id'] != null
+                ? json['assignee_user_id']
+                : User.nobody().id
+            : User.nobody().id,
         hashtag = json.containsKey('hashtag') ? "${json['hashtag']}" : "";
 
   // forms2 = {};

@@ -66,10 +66,10 @@ class ChoosePlaceWidgetState extends State<ChoosePlaceWidget> {
 
       childrenW.add(Wrap(
           direction: Axis.vertical,
-          spacing: 1.0,
-          runSpacing: 1.0,
+          spacing: 0.0,
+          runSpacing: 10.0,
           children: [
-            SizedBox(width: 100, child: Text(listForPlaces.list_name)),
+            Text(listForPlaces.list_name),
             DropdownButton(
                 items: dropdownItems,
 

@@ -96,6 +96,10 @@ class User {
     return user;
   }
 
+  isNobody() {
+    return id == "";
+  }
+
   bool isAuthorized() {
     if (id != "") {
       return true;

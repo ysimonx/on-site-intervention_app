@@ -252,11 +252,8 @@ class InterventionPageState extends State<InterventionPage> {
     }
 
     return Row(children: [
-      DropdownButton<String>(
-          value: intervention_status,
-          items: listStatusDropdownMenuItems,
-          onChanged: dropdownCallback),
-      DropdownButton<User>(
+      Expanded(
+          child: DropdownButton<User>(
         value: userCoordinator,
         items: listDropdownMenuItemsUsers,
         onChanged: (value) {
@@ -267,7 +264,12 @@ class InterventionPageState extends State<InterventionPage> {
             });
           }
         },
-      )
+      )),
+      Expanded(
+          child: DropdownButton<String>(
+              value: intervention_status,
+              items: listStatusDropdownMenuItems,
+              onChanged: dropdownCallback)),
     ]);
   }
 

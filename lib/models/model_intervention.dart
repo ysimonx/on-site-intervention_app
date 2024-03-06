@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'package:intl/intl.dart';
+
 import '../ui/utils/uuid.dart';
 import 'model_formulaire.dart';
 import 'model_place.dart';
@@ -52,7 +54,7 @@ class Intervention {
     data['assignee_user_id'] = assignee_user_id;
     data['hashtag'] = hashtag;
     data['indice'] = indice;
-    data['numchrono'] = num_chrono;
+    data['num_chrono'] = num_chrono;
     return data;
   }
 
@@ -100,14 +102,18 @@ class Intervention {
                 : User.nobody().id
             : User.nobody().id,
         indice = json['indice'],
-        num_chrono = json['num_chrono'],
+        num_chrono =
+            json['num_chrono'] != null ? "${json['num_chrono']}" : null,
         hashtag = json.containsKey('hashtag') ? "${json['hashtag']}" : "";
 
   // forms2 = {};
   String BuildNumRegistre() {
     String result = "${place.name}";
     if (num_chrono != null) {
-      result = "${result}-${num_chrono}";
+      NumberFormat formatter = new NumberFormat("00000");
+      if (num_chrono is String) {
+        result = "${result}-${formatter.format(int.parse(num_chrono!))}";
+      }
 
       if (indice != null) {
         result = "${result}-${indice}";

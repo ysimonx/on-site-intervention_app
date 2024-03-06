@@ -24,6 +24,7 @@ import 'utils/logger.dart';
 import 'widget/card_settings_gallery.dart';
 import 'widget/card_settings_signature.dart';
 import 'widget/choose_place.dart';
+import 'widget/widgetListInterventionSamePlace.dart';
 
 // Create a Form widget.
 class InterventionPage extends StatefulWidget {
@@ -221,13 +222,14 @@ class InterventionPageState extends State<InterventionPage> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: ChoosePlaceWidget(
-                    site: widget.site,
-                    onChanged: onChangedPlace,
-                    place: widget.intervention.place)),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: widgetHeaderFormulaire()),
+                child: Column(children: [
+                  ChoosePlaceWidget(
+                      site: widget.site,
+                      onChanged: onChangedPlace,
+                      place: widget.intervention.place),
+                  widgetNumChrono(),
+                  widgetHeaderFormulaire(),
+                ])),
             const Padding(
                 padding: EdgeInsets.symmetric(vertical: 2), child: Text(' ')),
             widgetBodyTabsFormulaires(),
@@ -575,10 +577,14 @@ class InterventionPageState extends State<InterventionPage> {
   CardSettingsInt genCardSettingsInt(String initialValue, Section s, Field f) {
     int initialIntValue = 0;
 
-    try {
-      initialIntValue = int.parse(initialValue);
-    } catch (e) {
+    if (initialValue == "") {
       initialIntValue = 0;
+    } else {
+      try {
+        initialIntValue = int.parse(initialValue);
+      } catch (e) {
+        initialIntValue = 0;
+      }
     }
 
     return CardSettingsInt(
@@ -823,5 +829,50 @@ class InterventionPageState extends State<InterventionPage> {
         widget.intervention.status = intervention_status;
       }
     });
+  }
+
+  Widget widgetNumChrono() {
+    if (widget.intervention.num_chrono == null) {
+      return Padding(
+          padding: const EdgeInsets.all(40.0),
+          child: FlexList(
+              /* style: TextButton.styleFrom(
+          textStyle: Theme.of(context).textTheme.labelLarge,
+        ),*/
+              children: [
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('reprendre un chrono existant'),
+                  widgetListInterventionSamePlace(
+                      site: widget.site,
+                      place: widget.intervention.place,
+                      onChanged: (
+                          {required Intervention intervention,
+                          required String next_indice}) {
+                        print(intervention.toString());
+                        print(next_indice);
+                        widget.intervention.num_chrono =
+                            intervention.num_chrono;
+                        widget.intervention.indice = next_indice;
+                        String newName = widget.intervention.BuildNumRegistre();
+                        widget.intervention.intervention_name = newName;
+                        refreshUI();
+                      })
+                ]),
+                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                  TextButton(
+                      child: const Text('créer un numero de chrono'),
+                      onPressed: () {
+                        // Navigator.pop(context);
+                        widget.intervention.num_chrono = "[NNNNN]";
+                        refreshUI();
+                      })
+                ]),
+              ]));
+    } else {
+      if (widget.intervention.num_chrono == "[NNNNN]") {
+        return Text("numero de chrono en attente de génération...");
+      }
+      return Text('num_chrono ${widget.intervention.num_chrono}');
+    }
   }
 }

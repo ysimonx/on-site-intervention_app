@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:on_site_intervention_app/models/model_place.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../models/model_intervention.dart';
@@ -26,7 +27,7 @@ class InterventionApi {
   DioClient dioClient = DioClient(Dio());
 
   Future<List<Intervention>> getListInterventions(
-      {required Site site, required bool realtime}) async {
+      {required Site site, required bool realtime, Place? place}) async {
     dynamic content = null;
 
     logger.d("ta da getListInterventions 10");
@@ -72,7 +73,13 @@ class InterventionApi {
       for (int j = 0; j < arrayJsonMobileFirst.length; j = j + 1) {
         Map<String, dynamic> itemJson = arrayJsonMobileFirst[j];
         Intervention intervention = Intervention.fromJson(itemJson);
-        listInterventionValues.add(intervention);
+        if (place == null) {
+          listInterventionValues.add(intervention);
+        } else {
+          if (place.id == intervention.place.id) {
+            listInterventionValues.add(intervention);
+          }
+        }
       }
       return listInterventionValues;
     }
@@ -132,7 +139,18 @@ class InterventionApi {
         site: site);
 
     logger.d("ta da getListInterventions 60");
-    return listInterventionValues;
+    if (place == null) {
+      return listInterventionValues;
+    } else {
+      List<Intervention> list2 = [];
+      for (var i = 0; i < listInterventionValues.length; i++) {
+        Intervention intervention = listInterventionValues[i];
+        if (place.id == intervention.place.id) {
+          list2.add(intervention);
+        }
+      }
+      return list2;
+    }
   }
 
   Future<Response?> postInterventionValuesOnServer(

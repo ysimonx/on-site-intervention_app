@@ -1,5 +1,6 @@
 // ignore_for_file: unused_import
 
+import 'package:diacritic/diacritic.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
@@ -235,7 +236,16 @@ class UsersPageState extends State<UsersPage> {
                   (email == null)
                       ? TextField(
                           controller: textEmailController,
+                          textCapitalization: TextCapitalization.none,
+                          keyboardType: TextInputType.emailAddress,
                           autofocus: true,
+                          onChanged: (value) {
+                            value = value.replaceAll(" ", "");
+                            value = removeDiacritics(value);
+                            textEmailController.value = TextEditingValue(
+                                text: value.toLowerCase(),
+                                selection: textEmailController.selection);
+                          },
                           decoration: InputDecoration(
                               hintText:
                                   "Enter the e-mail address of the new user"

@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/ui/utils/mobilefirst.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flex_list/flex_list.dart';
 
 import '../models/model_field.dart';
 import '../models/model_formulaire.dart';
@@ -45,7 +46,6 @@ class InterventionPage extends StatefulWidget {
 // Create a corresponding State class.
 class InterventionPageState extends State<InterventionPage> {
   late List<GlobalKey<FormState>> _formsKey = [];
-  late TextEditingController controllerInterventionName;
 
   bool _needSave = false;
 
@@ -67,21 +67,14 @@ class InterventionPageState extends State<InterventionPage> {
   late User userCoordinator;
   late List<User> usersCoordinators;
 
-  // late Directory directory;
+  late Future<String> myFuture;
 
-  void _onChangedInterventionName() {
-    final text = controllerInterventionName.text;
-    logger.d(" new size of : '$text' (${text.characters.length})");
-    _needSave = true;
-  }
+  // late Directory directory;
 
   @override
   void initState() {
     super.initState();
-    controllerInterventionName =
-        TextEditingController(text: widget.intervention.intervention_name);
-    // Start listening to changes.
-    controllerInterventionName.addListener(_onChangedInterventionName);
+
     intervention_status = widget.intervention.status;
 
     usersCoordinators =
@@ -94,9 +87,28 @@ class InterventionPageState extends State<InterventionPage> {
         userCoordinator = usersCoordinators[i];
       }
     }
+
+    myFuture = Future<String>.delayed(
+      const Duration(milliseconds: 100),
+      () => getMyConfig(),
+    );
   }
 
-  Future<List<User>> getMyConfig() async {
+  void refreshUI() {
+    setState(() {
+      myFuture = Future<String>.delayed(
+        const Duration(milliseconds: 100),
+        () => getMyVides(),
+      );
+    });
+  }
+
+  Future<String> getMyVides() async {
+    return "";
+  }
+
+  // Future<List<User>> getMyConfig() async {
+  Future<String> getMyConfig() async {
     mapFormulaires = await UserApi.getInterventionFormsFromTemplate(
         user: widget.user,
         site_name: widget.site.name,
@@ -139,13 +151,15 @@ class InterventionPageState extends State<InterventionPage> {
     deviceApplicationDocumentsDirectory =
         await getApplicationDocumentsDirectory();
 
-    return [];
+    String interventionName = widget.intervention.BuildNumRegistre();
+    widget.intervention.intervention_name = interventionName;
+    return "";
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: getMyConfig(),
+        future: myFuture,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return Scaffold(
@@ -194,8 +208,9 @@ class InterventionPageState extends State<InterventionPage> {
 
   void onChangedPlace(place) {
     widget.intervention.place = place;
-    controllerInterventionName.text = widget.intervention.BuildNumRegistre();
-    print(place.toString());
+    String newName = widget.intervention.BuildNumRegistre();
+    widget.intervention.intervention_name = newName;
+    refreshUI();
   }
 
   Widget widgetBodyForm(BuildContext context) {
@@ -213,9 +228,6 @@ class InterventionPageState extends State<InterventionPage> {
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: widgetHeaderFormulaire()),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: widgetBodyFormInterventionName()),
             const Padding(
                 padding: EdgeInsets.symmetric(vertical: 2), child: Text(' ')),
             widgetBodyTabsFormulaires(),
@@ -251,51 +263,32 @@ class InterventionPageState extends State<InterventionPage> {
       intervention_status = listStatus[0];
     }
 
-    return Wrap(children: [
-      Padding(
-          padding: const EdgeInsets.only(right: 30.0),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text("Coordinateur"),
-            DropdownButton<User>(
-              value: userCoordinator,
-              items: listDropdownMenuItemsUsers,
-              onChanged: (value) {
-                if (value is User) {
-                  setState(() {
-                    widget.intervention.assignee_user_id = value.id;
-                    userCoordinator = value;
-                  });
-                }
-              },
-            )
-          ])),
-      Padding(
-          padding: const EdgeInsets.only(right: 30.0),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text("Status"),
-            DropdownButton<String>(
-                value: intervention_status,
-                items: listStatusDropdownMenuItems,
-                onChanged: dropdownCallback)
-          ])),
-    ]);
-  }
-
-  Padding widgetBodyFormInterventionName() {
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-        child: TextFormField(
-          controller: controllerInterventionName,
-          // The validator receives the text that the user has entered.
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter some text';
+    return FlexList(horizontalSpacing: 5, verticalSpacing: 10, children: [
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text("Coordinateur"),
+        DropdownButton<User>(
+          value: userCoordinator,
+          items: listDropdownMenuItemsUsers,
+          onChanged: (value) {
+            if (value is User) {
+              setState(() {
+                widget.intervention.assignee_user_id = value.id;
+                userCoordinator = value;
+              });
             }
-            return null;
           },
-        ));
+        )
+      ]),
+      Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text("Status"),
+          DropdownButton<String>(
+              value: intervention_status,
+              items: listStatusDropdownMenuItems,
+              onChanged: dropdownCallback)
+        ])
+      ]),
+    ]);
   }
 
   Widget widgetBodyTabsFormulaires() {
@@ -305,6 +298,7 @@ class InterventionPageState extends State<InterventionPage> {
         initialIndex: _initialIndex,
         length: mapFormulaires.length,
         child: TabBar(
+            tabAlignment: TabAlignment.start,
             isScrollable: true,
             onTap: (selectedTabIndex) async {
               await saveIntervention(context);
@@ -319,7 +313,6 @@ class InterventionPageState extends State<InterventionPage> {
 
   Future<void> saveIntervention(BuildContext context) async {
     // sauvegarde du nom
-    widget.intervention.intervention_name = controllerInterventionName.text;
 
     // TODO : ici, on n'a QUE la liste des champs qui ont été modifiés en local
     print(listFieldsUUIDUpdated.toString());

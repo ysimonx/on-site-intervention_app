@@ -48,6 +48,7 @@ dependencies:
   package_info_plus: ^5.0.1
   url_launcher: ^6.2.5
   diacritic: ^0.1.5
+  flex_list: ^1.0.0
   
 
 dev_dependencies:

@@ -105,8 +105,16 @@ class Intervention {
 
   // forms2 = {};
   String BuildNumRegistre() {
-    String s = "${place.name}-${num_chrono}-${indice}";
-    return s;
+    String result = "${place.name}";
+    if (num_chrono != null) {
+      result = "${result}-${num_chrono}";
+
+      if (indice != null) {
+        result = "${result}-${indice}";
+      }
+    }
+
+    return result;
   }
 }
 

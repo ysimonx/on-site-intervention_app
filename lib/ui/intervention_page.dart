@@ -251,33 +251,35 @@ class InterventionPageState extends State<InterventionPage> {
       intervention_status = listStatus[0];
     }
 
-    return Row(children: [
-      Expanded(
+    return Wrap(children: [
+      Padding(
+          padding: const EdgeInsets.only(right: 30.0),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text("Coordinateur"),
-        DropdownButton<User>(
-          value: userCoordinator,
-          items: listDropdownMenuItemsUsers,
-          onChanged: (value) {
-            if (value is User) {
-              setState(() {
-                widget.intervention.assignee_user_id = value.id;
-                userCoordinator = value;
-              });
-            }
-          },
-        )
-      ])),
-      Expanded(
+            const Text("Coordinateur"),
+            DropdownButton<User>(
+              value: userCoordinator,
+              items: listDropdownMenuItemsUsers,
+              onChanged: (value) {
+                if (value is User) {
+                  setState(() {
+                    widget.intervention.assignee_user_id = value.id;
+                    userCoordinator = value;
+                  });
+                }
+              },
+            )
+          ])),
+      Padding(
+          padding: const EdgeInsets.only(right: 30.0),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text("Status"),
-        DropdownButton<String>(
-            value: intervention_status,
-            items: listStatusDropdownMenuItems,
-            onChanged: dropdownCallback)
-      ])),
+            const Text("Status"),
+            DropdownButton<String>(
+                value: intervention_status,
+                items: listStatusDropdownMenuItems,
+                onChanged: dropdownCallback)
+          ])),
     ]);
   }
 

@@ -64,41 +64,47 @@ class ChoosePlaceWidgetState extends State<ChoosePlaceWidget> {
             .add(DropdownMenuItem(value: element, child: Text(element)));
       });
 
-      childrenW.add(Wrap(
-          direction: Axis.vertical,
-          spacing: 0.0,
-          runSpacing: 10.0,
-          children: [
-            Text(listForPlaces.list_name),
-            DropdownButton(
-                items: dropdownItems,
+      childrenW.add(Padding(
+          padding: const EdgeInsets.only(
+            left: 20.0,
+          ),
+          child: Wrap(
+              direction: Axis.vertical,
+              spacing: 0.0,
+              runSpacing: 10.0,
+              children: [
+                Text(listForPlaces.list_name),
+                DropdownButton(
+                    items: dropdownItems,
 
-                // ici : spécifie la valeur actuelle
-                value: dataForPlaces[listForPlaces.list_name],
-                onChanged: (cvalue) {
-                  setState(() {
-                    if (cvalue is String) {
-                      dataForPlaces[listForPlaces.list_name] = cvalue;
+                    // ici : spécifie la valeur actuelle
+                    value: dataForPlaces[listForPlaces.list_name],
+                    onChanged: (cvalue) {
+                      setState(() {
+                        if (cvalue is String) {
+                          dataForPlaces[listForPlaces.list_name] = cvalue;
 
-                      List<String> names = [];
-                      listsForPlaces.mapLists.forEach((key, listForPlaces) {
-                        if (dataForPlaces[listForPlaces.list_name]! == "-") {
-                          names.add("[${listForPlaces.list_name}]");
-                        } else {
-                          names.add(dataForPlaces[listForPlaces.list_name]!);
+                          List<String> names = [];
+                          listsForPlaces.mapLists.forEach((key, listForPlaces) {
+                            if (dataForPlaces[listForPlaces.list_name]! ==
+                                "-") {
+                              names.add("[${listForPlaces.list_name}]");
+                            } else {
+                              names
+                                  .add(dataForPlaces[listForPlaces.list_name]!);
+                            }
+                          });
+
+                          Place p = Place.newPlace(
+                              place_json: dataForPlaces,
+                              site_id: widget.site!.id,
+                              place_name: names.join("-"));
+
+                          widget.onChanged(p);
                         }
                       });
-
-                      Place p = Place.newPlace(
-                          place_json: dataForPlaces,
-                          site_id: widget.site!.id,
-                          place_name: names.join("-"));
-
-                      widget.onChanged(p);
-                    }
-                  });
-                })
-          ]));
+                    })
+              ])));
     });
 
     return Padding(

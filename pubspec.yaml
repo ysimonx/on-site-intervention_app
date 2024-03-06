@@ -5,7 +5,7 @@ description: On Site Intervention.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 
-version: 1.0.61+61
+version: 1.0.62+62
 
 environment:
   sdk: '>=3.0.2 <4.0.0'
@@ -47,6 +47,7 @@ dependencies:
   svg_path_parser: ^1.1.2
   package_info_plus: ^5.0.1
   url_launcher: ^6.2.5
+  diacritic: ^0.1.5
   
 
 dev_dependencies:

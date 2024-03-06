@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:diacritic/diacritic.dart';
+import 'package:flutter/services.dart';
+
 import '../utils/context.dart';
 
 import '../../network/api/login_api.dart';
@@ -26,6 +29,16 @@ class _HomepageUnAuthentifiedContentState
   bool badAuth = false;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: widgetLoginForm(context),
@@ -37,7 +50,8 @@ class _HomepageUnAuthentifiedContentState
     return Center(
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
-        child: Column(
+        child: AutofillGroup(
+            child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             emailForm(),
@@ -53,7 +67,7 @@ class _HomepageUnAuthentifiedContentState
               height: 80,
             )
           ],
-        ),
+        )),
       ),
     );
   }
@@ -168,13 +182,25 @@ class _HomepageUnAuthentifiedContentState
   Widget emailForm() {
     return TextFormField(
         controller: emailController,
+        keyboardType: TextInputType.emailAddress,
+        //textCapitalization: TextCapitalization.none,
         decoration: const InputDecoration(hintText: "email"),
-        validator: validateEmail);
+        enableSuggestions: false,
+        validator: validateEmail,
+        autofillHints: const [AutofillHints.email],
+        onChanged: (value) {
+          value = value.replaceAll(" ", "");
+          value = removeDiacritics(value);
+          emailController.value = TextEditingValue(
+              text: value.toLowerCase(), selection: emailController.selection);
+        });
   }
 
   Widget passwordForm() {
     return TextFormField(
       controller: passwordController,
+      keyboardType: TextInputType.visiblePassword,
+      autofillHints: const [AutofillHints.password],
       obscureText: true,
       decoration: const InputDecoration(hintText: "Password"),
     );

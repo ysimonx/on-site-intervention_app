@@ -14,7 +14,7 @@ class Intervention {
   String type_intervention_name;
   String status;
   String hashtag = "";
-  String? numChrono = "[numchrono]";
+  String? num_chrono = "[numchrono]";
   String? indice = "A";
   int version = 1;
   Map<String, Formulaire> forms = {};
@@ -51,6 +51,8 @@ class Intervention {
     data['status'] = status;
     data['assignee_user_id'] = assignee_user_id;
     data['hashtag'] = hashtag;
+    data['indice'] = indice;
+    data['numchrono'] = num_chrono;
     return data;
   }
 
@@ -97,11 +99,13 @@ class Intervention {
                 ? json['assignee_user_id']
                 : User.nobody().id
             : User.nobody().id,
+        indice = json['indice'],
+        num_chrono = json['num_chrono'],
         hashtag = json.containsKey('hashtag') ? "${json['hashtag']}" : "";
 
   // forms2 = {};
   String BuildNumRegistre() {
-    String s = "${place.name}-${numChrono}-${indice}";
+    String s = "${place.name}-${num_chrono}-${indice}";
     return s;
   }
 }

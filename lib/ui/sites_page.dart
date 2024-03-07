@@ -207,12 +207,11 @@ class _SitePageState extends State<SitePage> {
                                 user: widget.user,
                                 intervention: intervention,
                                 site: widget.site);
-                          })).then((intervention) => setState(() {
-                                logger.d(
-                                    "ta da apres push ${intervention.field_on_site_uuid_values['36448a1b-3f11-463a-bf60-7668f32da094']}");
-                              }));
-                          setState(() {
-                            list[index] = intervention;
+                          })).then((intervention) {
+                            if (intervention is Intervention) {
+                              list[index] = intervention;
+                            }
+                            refreshUI();
                           });
                         },
                         icon: const Icon(Icons.navigate_next)),

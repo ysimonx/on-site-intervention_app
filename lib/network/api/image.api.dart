@@ -227,8 +227,11 @@ class ImageApi {
     return directory;
   }
 
-  static void syncImages({required List<String> list}) async {
+  static Future<void> syncImages(
+      {required List<String> list, required Null Function() onSuccess}) async {
     Directory d = await ImageApi.getDownloadedImageAbsoluteDirectory();
+    bool blnSuccess = true;
+
     for (var i = 0; i < list.length; i++) {
       String filename = list[i];
       String path = "${d.path}/${filename}";
@@ -247,8 +250,12 @@ class ImageApi {
           await raf.close();
         }
       } on Exception catch (e) {
+        blnSuccess = false;
         logger.e(e.toString());
       }
+    }
+    if (blnSuccess) {
+      onSuccess();
     }
   }
 

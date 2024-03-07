@@ -196,7 +196,7 @@ class InterventionPageState extends State<InterventionPage> {
           if (didPop) {
             return;
           }
-          await saveIntervention(context);
+          // await saveIntervention(context);
 
           if (_needSave) {
             _showBackDialog();
@@ -274,7 +274,9 @@ class InterventionPageState extends State<InterventionPage> {
           onChanged: (value) {
             if (value is User) {
               setState(() {
+                _needSave = true;
                 widget.intervention.assignee_user_id = value.id;
+                widget.intervention.assignee_user = value;
                 userCoordinator = value;
               });
             }
@@ -303,7 +305,7 @@ class InterventionPageState extends State<InterventionPage> {
             tabAlignment: TabAlignment.start,
             isScrollable: true,
             onTap: (selectedTabIndex) async {
-              await saveIntervention(context);
+              //await saveIntervention(context);
               setState(() {
                 _initialIndex = selectedTabIndex;
                 String s = (_initialIndex + 1).toString();
@@ -361,16 +363,18 @@ class InterventionPageState extends State<InterventionPage> {
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text('Annuler'),
-              onPressed: () {
+              child: const Text('Sauvegarder et quitter'),
+              onPressed: () async {
+                await saveIntervention(context);
                 Navigator.pop(context);
+                Navigator.pop(context, widget.intervention);
               },
             ),
             TextButton(
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text('Quitter'),
+              child: const Text('Quitter sans sauvegarder'),
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
@@ -541,6 +545,7 @@ class InterventionPageState extends State<InterventionPage> {
             if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
               listFieldsUUIDUpdated.add(f.field_on_site_uuid);
             }
+            _needSave = true;
           }
 
           return null;
@@ -568,6 +573,7 @@ class InterventionPageState extends State<InterventionPage> {
             if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
               listFieldsUUIDUpdated.add(f.field_on_site_uuid);
             }
+            _needSave = true;
           }
 
           return null;
@@ -605,6 +611,7 @@ class InterventionPageState extends State<InterventionPage> {
           if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
             listFieldsUUIDUpdated.add(f.field_on_site_uuid);
           }
+          _needSave = true;
         }
         return null;
       },
@@ -650,6 +657,7 @@ class InterventionPageState extends State<InterventionPage> {
           if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
             listFieldsUUIDUpdated.add(f.field_on_site_uuid);
           }
+          _needSave = true;
         }
         return null;
       },
@@ -670,6 +678,7 @@ class InterventionPageState extends State<InterventionPage> {
             if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
               listFieldsUUIDUpdated.add(f.field_on_site_uuid);
             }
+            _needSave = true;
           }
 
           return null;
@@ -689,6 +698,7 @@ class InterventionPageState extends State<InterventionPage> {
             if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
               listFieldsUUIDUpdated.add(f.field_on_site_uuid);
             }
+            _needSave = true;
           }
 
           return null;
@@ -708,6 +718,7 @@ class InterventionPageState extends State<InterventionPage> {
             if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
               listFieldsUUIDUpdated.add(f.field_on_site_uuid);
             }
+            _needSave = true;
           }
           return null;
         });
@@ -733,6 +744,7 @@ class InterventionPageState extends State<InterventionPage> {
             if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
               listFieldsUUIDUpdated.add(f.field_on_site_uuid);
             }
+            _needSave = true;
           }
 
           return null;
@@ -769,6 +781,7 @@ class InterventionPageState extends State<InterventionPage> {
             if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
               listFieldsUUIDUpdated.add(f.field_on_site_uuid);
             }
+            _needSave = true;
           }
         }
         return null;
@@ -796,6 +809,7 @@ class InterventionPageState extends State<InterventionPage> {
             if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
               listFieldsUUIDUpdated.add(f.field_on_site_uuid);
             }
+            _needSave = true;
           }
 
           return null;
@@ -816,6 +830,7 @@ class InterventionPageState extends State<InterventionPage> {
               if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
                 listFieldsUUIDUpdated.add(f.field_on_site_uuid);
               }
+              _needSave = true;
             }
           }
           return null;
@@ -827,6 +842,7 @@ class InterventionPageState extends State<InterventionPage> {
       if (value is String) {
         intervention_status = value;
         widget.intervention.status = intervention_status;
+        _needSave = true;
       }
     });
   }
@@ -855,6 +871,7 @@ class InterventionPageState extends State<InterventionPage> {
                         widget.intervention.indice = next_indice;
                         String newName = widget.intervention.BuildNumRegistre();
                         widget.intervention.intervention_name = newName;
+                        _needSave = true;
                         refreshUI();
                       })
                 ]),
@@ -864,6 +881,7 @@ class InterventionPageState extends State<InterventionPage> {
                       onPressed: () {
                         // Navigator.pop(context);
                         widget.intervention.num_chrono = "[NNNNN]";
+                        _needSave = true;
                         refreshUI();
                       })
                 ]),

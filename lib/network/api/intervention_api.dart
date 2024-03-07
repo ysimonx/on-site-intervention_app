@@ -26,11 +26,18 @@ class InterventionApi {
 
   DioClient dioClient = DioClient(Dio());
 
+  Map<String, dynamic> mapListInterventionsLastModified = {};
+  Map<String, List<dynamic>> mapListInterventionsJson = {};
+
+  Map<String, dynamic> mapListPhotosLastModified = {};
+
   Future<List<Intervention>> getListInterventions(
       {required Site site, required bool realtime, Place? place}) async {
     dynamic content = null;
 
     logger.d("ta da getListInterventions 10");
+
+    String lastModified = "";
 
     if (!isMobileFirst() || realtime == true) {
       try {
@@ -41,6 +48,13 @@ class InterventionApi {
 
         if (response.statusCode == 200) {
           content = jsonEncode(response.data);
+          response.headers.forEach((name, values) {
+            // print("header ${name} = ${values.toString()}");
+            if (name == "x-lastmodified") {
+              lastModified = values.join(",");
+              print(lastModified);
+            }
+          });
         }
       } on DioException catch (e) {
         if (e.response != null) {
@@ -67,7 +81,22 @@ class InterventionApi {
 
     List<Intervention> listInterventionValues = [];
 
-    List<dynamic> arrayJsonMobileFirst = jsonDecode(content);
+    // ici, ca coute en cpu
+    List<dynamic> arrayJsonMobileFirst = [];
+
+    if (mapListInterventionsLastModified.containsKey(site.id)) {
+      if (mapListInterventionsLastModified[site.id] != lastModified) {
+        arrayJsonMobileFirst = jsonDecode(content);
+        mapListInterventionsLastModified[site.id] = lastModified;
+        mapListInterventionsJson[site.id] = arrayJsonMobileFirst;
+      } else {
+        arrayJsonMobileFirst = mapListInterventionsJson[site.id]!;
+      }
+    } else {
+      arrayJsonMobileFirst = jsonDecode(content);
+      mapListInterventionsLastModified[site.id] = lastModified;
+      mapListInterventionsJson[site.id] = arrayJsonMobileFirst;
+    }
 
     if (isMobileFirst() == false) {
       for (int j = 0; j < arrayJsonMobileFirst.length; j = j + 1) {
@@ -389,6 +418,8 @@ class InterventionApi {
 
   Future<void> downloadPhotos({required Site site}) async {
     List<String> photosToDownload = [];
+    String lastModified = "";
+
     try {
       Map<String, String> qParams = {'site_id': site.id};
 
@@ -397,6 +428,28 @@ class InterventionApi {
           queryParameters: qParams);
 
       if (response.statusCode == 200) {
+        response.headers.forEach((name, values) {
+          // print("header ${name} = ${values.toString()}");
+          if (name == "x-lastmodified") {
+            lastModified = values.join(",");
+            print(lastModified);
+          }
+        });
+        if (site.name == "sandbox") {
+          print("to");
+        }
+
+        if (lastModified != "") {
+          if (mapListPhotosLastModified.containsKey(site.id)) {
+            if (mapListPhotosLastModified[site.id] == lastModified) {
+              return;
+            }
+          }
+        }
+
+        if (site.name == "sandbox") {
+          print("to");
+        }
         List<dynamic> list = response.data;
         for (var i = 0; i < list.length; i++) {
           Map<String, dynamic> jsonItem = list[i];
@@ -406,6 +459,9 @@ class InterventionApi {
 
             photosToDownload.add(photo);
           }
+        }
+        if (site.name == "sandbox") {
+          print("to");
         }
       }
     } on DioException catch (e) {
@@ -419,8 +475,14 @@ class InterventionApi {
       logger.e(e.toString());
     }
 
-    ImageApi.syncImages(list: photosToDownload);
+    if (photosToDownload.isNotEmpty) {
+      ImageApi.syncImages(
+          list: photosToDownload,
+          onSuccess: () {
+            mapListPhotosLastModified[site.id] = lastModified;
+          });
 
-    print(photosToDownload);
+      print(photosToDownload);
+    }
   }
 }

@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
 
   void initTimer() {
     if (timer != null && timer!.isActive) return;
-    timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 10), (timer) {
       functionTimer();
     });
   }
@@ -56,7 +56,8 @@ class _HomePageState extends State<HomePage> {
     timerIsRunning = true;
 
     await ImageApi.uploadPhotos();
-    await interventionAPI.uploadInterventions();
+    int nbInterventionsUploaded = await interventionAPI.uploadInterventions();
+    logger.i("nb interventions uploaded ${nbInterventionsUploaded}");
 
     try {
       List<Site> list = user.sites;

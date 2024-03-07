@@ -23,6 +23,7 @@ class Intervention {
   Map<String, dynamic> field_on_site_uuid_values = {};
   Place place;
   String? assignee_user_id;
+  User? assignee_user;
 
   Intervention(
       {required this.id,
@@ -52,9 +53,13 @@ class Intervention {
     data['place_on_site_uuid'] = place.place_on_site_uuid;
     data['status'] = status;
     data['assignee_user_id'] = assignee_user_id;
+    data['assignee_user'] = (assignee_user != null)
+        ? assignee_user!.toJSON()
+        : User.nobody().toJSON();
     data['hashtag'] = hashtag;
     data['indice'] = indice;
     data['num_chrono'] = num_chrono;
+
     return data;
   }
 
@@ -101,7 +106,11 @@ class Intervention {
                 ? json['assignee_user_id']
                 : User.nobody().id
             : User.nobody().id,
-        indice = json['indice'],
+        assignee_user = json.containsKey('assignee_user')
+            ? json['assignee_user'] != null
+                ? User.fromJson(json['assignee_user'])
+                : User.nobody()
+            : User.nobody(),
         num_chrono =
             json['num_chrono'] != null ? "${json['num_chrono']}" : null,
         hashtag = json.containsKey('hashtag') ? "${json['hashtag']}" : "";

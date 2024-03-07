@@ -64,7 +64,7 @@ class _SitePageState extends State<SitePage> {
 
   void initTimer() {
     if (timer != null && timer!.isActive) return;
-    timer = Timer.periodic(const Duration(seconds: 60), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 10), (timer) {
       //job
       refreshUI();
     });
@@ -187,6 +187,7 @@ class _SitePageState extends State<SitePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(listInterventions[index].status),
+                      Text(listInterventions[index].assignee_user!.email),
                       Text(listInterventions[index].type_intervention_name)
                     ]),
                 trailing: Row(

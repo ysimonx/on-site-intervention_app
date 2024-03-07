@@ -339,7 +339,9 @@ class InterventionApi {
     return list;
   }
 
-  uploadInterventions() async {
+  Future<int> uploadInterventions() async {
+    int nbInterventionsUploaded = 0;
+
     List<FileSystemEntity> listLocalUpdatedFiles = await getLocalUpdatedFiles();
 
     for (var j = 0; j < listLocalUpdatedFiles.length; j++) {
@@ -354,12 +356,15 @@ class InterventionApi {
           var r = await postInterventionValuesOnServer(i);
           logger.d(r.toString());
           logger.d("ta da uploadInterventions done");
+          nbInterventionsUploaded++;
         } catch (e) {
           logger.d("ta da uploadInterventions failed, deleting file");
           await f.delete();
         }
       }
     }
+
+    return nbInterventionsUploaded;
   }
 
   localUpdatedFileDelete({required Intervention intervention}) async {

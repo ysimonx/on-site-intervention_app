@@ -13,7 +13,7 @@ class User {
   String phone;
   String company;
 
-  late List<Site> sites;
+  late List<Site> sites = [];
   late List<Tenant> tenants_administrator_of;
 
   late Config myconfig;
@@ -28,6 +28,7 @@ class User {
 
   Map<String, dynamic> toJSON() {
     var resorg = [];
+
     for (var i = 0; i < sites.length; i++) {
       resorg.add(sites[i].toJSON());
     }

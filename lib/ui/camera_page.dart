@@ -1,106 +1,3 @@
-/*
-
-List<CameraDescription> camerasDescriptions = await availableCameras();
-CameraPage(
-              title: 'Prise de Photo',
-              cameras: camerasDescriptions)
-
-
-
-  Widget CarouselSliderItem(int fieldIndex, int photoIndex) {
-    return Container(
-      margin: const EdgeInsets.all(5.0),
-      child: ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-          child: Stack(
-            children: <Widget>[
-              GestureDetector(
-                  onTap: () async {}, // Image tapped
-
-                  child: widget
-                          .formulaire.fields[fieldIndex].photos[photoIndex].path
-                          .startsWith("http")
-                      ? CachedNetworkImage(
-                          imageUrl: widget.formulaire.fields[fieldIndex]
-                              .photos[photoIndex].path,
-                          fit: BoxFit.cover,
-                          width: 1000.0,
-                          height: 1000.0)
-                      : Image.file(
-                          File(widget.formulaire.fields[fieldIndex]
-                              .photos[photoIndex].path),
-                          alignment: Alignment.topCenter,
-                          fit: BoxFit.fitWidth,
-                          width: 1000.0,
-                          height: 1000.0)),
-              /* Positioned(
-                bottom: 0.0,
-                right: 0.0,
-                // right: 0.0,
-                child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 20.0, horizontal: 20.0),
-                    child: CircleAvatar(
-                        radius: 12,
-                        backgroundColor: Colors.white,
-                        child: Icon(photoIndex < 2
-                            ? Icons.check_circle_outline
-                            : Icons.warning_outlined))),
-              ),*/
-              Positioned(
-                  top: 0.0,
-                  right: 0.0,
-                  // right: 0.0,
-                  child: GestureDetector(
-                    onTap: () async {
-                      widget.formulaire.fields[fieldIndex].photos
-                          .removeAt(photoIndex);
-                      await widget.formulaire
-                          .save(widget.geste, widget.beneficiaire);
-                      setState(() {});
-                    },
-                    child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 20.0, horizontal: 20.0),
-                        child: const CircleAvatar(
-                            radius: 12,
-                            backgroundColor: Colors.white,
-                            child: Icon(Icons.delete))),
-                  )),
-              Positioned(
-                bottom: 0.0,
-                left: 0.0,
-                // right: 0.0,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color.fromARGB(200, 0, 0, 0),
-                        Color.fromARGB(0, 0, 0, 0)
-                      ],
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                    ),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 20.0, horizontal: 20.0),
-                  child: Text(
-                    '#${photoIndex + 1}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          )),
-    );
-  }
-  
-*/
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
@@ -219,30 +116,38 @@ class _CameraPageState extends State<CameraPage>
   @override
   Widget build(BuildContext context) {
     final sizeh = MediaQuery.of(context).size.height;
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
-        body: SafeArea(
-      child: Stack(children: [
+      body: Stack(children: [
         (_cameraController.value.isInitialized)
-            ? CameraPreview(_cameraController, child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTapDown: (details) => onViewFinderTap(details, constraints),
-                );
-              }))
+            ? Container(
+                width: size.width,
+                height: size.height,
+                child: FittedBox(
+                    fit: BoxFit.cover,
+                    child: Container(
+                        width: 100, // the actual width is not important here
+                        child: CameraPreview(_cameraController, child:
+                            LayoutBuilder(builder: (BuildContext context,
+                                BoxConstraints constraints) {
+                          return GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTapDown: (details) =>
+                                onViewFinderTap(details, constraints),
+                          );
+                        })))))
             : Container(
                 color: Colors.black,
                 child: const Center(child: CircularProgressIndicator())),
-        Positioned(top: sizeh * 0.75 - 150, left: 0, child: sliderZoom()),
+        Positioned(top: sizeh * 0.90 - 150, left: 0, child: sliderZoom()),
         // Align(alignment: Alignment.topCenter, child: sliderZoom()),
         Align(
             alignment: Alignment.bottomCenter,
             child: Container(
               padding:
                   const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
-              height: sizeh *
-                  0.25, // 1/4 de la hauteur pour le bas de l'écran = 3/4 de la hauteur de l'écran pour la photo
+              height: sizeh * 0.10, // 10% de la hauteur pour le bas de l'écran
               decoration: const BoxDecoration(
                   // borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                   color: Colors.black),
@@ -287,17 +192,10 @@ class _CameraPageState extends State<CameraPage>
                         const Icon(Icons.flash_on, color: Colors.white)
                       ])),
                 ]),
-                Expanded(
-                    child: Column(children: [
-                  const SizedBox(height: 0),
-                  Expanded(
-                      child: Image.network(
-                          "https://static-or00.inbenta.com/2285b3e873772835772543d5c2df2aed0394a0cfb9a47a4ec1416c77a7363c2a/comment-savoir-si-ma-pompe-a-chaleur-atlantic-est-reversible-2.png")),
-                ])),
               ]),
             ))
       ]),
-    ));
+    );
   }
 
   Widget sliderZoom() {
@@ -345,5 +243,19 @@ class _CameraPageState extends State<CameraPage>
     );
     _cameraController.setExposurePoint(offset);
     _cameraController.setFocusPoint(offset);
+  }
+}
+
+class _MediaSizeClipper extends CustomClipper<Rect> {
+  final Size mediaSize;
+  const _MediaSizeClipper(this.mediaSize);
+  @override
+  Rect getClip(Size size) {
+    return Rect.fromLTWH(0, 0, mediaSize.width, mediaSize.height);
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Rect> oldClipper) {
+    return true;
   }
 }

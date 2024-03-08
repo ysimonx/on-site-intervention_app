@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unused_import
 
 import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/network/api/image.api.dart';

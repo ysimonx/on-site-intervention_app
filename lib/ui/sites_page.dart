@@ -54,7 +54,7 @@ class _SitePageState extends State<SitePage> {
     filterList = FilterList(
         user: widget.user, user_coordinator: User.nobody(), site: widget.site);
     myFuture = newMethod();
-    // initTimer();
+    initTimer();
   }
 
   void refreshUI() {
@@ -197,7 +197,7 @@ class _SitePageState extends State<SitePage> {
                 // if (listInterventions.isNotEmpty) {
                 logger.d("ta da builder ${listInterventions.length}");
                 return Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(00),
                     child: Column(children: <Widget>[
                       widgetFilterList(filterList,
                           user: widget.user, site: widget.site,

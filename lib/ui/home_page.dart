@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // initTimer();
+    initTimer();
   }
 
   @override
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             user = snapshot.data;
-            // functionTimer();
+            functionTimer();
 
             return widgetBody(user);
           } else if (snapshot.hasError) {

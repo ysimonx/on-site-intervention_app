@@ -43,6 +43,11 @@ class InterventionApi {
       try {
         Map<String, String> qParams = {'site_id': site.id};
 
+        // if not modified-since
+        if (mapListInterventionsLastModified.containsKey(site.id)) {
+          qParams["maxutc"] = mapListInterventionsLastModified[site.id];
+        }
+
         final Response response = await dioClient
             .get(Endpoints.listInterventionsValues, queryParameters: qParams);
 
@@ -56,10 +61,19 @@ class InterventionApi {
             }
           });
         }
+
+        if (response.statusCode == 304) {
+          logger.i("not modified since");
+          content = null;
+        }
       } on DioException catch (e) {
         if (e.response != null) {
           if (e.response!.statusCode == 401) {
             return [];
+          }
+          if (e.response!.statusCode == 304) {
+            logger.i("not modified since");
+            content = null;
           }
           logger.e("getList : ${e.response!.statusCode}");
         }

@@ -1,5 +1,15 @@
+import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'dart:ui';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart' as syspaths;
+import 'package:image/image.dart';
+
+import 'image_page.dart';
 
 class CameraPage extends StatefulWidget {
   final List<CameraDescription>? cameras;
@@ -58,16 +68,60 @@ class _CameraPageState extends State<CameraPage>
         await _cameraController.setFlashMode(FlashMode.off);
       }
 
-      XFile picture = await _cameraController.takePicture();
+      XFile picturef = await _cameraController.takePicture();
 
       if (visor) {
-        // add visor to picture at center
+        ui.Image image = await loadUiImage(picturef.path);
+        int imageWidth = image.width;
+        int imageHeight = image.height;
+
+        final recorder = ui.PictureRecorder();
+        final canvas = Canvas(
+            recorder,
+            Rect.fromPoints(const Offset(0.0, 0.0),
+                Offset(imageWidth.toDouble(), imageHeight.toDouble())));
+
+        canvas.drawImage(image, Offset(0.0, 0.0), Paint());
+        final paint = Paint()
+          ..color = Colors.black
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 10.0;
+
+        canvas.drawCircle(
+            Offset(
+              imageWidth * 0.5,
+              imageHeight * 0.5,
+            ),
+            imageWidth * 0.2,
+            paint);
+
+        final picture = recorder.endRecording();
+        final ui.Image img = await picture.toImage(imageWidth, imageHeight);
+
+        final data = await img.toByteData(format: ui.ImageByteFormat.png);
+        final bytes = data!.buffer.asUint8List();
+
+        final appDir = await syspaths.getTemporaryDirectory();
+        final filepathpng = "${appDir.path}/save.png";
+        await File(filepathpng).writeAsBytes(bytes);
+
+        // var imagepng = decodeImage(File(filepathpng).readAsBytesSync())!;
+        // File(filepathjpg).writeAsBytesSync(encodeJpg(imagepng));
+
+        // ignore: use_build_context_synchronously
+        // Navigator.push(context, MaterialPageRoute(builder: (context) {
+        //   return ImagePage(filepath: filepathpng);
+        // })).then((value) {});
+        Navigator.of(context).pop(filepathpng);
+        return null;
       }
 
-      Navigator.of(context).pop(picture.path);
+      Navigator.of(context).pop(picturef.path);
     } on CameraException catch (e) {
       debugPrint('Error occured while taking picture: $e');
       return null;
+    } catch (e) {
+      debugPrint('Error occured while taking picture: $e');
     }
   }
 
@@ -281,4 +335,16 @@ class _MediaSizeClipper extends CustomClipper<Rect> {
   bool shouldReclip(CustomClipper<Rect> oldClipper) {
     return true;
   }
+}
+
+Future<ui.Image> loadUiImage(String filepath) async {
+  final File file = File(filepath);
+  Uint8List bytes = file.readAsBytesSync();
+  var data = bytes.buffer;
+
+  final Completer<ui.Image> completer = Completer();
+  ui.decodeImageFromList(Uint8List.view(data), (ui.Image img) {
+    return completer.complete(img);
+  });
+  return completer.future;
 }

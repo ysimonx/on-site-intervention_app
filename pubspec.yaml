@@ -49,6 +49,8 @@ dependencies:
   url_launcher: ^6.2.5
   diacritic: ^0.1.5
   flex_list: ^1.0.0
+  jpeg_encode: ^1.0.1
+  image: ^4.1.7
   
 
 dev_dependencies:

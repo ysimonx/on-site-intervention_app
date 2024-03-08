@@ -7,10 +7,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'package:on_site_intervention_app/ui/intervention_page.dart';
-import 'package:on_site_intervention_app/ui/widget/common_widgets.dart';
-import 'package:on_site_intervention_app/ui/widget/filter_list.dart';
-
+import 'intervention_page.dart';
+import 'widget/common_widgets.dart';
+import 'widget/filter_list.dart';
 import '../models/model_formulaire.dart';
 import '../models/model_intervention.dart';
 import '../models/model_site.dart';
@@ -103,6 +102,13 @@ class _SitePageState extends State<SitePage> {
     list = await interventionAPI.getListInterventions(
         site: widget.site, realtime: false);
 
+    if (await _storage.containsKey(key: "searchText")) {
+      String? filteredSearchString = await _storage.read(key: "searchText");
+      if (filteredSearchString is String) {
+        filterList.searchText = filteredSearchString;
+      }
+    }
+
     if (await _storage.containsKey(key: "lastStatus")) {
       String? filteredStatusString = await _storage.read(key: "lastStatus");
       if (filterList.listStatus.contains(filteredStatusString)) {
@@ -144,6 +150,16 @@ class _SitePageState extends State<SitePage> {
           list = filteredList;
         }
       }
+    }
+
+    if (filterList.searchText != "") {
+      List<Intervention> filteredList = [];
+      filteredList = list
+          .where((intervention) => intervention.intervention_name
+              .toLowerCase()
+              .contains(filterList.searchText.toLowerCase()))
+          .toList();
+      list = filteredList;
     }
 
     list.sort((i, j) {
@@ -190,6 +206,9 @@ class _SitePageState extends State<SitePage> {
                         _storage.write(
                             key: "lastCoordinatorUserId",
                             value: value.user_coordinator.id);
+                        _storage.write(
+                            key: "searchText", value: value.searchText);
+
                         filterList = value;
                         refreshUI();
                       }),

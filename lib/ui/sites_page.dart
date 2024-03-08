@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:flex_list/flex_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -40,12 +41,17 @@ class _SitePageState extends State<SitePage> {
   late Future<String> myFuture;
 
   late List<Intervention> list;
+  late FilterList filterList;
 
   @override
   void initState() {
     super.initState();
     interventionAPI = InterventionApi();
     userAPI = UserApi();
+
+    filterList = FilterList(
+        user: widget.user, user_coordinator: User.nobody(), site: widget.site);
+
     myFuture = Future<String>.delayed(
       const Duration(seconds: 1),
       () => getListInterventions(),
@@ -111,6 +117,7 @@ class _SitePageState extends State<SitePage> {
       return indiceJ.compareTo(indiceI);
     });
     logger.d("ta da getListInterventions fin");
+
     return "ok";
   }
 
@@ -130,7 +137,11 @@ class _SitePageState extends State<SitePage> {
                   return Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(children: <Widget>[
-                        searchBar(),
+                        widgetFilterList(filterList,
+                            onChangedFilterList: (FilterList value) {
+                          filterList = value;
+                          refreshUI();
+                        }),
                         Expanded(
                             child: widgetListInterventions(
                                 listInterventions, context)),
@@ -324,50 +335,144 @@ class _SitePageState extends State<SitePage> {
     );
   }
 
-  Widget searchBar() {
-    return SearchAnchor(
-      builder: (BuildContext context, SearchController controller) {
-        return SearchBar(
-          controller: controller,
-          padding: const MaterialStatePropertyAll<EdgeInsets>(
-              EdgeInsets.symmetric(horizontal: 16.0)),
-          onTap: () {
-            controller.openView();
-          },
-          onChanged: (_) {
-            controller.openView();
-          },
-          leading: const Icon(Icons.search),
-          trailing: <Widget>[
-            Tooltip(
-              message: 'Change brightness mode',
-              child: IconButton(
-                isSelected: isDark,
-                onPressed: () {
-                  setState(() {
-                    isDark = !isDark;
-                  });
-                },
-                icon: const Icon(Icons.wb_sunny_outlined),
-                selectedIcon: const Icon(Icons.brightness_2_outlined),
-              ),
-            )
-          ],
-        );
-      },
-      suggestionsBuilder: (BuildContext context, SearchController controller) {
-        return List<ListTile>.generate(5, (int index) {
-          final String item = 'item $index';
-          return ListTile(
-            title: Text(item),
+  Widget widgetFilterList(FilterList filterList,
+      {required Null Function(FilterList value) onChangedFilterList}) {
+    List<dynamic> listStatus = UserApi.getListStatusFromTemplate(
+        user: widget.user,
+        site: widget.site,
+        type_intervention_name: "scaffolding request");
+
+    if (listStatus.contains("-")) {
+    } else {
+      listStatus.insert(0, "-");
+    }
+
+    List<User> usersCoordinators =
+        UserApi.getCoordinatorsList(user: widget.user, site: widget.site);
+    if (usersCoordinators.contains(User.nobody)) {
+    } else {
+      usersCoordinators.insert(0, User.nobody());
+    }
+
+    List<DropdownMenuItem<String>> listStatusDropdownMenuItems = [];
+    List<DropdownMenuItem<int>> listDropdownMenuItemsUsers = [];
+
+    for (var i = 0; i < listStatus.length; i++) {
+      listStatusDropdownMenuItems.add(
+          DropdownMenuItem(value: listStatus[i], child: Text(listStatus[i])));
+    }
+
+    for (var i = 0; i < usersCoordinators.length; i++) {
+      User u = usersCoordinators[i];
+      listDropdownMenuItemsUsers
+          .add(DropdownMenuItem(value: i, child: Text(u.email)));
+    }
+    return Column(children: [
+      SearchAnchor(
+        builder: (BuildContext context, SearchController controller) {
+          return SearchBar(
+            controller: controller,
+            padding: const MaterialStatePropertyAll<EdgeInsets>(
+                EdgeInsets.symmetric(horizontal: 16.0)),
             onTap: () {
-              setState(() {
-                controller.closeView(item);
-              });
+              controller.openView();
             },
+            onChanged: (_) {
+              controller.openView();
+            },
+            leading: const Icon(Icons.search),
+            trailing: <Widget>[
+              Tooltip(
+                message: 'Change brightness mode',
+                child: IconButton(
+                  isSelected: isDark,
+                  onPressed: () {
+                    setState(() {
+                      isDark = !isDark;
+                    });
+                  },
+                  icon: const Icon(Icons.wb_sunny_outlined),
+                  selectedIcon: const Icon(Icons.brightness_2_outlined),
+                ),
+              )
+            ],
           );
-        });
-      },
-    );
+        },
+        suggestionsBuilder:
+            (BuildContext context, SearchController controller) {
+          return List<ListTile>.generate(5, (int index) {
+            final String item = 'item $index';
+            return ListTile(
+              title: Text(item),
+              onTap: () {
+                setState(() {
+                  controller.closeView(item);
+                });
+              },
+            );
+          });
+        },
+      ),
+      FlexList(horizontalSpacing: 5, verticalSpacing: 10, children: [
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text("Status"),
+          DropdownButton<String>(
+              value: filterList.status,
+              items: listStatusDropdownMenuItems,
+              onChanged: (value) {
+                filterList.status = value;
+                onChangedFilterList(filterList);
+                print(value);
+              })
+        ]),
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text("Coordinator"),
+          DropdownButton<int>(
+              value: filterList.indiceCoordinator,
+              items: listDropdownMenuItemsUsers,
+              onChanged: (value) {
+                print(filterList.toString());
+
+                if (value is int) {
+                  filterList.user_coordinator =
+                      filterList.usersCoordinators[value];
+                  filterList.indiceCoordinator = value;
+                  onChangedFilterList(filterList);
+                  print(value.toString());
+                }
+              })
+        ])
+      ]),
+    ]);
+  }
+}
+
+class FilterList {
+  final User user;
+  String? status = "";
+  late List<User> usersCoordinators;
+  User user_coordinator;
+  late List<dynamic> listStatus;
+
+  int indiceCoordinator = 0;
+
+  FilterList(
+      {this.status,
+      required this.user_coordinator,
+      required this.user,
+      required Site site}) {
+    listStatus = UserApi.getListStatusFromTemplate(
+        user: user, site: site, type_intervention_name: "scaffolding request");
+
+    usersCoordinators = UserApi.getCoordinatorsList(user: user, site: site);
+    if (usersCoordinators.contains(User.nobody())) {
+    } else {
+      usersCoordinators.insert(0, User.nobody());
+    }
+
+    if (listStatus.contains("-")) {
+    } else {
+      listStatus.insert(0, "-");
+    }
   }
 }

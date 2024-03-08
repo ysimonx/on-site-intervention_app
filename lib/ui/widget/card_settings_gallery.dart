@@ -94,6 +94,9 @@ Widget widgetGallery(
             position: myLocation,
           );
 
+          // on passe la balayette
+          imageFileSource.delete();
+
           validator!(jsonEncode(listPictures));
 
           setState(() {});

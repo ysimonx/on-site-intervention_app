@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart' as syspaths;
 import 'package:image/image.dart';
 
 import 'image_page.dart';
+import 'utils/logger.dart';
 
 class CameraPage extends StatefulWidget {
   final List<CameraDescription>? cameras;
@@ -92,7 +93,7 @@ class _CameraPageState extends State<CameraPage>
               imageWidth * 0.5,
               imageHeight * 0.5,
             ),
-            imageWidth * 0.2,
+            imageWidth * 0.1,
             paint);
 
         final picture = recorder.endRecording();
@@ -113,6 +114,14 @@ class _CameraPageState extends State<CameraPage>
         //   return ImagePage(filepath: filepathpng);
         // })).then((value) {});
         Navigator.of(context).pop(filepathpng);
+
+        // on passe la balayette
+        try {
+          File(picturef.path).delete();
+        } catch (e) {
+          logger.e(e.toString());
+        }
+
         return null;
       }
 

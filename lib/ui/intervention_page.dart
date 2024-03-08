@@ -517,7 +517,9 @@ class InterventionPageState extends State<InterventionPage> {
 
       return genCardSettingsGallery(jsonEncode(listPictures), f,
           directory: directoryImageGallery,
-          directoryPendingUpload: directoryPendingUploadImageGallery);
+          directoryPendingUpload: directoryPendingUploadImageGallery,
+          intervention_values_on_site_uuid:
+              widget.intervention.intervention_values_on_site_uuid);
     }
 
     return genCardSettingsInt(initialValue, s, f);
@@ -792,11 +794,13 @@ class InterventionPageState extends State<InterventionPage> {
 
   CardSettingsWidget genCardSettingsGallery(String initialValue, Field f,
       {required Directory directory,
-      required Directory directoryPendingUpload}) {
+      required Directory directoryPendingUpload,
+      required String intervention_values_on_site_uuid}) {
     return CardSettingsGallery(
         directory: directory,
         directoryPendingUpload: directoryPendingUpload,
         field: f,
+        intervention_values_on_site_uuid: intervention_values_on_site_uuid,
         label: f.field_label,
         initialValue: initialValue,
         validator: (stringJsonListPictures) {

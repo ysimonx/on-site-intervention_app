@@ -19,7 +19,8 @@ class ImageApi {
       required latitude,
       required longitude,
       required photo_on_site_uuid,
-      required field_on_site_uuid}) async {
+      required field_on_site_uuid,
+      required intervention_values_on_site_uuid}) async {
     DioClient dioClient = DioClient(Dio());
     // TO DO : https://kashifchandio.medium.com/upload-images-to-rest-api-with-flutter-using-dio-package-421111389c27
     try {
@@ -31,6 +32,7 @@ class ImageApi {
         "field_on_site_uuid": field_on_site_uuid,
         "latitude": latitude,
         "longitude": longitude,
+        "intervention_values_on_site_uuid": intervention_values_on_site_uuid
       });
 
       final Response response = await dioClient.post(
@@ -117,7 +119,9 @@ class ImageApi {
             field_on_site_uuid: mapPhoto["field_on_site_uuid"],
             filename: mapPhoto["filename"],
             latitude: mapPhoto["location"]["latitude"],
-            longitude: mapPhoto["location"]["longitude"]);
+            longitude: mapPhoto["location"]["longitude"],
+            intervention_values_on_site_uuid:
+                mapPhoto["intervention_values_on_site_uuid"]);
 
         if (resp != null) {
           logger.d(resp.statusCode);
@@ -150,6 +154,7 @@ class ImageApi {
     required String photo_on_site_uuid,
     required String filename,
     required String field_on_site_uuid,
+    required String intervention_values_on_site_uuid,
   }) async {
     double longitude = 0.0;
     double latitude = 0.0;
@@ -163,6 +168,7 @@ class ImageApi {
       "photo_on_site_uuid": photo_on_site_uuid,
       "filename": filename,
       "field_on_site_uuid": field_on_site_uuid,
+      "intervention_values_on_site_uuid": intervention_values_on_site_uuid,
       /* "fieldName": field.field_name,*/
       "location": {"longitude": longitude, "latitude": latitude}
     };

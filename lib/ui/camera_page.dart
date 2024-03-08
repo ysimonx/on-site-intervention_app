@@ -28,6 +28,7 @@ class _CameraPageState extends State<CameraPage>
 
   late FlashMode? _currentFlashMode;
   late bool light = false;
+  late bool visor = false;
 
   @override
   void dispose() {
@@ -58,6 +59,10 @@ class _CameraPageState extends State<CameraPage>
       }
 
       XFile picture = await _cameraController.takePicture();
+
+      if (visor) {
+        // add visor to picture at center
+      }
 
       Navigator.of(context).pop(picture.path);
     } on CameraException catch (e) {
@@ -143,6 +148,11 @@ class _CameraPageState extends State<CameraPage>
         Positioned(top: sizeh * 0.90 - 150, left: 0, child: sliderZoom()),
         // Align(alignment: Alignment.topCenter, child: sliderZoom()),
         Align(
+            alignment: Alignment.center,
+            child: (visor == true)
+                ? Icon(Icons.panorama_fish_eye_sharp, size: size.width * 0.2)
+                : Text("")),
+        Align(
             alignment: Alignment.bottomCenter,
             child: Container(
               padding:
@@ -176,21 +186,34 @@ class _CameraPageState extends State<CameraPage>
                     icon: const Icon(Icons.circle, color: Colors.white),
                   )),
                   Expanded(
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                        Switch(
-                          // This bool value toggles the switch.
-                          value: light,
-                          activeColor: Colors.yellow,
-                          onChanged: (bool value) async {
-                            setState(() {
-                              light = value;
-                            });
-                          },
-                        ),
-                        const Icon(Icons.flash_on, color: Colors.white)
-                      ])),
+                      child: Column(children: [
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Switch(
+                        // This bool value toggles the switch.
+                        value: light,
+                        activeColor: Colors.yellow,
+                        onChanged: (bool value) async {
+                          setState(() {
+                            light = value;
+                          });
+                        },
+                      ),
+                      const Icon(Icons.flash_on, color: Colors.white)
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Switch(
+                        // This bool value toggles the switch.
+                        value: visor,
+                        activeColor: Colors.yellow,
+                        onChanged: (bool value) async {
+                          setState(() {
+                            visor = value;
+                          });
+                        },
+                      ),
+                      const Icon(Icons.my_location, color: Colors.white)
+                    ])
+                  ])),
                 ]),
               ]),
             ))

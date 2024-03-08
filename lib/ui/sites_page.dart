@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:flex_list/flex_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:on_site_intervention_app/ui/intervention_page.dart';
 import 'package:on_site_intervention_app/ui/widget/common_widgets.dart';
@@ -35,6 +36,7 @@ class _SitePageState extends State<SitePage> {
   late UserApi userAPI;
   late InterventionApi interventionAPI;
   bool isDark = false;
+  final _storage = const FlutterSecureStorage();
 
   Timer? timer;
 
@@ -99,7 +101,50 @@ class _SitePageState extends State<SitePage> {
     logger.d("ta da getListInterventions debut");
     list = await interventionAPI.getListInterventions(
         site: widget.site, realtime: false);
-    print(list.toString());
+
+    if (await _storage.containsKey(key: "lastStatus")) {
+      String? filteredStatusString = await _storage.read(key: "lastStatus");
+      if (filterList.listStatus.contains(filteredStatusString)) {
+        filterList.status = filteredStatusString;
+      }
+    }
+
+    if (await _storage.containsKey(key: "lastCoordinatorUserId")) {
+      String? filteredUserId =
+          await _storage.read(key: "lastCoordinatorUserId");
+      if (filterList.usersCoordinators.isNotEmpty) {
+        filterList.user_coordinator = filterList.usersCoordinators[0];
+        for (var i = 0; i < filterList.usersCoordinators.length; i++) {
+          User u = filterList.usersCoordinators[i];
+          if (u.id == filteredUserId) {
+            filterList.indiceCoordinator = i;
+            filterList.user_coordinator = filterList.usersCoordinators[i];
+          }
+        }
+      }
+    }
+
+    if (filterList.user_coordinator.isNobody() == false) {
+      List<Intervention> filteredList = [];
+      filteredList = list
+          .where((intervention) =>
+              intervention.assignee_user_id == filterList.user_coordinator.id)
+          .toList();
+      list = filteredList;
+    }
+
+    if (filterList.status != null) {
+      if (filterList.status != "") {
+        if (filterList.status != "-") {
+          List<Intervention> filteredList = [];
+          filteredList = list
+              .where((intervention) => intervention.status == filterList.status)
+              .toList();
+          list = filteredList;
+        }
+      }
+    }
+
     list.sort((i, j) {
       int indiceI;
       int indiceJ;
@@ -132,22 +177,27 @@ class _SitePageState extends State<SitePage> {
               if (snapshot.hasData) {
                 // List<Intervention> listInterventions = snapshot.data;
                 List<Intervention> listInterventions = list;
-                if (listInterventions.isNotEmpty) {
-                  logger.d("ta da builder ${listInterventions.length}");
-                  return Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(children: <Widget>[
-                        widgetFilterList(filterList,
-                            onChangedFilterList: (FilterList value) {
-                          filterList = value;
-                          refreshUI();
-                        }),
-                        Expanded(
-                            child: widgetListInterventions(
-                                listInterventions, context)),
-                        const SizedBox(height: 100)
-                      ]));
-                } else {
+                // if (listInterventions.isNotEmpty) {
+                logger.d("ta da builder ${listInterventions.length}");
+                return Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(children: <Widget>[
+                      widgetFilterList(filterList,
+                          onChangedFilterList: (FilterList value) {
+                        _storage.write(key: "lastStatus", value: value.status);
+                        _storage.write(
+                            key: "lastCoordinatorUserId",
+                            value: value.user_coordinator.id);
+                        filterList = value;
+                        refreshUI();
+                      }),
+                      Expanded(
+                          child: widgetListInterventions(
+                              listInterventions, context)),
+                      const SizedBox(height: 100)
+                    ]));
+                //}
+                /* else {
                   return Center(
                     child: ElevatedButton(
                       onPressed: () {
@@ -156,7 +206,7 @@ class _SitePageState extends State<SitePage> {
                       child: const Text('Empty List, go back'),
                     ),
                   );
-                }
+                }*/
               } else if (snapshot.hasError) {
                 return widgetError();
               } else {
@@ -367,83 +417,85 @@ class _SitePageState extends State<SitePage> {
       listDropdownMenuItemsUsers
           .add(DropdownMenuItem(value: i, child: Text(u.email)));
     }
-    return Column(children: [
-      SearchAnchor(
-        builder: (BuildContext context, SearchController controller) {
-          return SearchBar(
-            controller: controller,
-            padding: const MaterialStatePropertyAll<EdgeInsets>(
-                EdgeInsets.symmetric(horizontal: 16.0)),
-            onTap: () {
-              controller.openView();
+    return Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(children: [
+          SearchAnchor(
+            builder: (BuildContext context, SearchController controller) {
+              return SearchBar(
+                controller: controller,
+                padding: const MaterialStatePropertyAll<EdgeInsets>(
+                    EdgeInsets.symmetric(horizontal: 16.0)),
+                onTap: () {
+                  controller.openView();
+                },
+                onChanged: (_) {
+                  controller.openView();
+                },
+                leading: const Icon(Icons.search),
+                trailing: <Widget>[
+                  Tooltip(
+                    message: 'Change brightness mode',
+                    child: IconButton(
+                      isSelected: isDark,
+                      onPressed: () {
+                        setState(() {
+                          isDark = !isDark;
+                        });
+                      },
+                      icon: const Icon(Icons.wb_sunny_outlined),
+                      selectedIcon: const Icon(Icons.brightness_2_outlined),
+                    ),
+                  )
+                ],
+              );
             },
-            onChanged: (_) {
-              controller.openView();
-            },
-            leading: const Icon(Icons.search),
-            trailing: <Widget>[
-              Tooltip(
-                message: 'Change brightness mode',
-                child: IconButton(
-                  isSelected: isDark,
-                  onPressed: () {
+            suggestionsBuilder:
+                (BuildContext context, SearchController controller) {
+              return List<ListTile>.generate(5, (int index) {
+                final String item = 'item $index';
+                return ListTile(
+                  title: Text(item),
+                  onTap: () {
                     setState(() {
-                      isDark = !isDark;
+                      controller.closeView(item);
                     });
                   },
-                  icon: const Icon(Icons.wb_sunny_outlined),
-                  selectedIcon: const Icon(Icons.brightness_2_outlined),
-                ),
-              )
-            ],
-          );
-        },
-        suggestionsBuilder:
-            (BuildContext context, SearchController controller) {
-          return List<ListTile>.generate(5, (int index) {
-            final String item = 'item $index';
-            return ListTile(
-              title: Text(item),
-              onTap: () {
-                setState(() {
-                  controller.closeView(item);
-                });
-              },
-            );
-          });
-        },
-      ),
-      FlexList(horizontalSpacing: 5, verticalSpacing: 10, children: [
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text("Status"),
-          DropdownButton<String>(
-              value: filterList.status,
-              items: listStatusDropdownMenuItems,
-              onChanged: (value) {
-                filterList.status = value;
-                onChangedFilterList(filterList);
-                print(value);
-              })
-        ]),
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text("Coordinator"),
-          DropdownButton<int>(
-              value: filterList.indiceCoordinator,
-              items: listDropdownMenuItemsUsers,
-              onChanged: (value) {
-                print(filterList.toString());
+                );
+              });
+            },
+          ),
+          FlexList(horizontalSpacing: 5, verticalSpacing: 10, children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text("Status"),
+              DropdownButton<String>(
+                  value: filterList.status,
+                  items: listStatusDropdownMenuItems,
+                  onChanged: (value) {
+                    filterList.status = value;
+                    onChangedFilterList(filterList);
+                    print(value);
+                  })
+            ]),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text("Coordinator"),
+              DropdownButton<int>(
+                  value: filterList.indiceCoordinator,
+                  items: listDropdownMenuItemsUsers,
+                  onChanged: (value) {
+                    print(filterList.toString());
 
-                if (value is int) {
-                  filterList.user_coordinator =
-                      filterList.usersCoordinators[value];
-                  filterList.indiceCoordinator = value;
-                  onChangedFilterList(filterList);
-                  print(value.toString());
-                }
-              })
-        ])
-      ]),
-    ]);
+                    if (value is int) {
+                      filterList.user_coordinator =
+                          filterList.usersCoordinators[value];
+                      filterList.indiceCoordinator = value;
+                      onChangedFilterList(filterList);
+                      print(value.toString());
+                    }
+                  })
+            ])
+          ]),
+        ]));
   }
 }
 

@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 import 'dart:typed_data';
+import 'package:xml/xml.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -91,6 +92,8 @@ class _SignaturePageState extends State<SignaturePage> {
     final String stringSVG = _controller.toRawSVG()!;
     if (!mounted) return;
 
+    final String stringSVGReduced =
+        optimiseSVG(stringSVG, float2int: true, minDistanceBetweenPoints: 3);
     /* await push(
       context,
       Scaffold(
@@ -107,14 +110,14 @@ class _SignaturePageState extends State<SignaturePage> {
     );
     */
 
-    Navigator.of(context).pop(stringSVG);
+    Navigator.of(context).pop(stringSVGReduced);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Signature Demo'),
+        title: const Text('Signature'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -189,5 +192,54 @@ class _SignaturePageState extends State<SignaturePage> {
         ),
       ),
     );
+  }
+
+  String optimiseSVG(String stringSVG,
+      {bool float2int = false, int minDistanceBetweenPoints = 0}) {
+    final document = XmlDocument.parse(stringSVG);
+    var svgroot = document.root;
+
+    for (XmlElement child in svgroot.childElements) {
+      if (child.localName == "svg") {
+        for (XmlElement childsvg in child.childElements) {
+          if (childsvg.localName == "polyline") {
+            List attrs = childsvg.attributes;
+            for (XmlAttribute attr in attrs) {
+              if (attr.localName == "points") {
+                String value = attr.value;
+                List<String> points = value.split(" ");
+                List<String> filteredPoints = [];
+                dynamic x_prec = -1;
+                dynamic y_prec = -1;
+
+                for (String point in points) {
+                  List<String> xy = point.split(",");
+                  double doublex = double.parse(xy[0]);
+                  double doubley = double.parse(xy[1]);
+                  dynamic x;
+                  dynamic y;
+                  if (float2int) {
+                    x = doublex.round();
+                    y = doubley.round();
+                  } else {
+                    x = doublex;
+                    y = doubley;
+                  }
+                  if ((x - x_prec).abs() > minDistanceBetweenPoints ||
+                      (y - y_prec).abs() > minDistanceBetweenPoints) {
+                    String s = "${x},${y}";
+                    filteredPoints.add(s);
+                    x_prec = x;
+                    y_prec = y;
+                  }
+                }
+                childsvg.setAttribute("points", filteredPoints.join(" "));
+              }
+            }
+          }
+        }
+      }
+    }
+    return document.toString();
   }
 }

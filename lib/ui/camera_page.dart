@@ -208,7 +208,7 @@ class _CameraPageState extends State<CameraPage>
             : Container(
                 color: Colors.black,
                 child: const Center(child: CircularProgressIndicator())),
-        Positioned(top: sizeh * 0.90 - 150, left: 0, child: sliderZoom()),
+        Positioned(top: sizeh * 0.85 - 150, left: 0, child: sliderZoom()),
         // Align(alignment: Alignment.topCenter, child: sliderZoom()),
         Align(
             alignment: Alignment.center,
@@ -220,7 +220,7 @@ class _CameraPageState extends State<CameraPage>
             child: Container(
               padding:
                   const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
-              height: sizeh * 0.10, // 10% de la hauteur pour le bas de l'écran
+              height: sizeh * 0.15, // 10% de la hauteur pour le bas de l'écran
               decoration: const BoxDecoration(
                   // borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                   color: Colors.black),

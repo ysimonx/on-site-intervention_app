@@ -211,6 +211,7 @@ class InterventionPageState extends State<InterventionPage> {
     widget.intervention.place = place;
     String newName = widget.intervention.BuildNumRegistre();
     widget.intervention.intervention_name = newName;
+    _needSave = true;
     refreshUI();
   }
 

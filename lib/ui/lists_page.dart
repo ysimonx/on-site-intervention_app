@@ -79,7 +79,7 @@ class ListsPageState extends State<ListsPage> {
           if (valueString != "") {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                  duration: const Duration(milliseconds: 100),
+                  duration: const Duration(milliseconds: 500),
                   content: Text(valueString)),
             );
           }

@@ -56,7 +56,7 @@ class _SitePageState extends State<SitePage> {
     filterList = FilterList(
         user: widget.user, user_coordinator: User.nobody(), site: widget.site);
     myFuture = newMethod();
-    initTimer();
+    // initTimer();
   }
 
   void refreshUI() {

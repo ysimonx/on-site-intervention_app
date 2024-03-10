@@ -110,7 +110,10 @@ class InterventionApi {
     logger.d("ta da getListInterventions 30");
     if (content != null) {
       logger.d("ta da getListInterventions 35 -> realtime = true");
-      await writeListInterventionValues(site: site, data: content);
+
+      if (isMobileFirst()) {
+        await writeListInterventionValues(site: site, data: content);
+      }
     } else {
       logger.d("ta da getListInterventions 35 -> realtime = false");
       content = await readListInterventionValues(site: site);

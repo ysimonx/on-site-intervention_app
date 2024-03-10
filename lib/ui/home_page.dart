@@ -10,6 +10,7 @@ import '../network/api/image.api.dart';
 import '../network/api/intervention_api.dart';
 import '../network/api/user_api.dart';
 import 'utils/logger.dart';
+import 'utils/mobilefirst.dart';
 import 'widget/_home_page_authentified_content.dart';
 import 'widget/_home_page_unauthentified_content.dart';
 import 'widget/app_bar.dart';
@@ -54,19 +55,21 @@ class _HomePageState extends State<HomePage> {
     }
 
     timerIsRunning = true;
+    if (isOfflineFirst()) {
+      await ImageApi.uploadPhotos();
+      int nbInterventionsUploaded = await interventionAPI.uploadInterventions();
+      logger.i("nb interventions uploaded ${nbInterventionsUploaded}");
 
-    await ImageApi.uploadPhotos();
-    int nbInterventionsUploaded = await interventionAPI.uploadInterventions();
-    logger.i("nb interventions uploaded ${nbInterventionsUploaded}");
-
-    try {
-      List<Site> list = user.sites;
-      list.forEach((site) async {
-        await interventionAPI.getListInterventions(site: site, realtime: true);
-        interventionAPI.downloadPhotos(site: site);
-      });
-    } catch (e) {
-      logger.e(e.toString());
+      try {
+        List<Site> list = user.sites;
+        list.forEach((site) async {
+          await interventionAPI.getListInterventions(
+              site: site, realtime: true);
+          interventionAPI.downloadPhotos(site: site);
+        });
+      } catch (e) {
+        logger.e(e.toString());
+      }
     }
 
     timerIsRunning = false;

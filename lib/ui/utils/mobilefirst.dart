@@ -6,3 +6,10 @@ bool isMobileFirst() {
   }
   return true;
 }
+
+bool isOfflineFirst() {
+  if (kIsWeb) {
+    return false;
+  }
+  return true;
+}

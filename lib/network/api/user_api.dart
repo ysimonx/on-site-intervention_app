@@ -67,7 +67,7 @@ class UserApi {
     }
 
     try {
-      if (isMobileFirst()) {
+      if (isOfflineFirst()) {
         if (content != null) {
           await writeUserMe(content);
         } else {

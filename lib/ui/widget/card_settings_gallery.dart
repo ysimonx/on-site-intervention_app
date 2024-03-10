@@ -17,9 +17,11 @@ import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter_cupertino_settings/flutter_cupertino_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:on_site_intervention_app/ui/utils/mobilefirst.dart';
 
 import '../../models/model_field.dart';
 import '../../models/model_photo.dart';
+import '../../network/api/constants.dart';
 import '../../network/api/image.api.dart';
 import '../camera_page.dart';
 import '../utils/logger.dart';
@@ -38,9 +40,9 @@ Widget widgetGallery(
     {required String initialValue,
     required BuildContext context,
     FormFieldValidator<String>? validator,
-    required Directory directory,
+    required Directory? directory,
     required Field field,
-    required Directory directoryPendingUpload,
+    required Directory? directoryPendingUpload,
     required String intervention_values_on_site_uuid}) {
   List<dynamic> listPictures = jsonDecode(initialValue);
 
@@ -125,20 +127,32 @@ Widget widgetGallery(
 
 Widget widgetGalleryItem(
     {required String uriPicture,
-    required Directory directory,
-    required Directory directoryPendingUpload}) {
+    required Directory? directory,
+    required Directory? directoryPendingUpload}) {
   String localuriPicture = "";
 
-  if (!uriPicture.startsWith("/")) {
-    localuriPicture = "${directory.path}/$uriPicture";
+  if (isOfflineFirst()) {
+    if (!uriPicture.startsWith("/")) {
+      localuriPicture = "${directory!.path}/$uriPicture";
+    }
   }
 
   Widget widgetChild =
       const SizedBox(width: 1000, height: 1000, child: Text("no"));
 
-  if (uriPicture.startsWith("http")) {
+  if (!isOfflineFirst()) {
+    String urlImg;
+    if (uriPicture.startsWith("http")) {
+      urlImg = uriPicture;
+    } else {
+      String path = Endpoints.downloadImage;
+      String host = Endpoints.baseUrl;
+      path = path.replaceAll("<image>", uriPicture);
+      urlImg = "${host}${path}";
+      print(urlImg);
+    }
     widgetChild = CachedNetworkImage(
-        imageUrl: uriPicture, fit: BoxFit.cover, width: 1000.0, height: 1000.0);
+        imageUrl: urlImg, fit: BoxFit.cover, width: 1000.0, height: 1000.0);
   } else {
     File f = File(localuriPicture);
     if (f.existsSync()) {
@@ -148,7 +162,7 @@ Widget widgetGalleryItem(
           width: 1000.0,
           height: 1000.0);
     } else {
-      localuriPicture = "${directoryPendingUpload.path}/$uriPicture";
+      localuriPicture = "${directoryPendingUpload!.path}/$uriPicture";
       File f = File(localuriPicture);
       if (f.existsSync()) {
         widgetChild = Image.file(f,
@@ -198,8 +212,8 @@ Widget widgetGalleryItem(
 /// This is a standard one line text entry  It's based on the [TextFormField] widget.
 class CardSettingsGallery extends FormField<String>
     implements ICommonFieldProperties, ITextFieldProperties {
-  final Directory directory;
-  final Directory directoryPendingUpload;
+  final Directory? directory;
+  final Directory? directoryPendingUpload;
   final String intervention_values_on_site_uuid;
   final Field field;
 

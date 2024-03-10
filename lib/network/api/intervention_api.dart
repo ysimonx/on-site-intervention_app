@@ -27,7 +27,6 @@ class InterventionApi {
   DioClient dioClient = DioClient(Dio());
 
   Map<String, dynamic> mapListInterventionsLastModified = {};
-  Map<String, List<dynamic>> mapListInterventionsJson = {};
 
   Map<String, dynamic> mapListPhotosLastModified = {};
 
@@ -44,7 +43,7 @@ class InterventionApi {
 
     bool bln304 = false;
 
-    if (!isMobileFirst() || true == true) {
+    if (true) {
       try {
         Map<String, String> qParams = {'site_id': site.id};
 
@@ -108,15 +107,14 @@ class InterventionApi {
     }
 
     logger.d("ta da getListInterventions 30");
-    if (content != null) {
-      logger.d("ta da getListInterventions 35 -> realtime = true");
-
-      if (isMobileFirst()) {
+    if (isOfflineFirst()) {
+      if (content != null) {
+        logger.d("ta da getListInterventions 35 -> realtime = true");
         await writeListInterventionValues(site: site, data: content);
+      } else {
+        logger.d("ta da getListInterventions 35 -> realtime = false");
+        content = await readListInterventionValues(site: site);
       }
-    } else {
-      logger.d("ta da getListInterventions 35 -> realtime = false");
-      content = await readListInterventionValues(site: site);
     }
 
     logger.d("ta da getListInterventions 40");
@@ -128,10 +126,11 @@ class InterventionApi {
 
     arrayJsonMobileFirst = jsonDecode(content);
     mapListInterventionsLastModified[site.id] = lastModified;
-    mapListInterventionsJson[site.id] = arrayJsonMobileFirst;
+
     //}
 
-    if (isMobileFirst() == false) {
+    // si je suis en mode connecté nécessaire == isOfflineFirst à false
+    if (!isOfflineFirst()) {
       for (int j = 0; j < arrayJsonMobileFirst.length; j = j + 1) {
         Map<String, dynamic> itemJson = arrayJsonMobileFirst[j];
         Intervention intervention = Intervention.fromJson(itemJson);

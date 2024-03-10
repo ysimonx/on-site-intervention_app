@@ -62,7 +62,9 @@ class InterventionPageState extends State<InterventionPage> {
   Map<String, TextEditingController> fieldsController = {};
   List<String> listFieldsUUIDUpdated = [];
 
-  late Directory deviceApplicationDocumentsDirectory;
+  late Directory? deviceApplicationDocumentsDirectory;
+  late Directory? directoryImageGallery;
+  late Directory? directoryPendingUploadImageGallery;
 
   late String intervention_status;
   late User userCoordinator;
@@ -149,8 +151,20 @@ class InterventionPageState extends State<InterventionPage> {
     String s = (_initialIndex + 1).toString();
     currentFormulaire = mapFormulaires[s] as Formulaire;
 
-    deviceApplicationDocumentsDirectory =
-        await getApplicationDocumentsDirectory();
+    if (isOfflineFirst()) {
+      deviceApplicationDocumentsDirectory =
+          await getApplicationDocumentsDirectory();
+
+      directoryImageGallery = Directory(
+          "${deviceApplicationDocumentsDirectory!.path}/${ImageApi.getDownloadedImageRelativeDirectoryPath()}");
+
+      directoryPendingUploadImageGallery = Directory(
+          "${deviceApplicationDocumentsDirectory!.path}/${ImageApi.getPendingUploadImageRelativeDirectoryPath()}");
+    } else {
+      deviceApplicationDocumentsDirectory = null;
+      directoryImageGallery = null;
+      directoryPendingUploadImageGallery = null;
+    }
 
     String interventionName = widget.intervention.BuildNumRegistre();
     widget.intervention.intervention_name = interventionName;
@@ -335,16 +349,14 @@ class InterventionPageState extends State<InterventionPage> {
 
     InterventionApi interventionApi = InterventionApi();
 
-    if (isMobileFirst()) {
+    if (isOfflineFirst()) {
       await interventionApi.localUpdatedFileSave(
           intervention: widget.intervention);
-
-      // await interventionApi.uploadInterventions();
-    } else {
-      var r = await interventionApi
-          .postInterventionValuesOnServer(widget.intervention);
-      logger.d("saveIntervention, statusCode ${r?.statusCode}");
     }
+
+    var r = await interventionApi
+        .postInterventionValuesOnServer(widget.intervention);
+    logger.d("saveIntervention, statusCode ${r?.statusCode}");
 
     _needSave = false;
   }
@@ -509,12 +521,6 @@ class InterventionPageState extends State<InterventionPage> {
       } catch (e) {
         logger.e(e.toString());
       }
-
-      Directory directoryImageGallery = Directory(
-          "${deviceApplicationDocumentsDirectory.path}/${ImageApi.getDownloadedImageRelativeDirectoryPath()}");
-
-      Directory directoryPendingUploadImageGallery = Directory(
-          "${deviceApplicationDocumentsDirectory.path}/${ImageApi.getPendingUploadImageRelativeDirectoryPath()}");
 
       return genCardSettingsGallery(jsonEncode(listPictures), f,
           directory: directoryImageGallery,
@@ -794,8 +800,8 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   CardSettingsWidget genCardSettingsGallery(String initialValue, Field f,
-      {required Directory directory,
-      required Directory directoryPendingUpload,
+      {required Directory? directory,
+      required Directory? directoryPendingUpload,
       required String intervention_values_on_site_uuid}) {
     return CardSettingsGallery(
         directory: directory,

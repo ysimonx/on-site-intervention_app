@@ -77,8 +77,7 @@ Widget widgetFilterList(FilterList filterList,
       padding: const EdgeInsets.only(left: 20.0, right: 20.0),
       child: Column(children: [
         Container(
-            padding:
-                const EdgeInsets.symmetric(vertical: 50.0, horizontal: 0.0),
+            padding: const EdgeInsets.only(bottom: 30.0),
             child: Row(children: [
               Expanded(
                   child: TextField(
@@ -101,7 +100,7 @@ Widget widgetFilterList(FilterList filterList,
                   }),
               Icon(Icons.search)
             ])),
-        FlexList(horizontalSpacing: 5, verticalSpacing: 10, children: [
+        FlexList(horizontalSpacing: 1, verticalSpacing: 1, children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Text("Status"),
             DropdownButton<String>(

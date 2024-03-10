@@ -206,27 +206,24 @@ class _SitePageState extends State<SitePage> {
                 List<Intervention> listInterventions = list;
                 // if (listInterventions.isNotEmpty) {
                 logger.d("ta da builder ${listInterventions.length}");
-                return Padding(
-                    padding: const EdgeInsets.all(00),
-                    child: Column(children: <Widget>[
-                      widgetFilterList(filterList,
-                          user: widget.user, site: widget.site,
-                          onChangedFilterList: (FilterList value) {
-                        _storage.write(key: "lastStatus", value: value.status);
-                        _storage.write(
-                            key: "lastCoordinatorUserId",
-                            value: value.user_coordinator.id);
-                        _storage.write(
-                            key: "searchText", value: value.searchText);
+                return Column(children: <Widget>[
+                  widgetFilterList(filterList,
+                      user: widget.user, site: widget.site,
+                      onChangedFilterList: (FilterList value) {
+                    _storage.write(key: "lastStatus", value: value.status);
+                    _storage.write(
+                        key: "lastCoordinatorUserId",
+                        value: value.user_coordinator.id);
+                    _storage.write(key: "searchText", value: value.searchText);
 
-                        filterList = value;
-                        refreshUI();
-                      }),
-                      Expanded(
-                          child: widgetListInterventions(
-                              listInterventions, context)),
-                      const SizedBox(height: 100)
-                    ]));
+                    filterList = value;
+                    refreshUI();
+                  }),
+                  Expanded(
+                      child:
+                          widgetListInterventions(listInterventions, context)),
+                  const SizedBox(height: 100)
+                ]);
                 //}
                 /* else {
                   return Center(

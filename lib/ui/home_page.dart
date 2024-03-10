@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
 
   void initTimer() {
     if (timer != null && timer!.isActive) return;
-    timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 30), (timer) {
       functionTimer();
     });
   }

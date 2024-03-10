@@ -45,6 +45,8 @@ class _SitePageState extends State<SitePage> {
   late List<Intervention> list;
   late FilterList filterList;
 
+  List<Intervention> prec_result = [];
+
   @override
   void initState() {
     super.initState();
@@ -66,13 +68,15 @@ class _SitePageState extends State<SitePage> {
   Future<String> newMethod() {
     return Future<String>.delayed(
       const Duration(seconds: 1),
-      () => getListInterventions(),
+      () {
+        return getListInterventions();
+      },
     );
   }
 
   void initTimer() {
     if (timer != null && timer!.isActive) return;
-    timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 30), (timer) {
       //job
       refreshUI();
     });
@@ -99,8 +103,13 @@ class _SitePageState extends State<SitePage> {
 
   Future<String> getListInterventions() async {
     logger.d("ta da getListInterventions debut");
-    list = await interventionAPI.getListInterventions(
-        site: widget.site, realtime: false);
+
+    List<Intervention> result = [];
+
+    result = await interventionAPI.getListInterventions(
+        site: widget.site, realtime: false, prec_result: prec_result);
+
+    prec_result = result;
 
     if (await _storage.containsKey(key: "searchText")) {
       String? filteredSearchString = await _storage.read(key: "searchText");
@@ -133,36 +142,36 @@ class _SitePageState extends State<SitePage> {
 
     if (filterList.user_coordinator.isNobody() == false) {
       List<Intervention> filteredList = [];
-      filteredList = list
+      filteredList = result
           .where((intervention) =>
               intervention.assignee_user_id == filterList.user_coordinator.id)
           .toList();
-      list = filteredList;
+      result = filteredList;
     }
 
     if (filterList.status != null) {
       if (filterList.status != "") {
         if (filterList.status != "-") {
           List<Intervention> filteredList = [];
-          filteredList = list
+          filteredList = result
               .where((intervention) => intervention.status == filterList.status)
               .toList();
-          list = filteredList;
+          result = filteredList;
         }
       }
     }
 
     if (filterList.searchText != "") {
       List<Intervention> filteredList = [];
-      filteredList = list
+      filteredList = result
           .where((intervention) => intervention.intervention_name
               .toLowerCase()
               .contains(filterList.searchText.toLowerCase()))
           .toList();
-      list = filteredList;
+      result = filteredList;
     }
 
-    list.sort((i, j) {
+    result.sort((i, j) {
       int indiceI;
       int indiceJ;
 
@@ -180,6 +189,7 @@ class _SitePageState extends State<SitePage> {
     });
     logger.d("ta da getListInterventions fin");
 
+    list = result;
     return "ok";
   }
 

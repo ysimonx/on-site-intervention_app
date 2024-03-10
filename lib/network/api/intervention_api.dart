@@ -32,14 +32,19 @@ class InterventionApi {
   Map<String, dynamic> mapListPhotosLastModified = {};
 
   Future<List<Intervention>> getListInterventions(
-      {required Site site, required bool realtime, Place? place}) async {
+      {required Site site,
+      required bool realtime,
+      Place? place,
+      List<Intervention>? prec_result}) async {
     dynamic content = null;
 
     logger.d("ta da getListInterventions 10");
 
     String lastModified = "";
 
-    if (!isMobileFirst() || realtime == true) {
+    bool bln304 = false;
+
+    if (!isMobileFirst() || true == true) {
       try {
         Map<String, String> qParams = {'site_id': site.id};
 
@@ -73,12 +78,32 @@ class InterventionApi {
           }
           if (e.response!.statusCode == 304) {
             logger.i("not modified since");
+            bln304 = true;
             content = null;
           }
           logger.e("getList : ${e.response!.statusCode}");
         }
       } catch (e) {
         logger.e(e.toString());
+      }
+    }
+
+    if (bln304) {
+      if (prec_result != null) {
+        if (prec_result.length > 0) {
+          print("304");
+          return prec_result;
+        }
+      }
+    }
+    if (mapListInterventionsLastModified.containsKey(site.id)) {
+      if (mapListInterventionsLastModified[site.id] == lastModified) {
+        if (prec_result != null) {
+          if (prec_result.length > 0) {
+            print("deja chargé en mémoire");
+            return prec_result;
+          }
+        }
       }
     }
 
@@ -98,19 +123,10 @@ class InterventionApi {
     // ici, ca coute en cpu
     List<dynamic> arrayJsonMobileFirst = [];
 
-    if (mapListInterventionsLastModified.containsKey(site.id)) {
-      if (mapListInterventionsLastModified[site.id] != lastModified) {
-        arrayJsonMobileFirst = jsonDecode(content);
-        mapListInterventionsLastModified[site.id] = lastModified;
-        mapListInterventionsJson[site.id] = arrayJsonMobileFirst;
-      } else {
-        arrayJsonMobileFirst = mapListInterventionsJson[site.id]!;
-      }
-    } else {
-      arrayJsonMobileFirst = jsonDecode(content);
-      mapListInterventionsLastModified[site.id] = lastModified;
-      mapListInterventionsJson[site.id] = arrayJsonMobileFirst;
-    }
+    arrayJsonMobileFirst = jsonDecode(content);
+    mapListInterventionsLastModified[site.id] = lastModified;
+    mapListInterventionsJson[site.id] = arrayJsonMobileFirst;
+    //}
 
     if (isMobileFirst() == false) {
       for (int j = 0; j < arrayJsonMobileFirst.length; j = j + 1) {

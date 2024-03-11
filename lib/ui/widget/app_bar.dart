@@ -2,10 +2,12 @@
 
 import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/network/api/image.api.dart';
+import 'package:on_site_intervention_app/ui/types_intervention_page.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/model_user.dart';
+import '../../network/api/constants.dart';
 import '../../network/api/intervention_api.dart';
 import '../../network/api/login_api.dart';
 import 'package:flutter/material.dart';
@@ -41,9 +43,14 @@ class AuthentifiedBaseAppBar extends StatelessWidget
   static const int valueLISTFORPLACES = 8;
   static const int valueINFOAPP = 9;
   static const int valueGOOGLESTORE = 10;
+  static const int valueTYPESINTERVENTION = 11;
+  static const int valueEXPORTCSV = 12;
 
   @override
   Widget build(BuildContext context) {
+    //
+    //
+
     return AppBar(
       toolbarHeight: 200,
       centerTitle: true,
@@ -78,8 +85,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                   ),
                   PopupMenuItem<int>(
                     value: valueGOOGLESTORE,
-                    child:
-                        Text(translateI18N("App Google Store").toCapitalized()),
+                    child: Text(translateI18N("App Store").toCapitalized()),
                   ),
                   if (site != null)
                     if (site!.getRoleNamesForUser(user).contains("admin") ||
@@ -88,7 +94,17 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                             .contains("site administrator"))
                       PopupMenuItem<int>(
                         value: valueUSERS,
-                        child: Text(translateI18N("gestion des utilisateurs")
+                        child:
+                            Text(translateI18N("utilisateurs").toCapitalized()),
+                      ),
+                  if (site != null)
+                    if (site!.getRoleNamesForUser(user).contains("admin") ||
+                        site!
+                            .getRoleNamesForUser(user)
+                            .contains("site administrator"))
+                      PopupMenuItem<int>(
+                        value: valueTYPESINTERVENTION,
+                        child: Text(translateI18N("types d'interventions")
                             .toCapitalized()),
                       ),
                   if (site != null)
@@ -98,8 +114,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                             .contains("site administrator"))
                       PopupMenuItem<int>(
                         value: valueLIST,
-                        child: Text(translateI18N("gestion des listes")
-                            .toCapitalized()),
+                        child: Text(translateI18N("listes").toCapitalized()),
                       ),
                   if (site != null)
                     if (site!.getRoleNamesForUser(user).contains("admin") ||
@@ -108,8 +123,18 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                             .contains("site administrator"))
                       PopupMenuItem<int>(
                         value: valueLISTFORPLACES,
-                        child: Text(translateI18N("gestion des emplacements")
-                            .toCapitalized()),
+                        child:
+                            Text(translateI18N("emplacements").toCapitalized()),
+                      ),
+                  if (site != null)
+                    if (site!.getRoleNamesForUser(user).contains("admin") ||
+                        site!
+                            .getRoleNamesForUser(user)
+                            .contains("site administrator"))
+                      PopupMenuItem<int>(
+                        value: valueEXPORTCSV,
+                        child:
+                            Text(translateI18N("export csv").toCapitalized()),
                       ),
                   const PopupMenuItem<int>(
                       value: valueREMOVEFILES,
@@ -165,6 +190,19 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                     }
                   }
                 }
+                if (value == valueTYPESINTERVENTION) {
+                  if (context.mounted) {
+                    if (site != null) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return TypesInterventionPage(
+                            site: site!,
+                            tenants: user.tenants_administrator_of,
+                            user: user);
+                      }));
+                    }
+                  }
+                }
                 if (value == valueINFOAPP) {
                   final info = await PackageInfo.fromPlatform();
 
@@ -179,6 +217,16 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                   //
                   final Uri _url = Uri.parse(
                       'https://play.google.com/store/apps/details?id=fr.fidwork.app&hl=fr-FR');
+                  if (!await launchUrl(_url)) {
+                    throw Exception('Could not launch $_url');
+                  }
+                }
+                if (value == valueEXPORTCSV) {
+                  //
+                  String url =
+                      "${Endpoints.baseUrl}${Endpoints.exportInterventionsCSV.replaceAll("<site_id>", site!.id)}";
+
+                  final Uri _url = Uri.parse(url);
                   if (!await launchUrl(_url)) {
                     throw Exception('Could not launch $_url');
                   }

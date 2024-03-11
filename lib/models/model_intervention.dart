@@ -121,7 +121,11 @@ class Intervention {
     if (num_chrono != null) {
       NumberFormat formatter = new NumberFormat("00000");
       if (num_chrono is String) {
-        result = "${result}-${formatter.format(int.parse(num_chrono!))}";
+        try {
+          result = "${result}-${formatter.format(int.parse(num_chrono!))}";
+        } catch (e) {
+          result = "$result-$num_chrono";
+        }
       }
 
       if (indice != null) {

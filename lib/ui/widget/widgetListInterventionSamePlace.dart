@@ -34,23 +34,14 @@ class widgetListInterventionSamePlaceState
   List<Intervention> filteredListIntervention = [];
   late Future<String> myFuture;
 
-  Timer? timer;
-
-  final Future<String> _calculations =
-      Future<String>.delayed(const Duration(seconds: 2), () async {
-    return 'Data loaded';
-  });
-
   @override
   void initState() {
     super.initState();
-    // initTimer();
     interventionAPI = InterventionApi();
   }
 
   @override
   void dispose() {
-    timer!.cancel();
     super.dispose();
   }
 
@@ -61,9 +52,7 @@ class widgetListInterventionSamePlaceState
 
   Future<String> xgetListInterventions() async {
     logger.d("ta da getListInterventions debut");
-    // if (filteredListIntervention.isNotEmpty) {
-    //   return "cache";
-    //  }
+
     List<Intervention> list = await interventionAPI.getListInterventions(
         site: widget.site, realtime: false, place: widget.place);
 

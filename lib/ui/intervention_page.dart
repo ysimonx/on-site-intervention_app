@@ -21,6 +21,7 @@ import '../network/api/image.api.dart';
 import '../network/api/intervention_api.dart';
 import '../network/api/user_api.dart';
 import 'utils/logger.dart';
+import 'widget/card_settings_schema.dart';
 import 'widget/card_settings_gallery.dart';
 import 'widget/card_settings_signature.dart';
 import 'widget/choose_place.dart';
@@ -521,8 +522,11 @@ class InterventionPageState extends State<InterventionPage> {
     }
 
     if (f.field_type == "signature") {
-      // return genCardSettingsInt(initialValue, s, f);
       return genCardSettingsSignature(initialValue, f);
+    }
+
+    if (f.field_type == "schema") {
+      return genCardSettingsSchema(initialValue, f);
     }
 
     if (f.field_type == "gallery") {
@@ -846,6 +850,27 @@ class InterventionPageState extends State<InterventionPage> {
 
   CardSettingsWidget genCardSettingsSignature(String initialValue, Field f) {
     return CardSettingsSignature(
+        field: f,
+        label: f.field_label,
+        initialValue: initialValue,
+        validator: (value) {
+          if (value != null) {
+            fieldsController[f.field_on_site_uuid]!.text = value;
+
+            // keep track of real updates
+            if (value != initialValue) {
+              if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+                listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+              }
+              _needSave = true;
+            }
+          }
+          return null;
+        });
+  }
+
+  CardSettingsWidget genCardSettingsSchema(String initialValue, Field f) {
+    return CardSettingsSchema(
         field: f,
         label: f.field_label,
         initialValue: initialValue,

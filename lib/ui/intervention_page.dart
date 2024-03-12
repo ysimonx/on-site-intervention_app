@@ -188,7 +188,15 @@ class InterventionPageState extends State<InterventionPage> {
                   onPressed: () async {
                     // Validate returns true if the form is valid, or false otherwise.
                     // if (_formKey.currentState!.validate()) {
-                    await saveIntervention(context);
+                    await saveIntervention(context,
+                        onMessage: (String message) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(message),
+                            duration: Duration(seconds: 1)),
+                      );
+                      print(message);
+                    });
                     // }
                   },
                   tooltip: 'Save',
@@ -330,7 +338,8 @@ class InterventionPageState extends State<InterventionPage> {
             tabs: tabs));
   }
 
-  Future<void> saveIntervention(BuildContext context) async {
+  Future<void> saveIntervention(BuildContext context,
+      {required Null Function(String message) onMessage}) async {
     // sauvegarde du nom
 
     // TODO : ici, on n'a QUE la liste des champs qui ont été modifiés en local
@@ -342,10 +351,11 @@ class InterventionPageState extends State<InterventionPage> {
       widget.intervention.field_on_site_uuid_values[key] = value.text;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-          content: Text('Processing Data'), duration: Duration(seconds: 1)),
-    );
+    try {
+      onMessage('Processing Data');
+    } catch (e) {
+      print(e.toString());
+    }
 
     InterventionApi interventionApi = InterventionApi();
 
@@ -378,7 +388,14 @@ class InterventionPageState extends State<InterventionPage> {
               ),
               child: const Text('Sauvegarder et quitter'),
               onPressed: () async {
-                await saveIntervention(context);
+                await saveIntervention(context, onMessage: (String message) {
+                  print(message);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Processing Data'),
+                        duration: Duration(seconds: 1)),
+                  );
+                });
                 Navigator.pop(context);
                 Navigator.pop(context, widget.intervention);
               },
@@ -878,25 +895,6 @@ class InterventionPageState extends State<InterventionPage> {
           textStyle: Theme.of(context).textTheme.labelLarge,
         ),*/
               children: [
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('reprendre un chrono existant'),
-                  widgetListInterventionSamePlace(
-                      site: widget.site,
-                      place: widget.intervention.place,
-                      onChanged: (
-                          {required Intervention intervention,
-                          required String next_indice}) {
-                        print(intervention.toString());
-                        print(next_indice);
-                        widget.intervention.num_chrono =
-                            intervention.num_chrono;
-                        widget.intervention.indice = next_indice;
-                        String newName = widget.intervention.BuildNumRegistre();
-                        widget.intervention.intervention_name = newName;
-                        _needSave = true;
-                        refreshUI();
-                      })
-                ]),
                 Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                   TextButton(
                       child: const Text('créer un numero de chrono'),
@@ -907,6 +905,23 @@ class InterventionPageState extends State<InterventionPage> {
                         refreshUI();
                       })
                 ]),
+                Padding(
+                    padding: EdgeInsets.only(top: 5.0),
+                    child: widgetListInterventionSamePlace(
+                        site: widget.site,
+                        place: widget.intervention.place,
+                        onChanged: (
+                            {required Intervention intervention,
+                            required String next_indice}) {
+                          widget.intervention.num_chrono =
+                              intervention.num_chrono;
+                          widget.intervention.indice = next_indice;
+                          String newName =
+                              widget.intervention.BuildNumRegistre();
+                          widget.intervention.intervention_name = newName;
+                          _needSave = true;
+                          refreshUI();
+                        })),
               ]));
     } else {
       if (widget.intervention.num_chrono == "[NNNNN]") {

@@ -39,6 +39,9 @@ class InterventionApi {
 
     logger.d("ta da getListInterventions 10");
 
+    if (place != null) {
+      print("yo");
+    }
     String lastModified = "";
 
     bool bln304 = false;

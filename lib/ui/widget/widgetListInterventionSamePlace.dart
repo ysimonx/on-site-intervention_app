@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../models/model_intervention.dart';
@@ -29,21 +30,42 @@ class widgetListInterventionSamePlace extends StatefulWidget {
 class widgetListInterventionSamePlaceState
     extends State<widgetListInterventionSamePlace> {
   late InterventionApi interventionAPI;
-  late List<Intervention> filteredListIntervention;
   Map<String, String> MaxIndices = {};
+  List<Intervention> filteredListIntervention = [];
+  late Future<String> myFuture;
+
+  Timer? timer;
+
+  final Future<String> _calculations =
+      Future<String>.delayed(const Duration(seconds: 2), () async {
+    return 'Data loaded';
+  });
 
   @override
   void initState() {
     super.initState();
+    // initTimer();
     interventionAPI = InterventionApi();
   }
 
-  Future<List<Intervention>> getListInterventions() async {
+  @override
+  void dispose() {
+    timer!.cancel();
+    super.dispose();
+  }
+
+  Future<String> getWriterName() {
+    return Future.delayed(
+        const Duration(seconds: 2), () => xgetListInterventions());
+  }
+
+  Future<String> xgetListInterventions() async {
     logger.d("ta da getListInterventions debut");
+    // if (filteredListIntervention.isNotEmpty) {
+    //   return "cache";
+    //  }
     List<Intervention> list = await interventionAPI.getListInterventions(
         site: widget.site, realtime: false, place: widget.place);
-    filteredListIntervention = [];
-    print(list.length);
 
     for (var i = 0; i < list.length; i++) {
       Intervention intervention = list[i];
@@ -61,39 +83,119 @@ class widgetListInterventionSamePlaceState
       }
     }
     print(MaxIndices.toString());
-    return filteredListIntervention;
+    return "full";
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: getListInterventions(),
+        future: getWriterName(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
+          List<Widget> children = [];
           if (snapshot.hasData) {
+            if (filteredListIntervention.isNotEmpty) {
+              List<DropdownMenuItem<Intervention>>
+                  listDropdownMenuItemsInterventions = [];
+              if (listDropdownMenuItemsInterventions.isEmpty) {
+                // return Text("");
+              }
+              for (var i = 0; i < filteredListIntervention.length; i++) {
+                Intervention intervention = filteredListIntervention[i];
+
+                listDropdownMenuItemsInterventions.add(DropdownMenuItem(
+                    value: intervention,
+                    child: Row(
+                      children: [
+                        Text(intervention.intervention_name),
+                        Text(" - (${intervention.status})"),
+                      ],
+                    )));
+              }
+              return Column(children: [
+                Text('reprendre un chrono existant'),
+                DropdownButton<Intervention>(
+                    items: listDropdownMenuItemsInterventions,
+                    onChanged: (Intervention? intervention) {
+                      if (intervention is Intervention) {
+                        String? maxIndice = MaxIndices[intervention.num_chrono];
+
+                        int value = maxIndice!.codeUnitAt(0);
+                        String char = String.fromCharCode(value + 1);
+                        widget.onChanged(
+                            intervention: intervention, next_indice: char);
+                      }
+                    })
+              ]);
+            }
+          } else if (snapshot.hasError) {
+            children = <Widget>[
+              const Icon(
+                Icons.error_outline,
+                color: Colors.red,
+                size: 60,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Text('Error: ${snapshot.error}'),
+              ),
+            ];
+          } else {
+            children = const <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 0),
+                child: Text('recherche de numero chrono.'),
+              ),
+              SizedBox(
+                width: 60,
+                height: 60,
+                child: CircularProgressIndicator(),
+              ),
+            ];
+          }
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: children,
+          );
+
+          /*
+          if (filteredListIntervention.isNotEmpty) {
             // return Text('yo ${filteredListIntervention.length}');
+            // List<Intervention> filteredListIntervention = snapshot.data;
             List<DropdownMenuItem<Intervention>>
                 listDropdownMenuItemsInterventions = [];
+            if (listDropdownMenuItemsInterventions.isEmpty) {
+              return Text("");
+            }
             for (var i = 0; i < filteredListIntervention.length; i++) {
               Intervention intervention = filteredListIntervention[i];
 
               listDropdownMenuItemsInterventions.add(DropdownMenuItem(
                   value: intervention,
-                  child: Text(intervention.intervention_name)));
+                  child: Row(
+                    children: [
+                      Text(intervention.intervention_name),
+                      Text(" - (${intervention.status})"),
+                    ],
+                  )));
             }
-            return DropdownButton<Intervention>(
-                items: listDropdownMenuItemsInterventions,
-                onChanged: (Intervention? intervention) {
-                  if (intervention is Intervention) {
-                    String? maxIndice = MaxIndices[intervention.num_chrono];
+            return Column(children: [
+              Text('reprendre un chrono existant'),
+              DropdownButton<Intervention>(
+                  items: listDropdownMenuItemsInterventions,
+                  onChanged: (Intervention? intervention) {
+                    if (intervention is Intervention) {
+                      String? maxIndice = MaxIndices[intervention.num_chrono];
 
-                    int value = maxIndice!.codeUnitAt(0);
-                    String char = String.fromCharCode(value + 1);
-                    widget.onChanged(
-                        intervention: intervention, next_indice: char);
-                  }
-                });
+                      int value = maxIndice!.codeUnitAt(0);
+                      String char = String.fromCharCode(value + 1);
+                      widget.onChanged(
+                          intervention: intervention, next_indice: char);
+                    }
+                  })
+            ]);
           }
           return (Text("en attente"));
+          */
         });
 
     // TODO: implement build

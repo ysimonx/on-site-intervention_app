@@ -858,8 +858,19 @@ class InterventionPageState extends State<InterventionPage> {
     });
   }
 
+  bool isNumericUsingRegularExpression(String? string) {
+    final numericRegex = RegExp(r'^-?(([0-9]*)|(([0-9]*)\.([0-9]*)))$');
+    try {
+      return numericRegex.hasMatch(string!);
+    } catch (e) {
+      return false;
+    }
+  }
+
   Widget widgetNumChrono() {
-    if (widget.intervention.num_chrono == null) {
+    if (widget.intervention.num_chrono == null ||
+        isNumericUsingRegularExpression(widget.intervention.num_chrono) ==
+            false) {
       return Padding(
           padding: const EdgeInsets.all(40.0),
           child: FlexList(

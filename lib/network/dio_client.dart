@@ -10,7 +10,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class DioClient {
   // dio instance
   final Dio _dio;
-  final _storage = const FlutterSecureStorage();
+  final _storage = const FlutterSecureStorage(
+      mOptions: MacOsOptions(
+          accessibility: KeychainAccessibility.first_unlock,
+          synchronizable: true));
 
   // injecting dio instance
   DioClient(this._dio) {

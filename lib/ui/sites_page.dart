@@ -36,7 +36,10 @@ class _SitePageState extends State<SitePage> {
   late UserApi userAPI;
   late InterventionApi interventionAPI;
   bool isDark = false;
-  final _storage = const FlutterSecureStorage();
+  final _storage = const FlutterSecureStorage(
+      mOptions: MacOsOptions(
+          accessibility: KeychainAccessibility.first_unlock,
+          synchronizable: true));
 
   Timer? timer;
 
@@ -209,15 +212,20 @@ class _SitePageState extends State<SitePage> {
                 return Column(children: <Widget>[
                   widgetFilterList(filterList,
                       user: widget.user, site: widget.site,
-                      onChangedFilterList: (FilterList value) {
-                    _storage.write(key: "lastStatus", value: value.status);
-                    _storage.write(
+                      onChangedFilterList: (FilterList value) async {
+                    await _storage.write(
+                        key: "lastStatus", value: value.status);
+                    String? x = await _storage.read(key: "lastStatus");
+                    print(x);
+                    await _storage.write(
                         key: "lastCoordinatorUserId",
                         value: value.user_coordinator.id);
-                    _storage.write(key: "searchText", value: value.searchText);
+                    await _storage.write(
+                        key: "searchText", value: value.searchText);
 
                     filterList = value;
                     refreshUI();
+                    return "";
                   }),
                   Expanded(
                       child:

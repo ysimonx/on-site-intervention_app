@@ -19,7 +19,10 @@ class LoginApi {
   late FlutterSecureStorage _storage;
 
   LoginApi() {
-    _storage = const FlutterSecureStorage();
+    _storage = const FlutterSecureStorage(
+        mOptions: MacOsOptions(
+            accessibility: KeychainAccessibility.first_unlock,
+            synchronizable: true));
   }
 
   DioClient dioClient = DioClient(Dio());

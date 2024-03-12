@@ -40,7 +40,7 @@ dependencies:
   cached_network_image: ^3.3.1
   flutter_cupertino_settings: ^0.5.0
   extended_masked_text: ^2.3.1
-  google_fonts: ^6.1.0
+  google_fonts: 6.1.0
   signature: ^5.4.1
   flutter_svg: ^2.0.9
   permission_handler: ^11.3.0

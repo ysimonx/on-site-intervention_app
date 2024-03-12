@@ -38,7 +38,7 @@ class FilterList {
 }
 
 Widget widgetFilterList(FilterList filterList,
-    {required Null Function(FilterList value) onChangedFilterList,
+    {required Future<String> Function(FilterList value) onChangedFilterList,
     required User user,
     required Site site}) {
   TextEditingController textSearchController = TextEditingController();

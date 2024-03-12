@@ -23,11 +23,18 @@ import 'utils/logger.dart';
 import 'utils/uuid.dart';
 import 'widget/app_bar.dart';
 
-class SitePage extends StatefulWidget {
-  const SitePage({super.key, required this.site, required this.user});
-
-  final Site site;
+class SitePageArguments {
   final User user;
+  final Site site;
+
+  SitePageArguments(this.user, this.site);
+}
+
+class SitePage extends StatefulWidget {
+  const SitePage({super.key});
+
+  static String routeName = "/site";
+
   @override
   State<SitePage> createState() => _SitePageState();
 }
@@ -50,16 +57,24 @@ class _SitePageState extends State<SitePage> {
 
   List<Intervention> prec_result = [];
 
+  late SitePageArguments args;
+
   @override
   void initState() {
     super.initState();
+
     interventionAPI = InterventionApi();
     userAPI = UserApi();
+  }
 
+  @override
+  void didChangeDependencies() {
+    args = ModalRoute.of(context)!.settings.arguments as SitePageArguments;
     filterList = FilterList(
-        user: widget.user, user_coordinator: User.nobody(), site: widget.site);
+        user: args.user, user_coordinator: User.nobody(), site: args.site);
     myFuture = newMethod();
     initTimer();
+    super.didChangeDependencies();
   }
 
   void refreshUI() {
@@ -110,7 +125,7 @@ class _SitePageState extends State<SitePage> {
     List<Intervention> result = [];
 
     result = await interventionAPI.getListInterventions(
-        site: widget.site, realtime: false, prec_result: prec_result);
+        site: args.site, realtime: false, prec_result: prec_result);
 
     prec_result = result;
 
@@ -200,7 +215,7 @@ class _SitePageState extends State<SitePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: widgetAppBar(
-            title: widget.site.name, user: widget.user, site: widget.site),
+            title: args.site.name, user: args.user, site: args.site),
         body: FutureBuilder(
             future: myFuture,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -210,8 +225,7 @@ class _SitePageState extends State<SitePage> {
                 // if (listInterventions.isNotEmpty) {
                 logger.d("ta da builder ${listInterventions.length}");
                 return Column(children: <Widget>[
-                  widgetFilterList(filterList,
-                      user: widget.user, site: widget.site,
+                  widgetFilterList(filterList, user: args.user, site: args.site,
                       onChangedFilterList: (FilterList value) async {
                     await _storage.write(
                         key: "lastStatus", value: value.status);
@@ -301,9 +315,9 @@ class _SitePageState extends State<SitePage> {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
                             return InterventionPage(
-                                user: widget.user,
+                                user: args.user,
                                 intervention: intervention,
-                                site: widget.site);
+                                site: args.site);
                           })).then((intervention) {
                             if (intervention is Intervention) {
                               list[index] = intervention;
@@ -323,21 +337,21 @@ class _SitePageState extends State<SitePage> {
   void addIntervention(String typeInterventionName) async {
     Map<String, Formulaire> initializedForms =
         await UserApi.getInterventionFormsFromTemplate(
-            user: widget.user,
-            site_name: widget.site.name,
+            user: args.user,
+            site_name: args.site.name,
             type_intervention_name: typeInterventionName);
 
     String defaultStatus = UserApi.getDefaultStatusFromTemplate(
-        user: widget.user,
-        site: widget.site,
+        user: args.user,
+        site: args.site,
         type_intervention_name: typeInterventionName);
 
-    Place nowhere = Place.nowhere(site_id: widget.site.id);
+    Place nowhere = Place.nowhere(site_id: args.site.id);
 
     Intervention newIntervention = Intervention(
         id: "new_${generateUUID()}",
         intervention_name: "nouvelle",
-        site_id: widget.site.id,
+        site_id: args.site.id,
         intervention_values_on_site_uuid: generateUUID(),
         type_intervention_id:
             typeInterventionName, // let's consider it is an ID
@@ -353,9 +367,9 @@ class _SitePageState extends State<SitePage> {
         context,
         MaterialPageRoute(
             builder: (context) => InterventionPage(
-                user: widget.user,
+                user: args.user,
                 intervention: newIntervention,
-                site: widget.site))).then((value) => refreshUI());
+                site: args.site))).then((value) => refreshUI());
   }
 
   FloatingActionButton fabNewScaff(
@@ -375,7 +389,7 @@ class _SitePageState extends State<SitePage> {
       useRootNavigator: false,
       context: context,
       builder: (BuildContext context) {
-        Map<String, dynamic> x = widget.user.myconfig.config_types_intervention;
+        Map<String, dynamic> x = args.user.myconfig.config_types_intervention;
         List<Map<String, dynamic>> listTypeInterventions = [];
         x.forEach((key, value) {
           listTypeInterventions.add({"key": key, "value": value});

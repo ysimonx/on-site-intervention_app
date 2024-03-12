@@ -1,4 +1,5 @@
-import 'dart:io' show File;
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
@@ -49,8 +50,8 @@ class ImagePageState extends State<ImagePage> {
   }
 
   Scaffold widgetWaiting() {
-    return Scaffold(
-        body: const Center(
+    return const Scaffold(
+        body: Center(
             child: SizedBox(
       width: 60,
       height: 60,
@@ -59,7 +60,7 @@ class ImagePageState extends State<ImagePage> {
   }
 
   Scaffold widgetError() {
-    return Scaffold(body: const Text("error"));
+    return const Scaffold(body: Text("error"));
   }
 
   Widget widgetBody() {

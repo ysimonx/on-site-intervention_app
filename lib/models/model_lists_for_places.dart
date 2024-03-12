@@ -12,8 +12,8 @@ class ListForPlaces {
 
   Map<String, dynamic> toJSON() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['list_name'] = this.list_name;
-    data['values'] = this.values;
+    data['list_name'] = list_name;
+    data['values'] = values;
     return data;
   }
 }
@@ -41,14 +41,14 @@ class ListsForPlaces {
 
   Map<String, dynamic> toJSON() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    this.mapLists.forEach((order, lfp) {
+    mapLists.forEach((order, lfp) {
       data[order.toString()] = lfp.toJSON();
     });
     return data;
   }
 
   void removeFromList({required int index}) {
-    logger.i("${index}");
+    logger.i("$index");
     mapLists.remove(index);
     fixOrderOfList();
   }

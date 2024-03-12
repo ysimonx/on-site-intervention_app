@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:diacritic/diacritic.dart';
-import 'package:flutter/services.dart';
 
 import '../utils/context.dart';
 
@@ -53,7 +52,7 @@ class _HomepageUnAuthentifiedContentState
         child: AutofillGroup(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Container(
-                constraints: BoxConstraints(maxWidth: 500),
+                constraints: const BoxConstraints(maxWidth: 500),
                 child: Column(children: [
                   emailForm(),
                   const SizedBox(
@@ -161,6 +160,9 @@ class _HomepageUnAuthentifiedContentState
                     return;
                   }
                   badAuth = false;
+                  if (!context.mounted) {
+                    return;
+                  }
                   context.showErrorSnackBar(
                       "Echec de la reinitialisation du mot de passe");
                   setState(() {});

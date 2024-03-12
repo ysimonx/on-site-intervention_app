@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, prefer_if_null_operators
 
 import 'package:intl/intl.dart';
 
@@ -117,19 +117,19 @@ class Intervention {
 
   // forms2 = {};
   String BuildNumRegistre() {
-    String result = "${place.name}";
+    String result = place.name;
     if (num_chrono != null) {
-      NumberFormat formatter = new NumberFormat("00000");
+      NumberFormat formatter = NumberFormat("00000");
       if (num_chrono is String) {
         try {
-          result = "${result}-${formatter.format(int.parse(num_chrono!))}";
+          result = "$result-${formatter.format(int.parse(num_chrono!))}";
         } catch (e) {
           result = "$result-$num_chrono";
         }
       }
 
       if (indice != null) {
-        result = "${result}-${indice}";
+        result = "$result-$indice";
       }
     }
 

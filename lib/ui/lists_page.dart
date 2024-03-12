@@ -215,8 +215,7 @@ class ListsPageState extends State<ListsPage> {
                     return Column(children: [
                       TextField(
                         onChanged: (v) {
-                          controllerListName.text =
-                              controllerListName.text.toLowerCase();
+                          controllerListName.text = v.toLowerCase();
                         },
                         controller: controllerListName,
                         autofocus: true,

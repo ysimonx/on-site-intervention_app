@@ -5,6 +5,7 @@ import 'package:on_site_intervention_app/network/api/image.api.dart';
 import 'package:on_site_intervention_app/ui/types_intervention_page.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:clipboard/clipboard.dart';
 
 import '../../models/model_user.dart';
 import '../../network/api/constants.dart';
@@ -133,8 +134,19 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                             .contains("site administrator"))
                       PopupMenuItem<int>(
                         value: valueEXPORTCSV,
-                        child:
-                            Text(translateI18N("export csv").toCapitalized()),
+                        child: Row(
+                          children: [
+                            Text(translateI18N("export Excel").toCapitalized()),
+                            Expanded(
+                                child: Container(
+                                    child: IconButton(
+                              icon: Icon(Icons.copy),
+                              onPressed: () {
+                                copy(context: context);
+                              },
+                            ))),
+                          ],
+                        ),
                       ),
                   const PopupMenuItem<int>(
                       value: valueREMOVEFILES,
@@ -239,6 +251,21 @@ class AuthentifiedBaseAppBar extends StatelessWidget
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  void copy({required BuildContext context}) async {
+    String url =
+        "${Endpoints.baseUrl}${Endpoints.exportInterventionsCSV.replaceAll("<site_id>", site!.id)}";
+    await FlutterClipboard.copy(url);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.green,
+      content: Text(
+        "📝 text url export Excel copiées dans le presse-papier",
+        style: TextStyle(color: Colors.white, fontSize: 18),
+      ),
+      behavior: SnackBarBehavior.floating,
+      margin: EdgeInsets.symmetric(vertical: 20),
+    ));
+  }
 }
 
 class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {

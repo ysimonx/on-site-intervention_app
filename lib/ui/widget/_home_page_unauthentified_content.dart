@@ -51,23 +51,25 @@ class _HomepageUnAuthentifiedContentState
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
         child: AutofillGroup(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            emailForm(),
-            const SizedBox(
-              height: 10,
-            ),
-            passwordForm(),
-            const SizedBox(
-              height: 10,
-            ),
-            submit(),
-            const SizedBox(
-              height: 80,
-            )
-          ],
-        )),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Container(
+                constraints: BoxConstraints(maxWidth: 500),
+                child: Column(children: [
+                  emailForm(),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  passwordForm(),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  submit(),
+                  const SizedBox(
+                    height: 80,
+                  )
+                ]))
+          ]),
+        ),
       ),
     );
   }

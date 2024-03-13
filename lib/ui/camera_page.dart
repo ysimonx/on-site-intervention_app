@@ -7,9 +7,7 @@ import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as syspaths;
-import 'package:image/image.dart';
 
-import 'image_page.dart';
 import 'utils/logger.dart';
 
 class CameraPage extends StatefulWidget {
@@ -82,7 +80,7 @@ class _CameraPageState extends State<CameraPage>
             Rect.fromPoints(const Offset(0.0, 0.0),
                 Offset(imageWidth.toDouble(), imageHeight.toDouble())));
 
-        canvas.drawImage(image, Offset(0.0, 0.0), Paint());
+        canvas.drawImage(image, const Offset(0.0, 0.0), Paint());
         final paint = Paint()
           ..color = Colors.black
           ..style = PaintingStyle.stroke
@@ -189,12 +187,12 @@ class _CameraPageState extends State<CameraPage>
     return Scaffold(
       body: Stack(children: [
         (_cameraController.value.isInitialized)
-            ? Container(
+            ? SizedBox(
                 width: size.width,
                 height: size.height,
                 child: FittedBox(
                     fit: BoxFit.cover,
-                    child: Container(
+                    child: SizedBox(
                         width: 100, // the actual width is not important here
                         child: CameraPreview(_cameraController, child:
                             LayoutBuilder(builder: (BuildContext context,
@@ -214,7 +212,7 @@ class _CameraPageState extends State<CameraPage>
             alignment: Alignment.center,
             child: (visor == true)
                 ? Icon(Icons.panorama_fish_eye_sharp, size: size.width * 0.2)
-                : Text("")),
+                : const Text("")),
         Align(
             alignment: Alignment.bottomCenter,
             child: Container(

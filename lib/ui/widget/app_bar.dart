@@ -207,10 +207,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                     if (site != null) {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return TypesInterventionPage(
-                            site: site!,
-                            tenants: user.tenants_administrator_of,
-                            user: user);
+                        return TypesInterventionPage(site: site!, user: user);
                       }));
                     }
                   }

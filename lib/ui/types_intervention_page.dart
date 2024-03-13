@@ -8,14 +8,10 @@ import '../models/model_user.dart';
 import 'widget/app_bar.dart';
 
 class TypesInterventionPage extends StatefulWidget {
-  final List<Tenant> tenants;
   final Site site;
   final User user;
   const TypesInterventionPage(
-      {super.key,
-      required this.tenants,
-      required this.site,
-      required this.user});
+      {super.key, required this.site, required this.user});
 
   @override
   State<StatefulWidget> createState() {
@@ -25,11 +21,7 @@ class TypesInterventionPage extends StatefulWidget {
 
 // Create a corresponding State class.
 class TypesInterventionPageState extends State<TypesInterventionPage> {
-  Map<String, User> dictUser = {};
-  Map<String, List<String>> dictRolesUsers = {};
-  late Site s;
-
-  late String _title = "types d'intervention";
+  final String _title = "types d'intervention";
 
   @override
   void initState() {

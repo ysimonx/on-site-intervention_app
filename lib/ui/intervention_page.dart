@@ -10,6 +10,7 @@ import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/ui/utils/mobilefirst.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flex_list/flex_list.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/model_field.dart';
 import '../models/model_formulaire.dart';
@@ -17,6 +18,7 @@ import '../models/model_intervention.dart';
 import '../models/model_lists_for_places.dart';
 import '../models/model_section.dart';
 import '../models/model_user.dart';
+import '../network/api/constants.dart';
 import '../network/api/image.api.dart';
 import '../network/api/intervention_api.dart';
 import '../network/api/user_api.dart';
@@ -181,27 +183,54 @@ class InterventionPageState extends State<InterventionPage> {
             return Scaffold(
                 resizeToAvoidBottomInset: false,
                 appBar: AppBar(
-                  backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-                  title: Text(widget.intervention.intervention_name),
-                ),
+                    backgroundColor:
+                        Theme.of(context).colorScheme.inversePrimary,
+                    title: Text(widget.intervention.intervention_name),
+                    actions: []),
                 body: widgetMainBody(context),
-                floatingActionButton: FloatingActionButton(
-                  onPressed: () async {
-                    // Validate returns true if the form is valid, or false otherwise.
-                    // if (_formKey.currentState!.validate()) {
-                    await saveIntervention(context,
-                        onMessage: (String message) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text(message),
-                            duration: Duration(seconds: 1)),
-                      );
-                      print(message);
-                    });
-                    // }
-                  },
-                  tooltip: 'Save',
-                  child: const Icon(Icons.save),
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.centerDocked,
+                floatingActionButton: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        FloatingActionButton(
+                          onPressed: () async {
+                            // Validate returns true if the form is valid, or false otherwise.
+                            // if (_formKey.currentState!.validate()) {
+                            await downloadFEB(context,
+                                onMessage: (String message) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(message),
+                                    duration: Duration(seconds: 1)),
+                              );
+                              print(message);
+                            });
+                            // }
+                          },
+                          tooltip: 'print FEB',
+                          child: const Icon(Icons.print),
+                        ),
+                        FloatingActionButton(
+                          onPressed: () async {
+                            // Validate returns true if the form is valid, or false otherwise.
+                            // if (_formKey.currentState!.validate()) {
+                            await saveIntervention(context,
+                                onMessage: (String message) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(message),
+                                    duration: Duration(seconds: 1)),
+                              );
+                            });
+                            // }
+                          },
+                          tooltip: 'Save',
+                          child: const Icon(Icons.save),
+                        )
+                      ]),
                 ));
           }
           return const SizedBox(
@@ -953,6 +982,18 @@ class InterventionPageState extends State<InterventionPage> {
         return Text("numero de chrono en attente de génération...");
       }
       return Text('num_chrono ${widget.intervention.num_chrono}');
+    }
+  }
+
+  downloadFEB(BuildContext context,
+      {required Null Function(String message) onMessage}) async {
+    String url =
+        "${Endpoints.baseUrl}${Endpoints.downloadFEB.replaceAll("<intervention_values_id>", widget.intervention.id)}";
+
+    final Uri _url = Uri.parse(url);
+
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $_url');
     }
   }
 }

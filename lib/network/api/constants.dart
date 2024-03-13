@@ -39,4 +39,6 @@ class Endpoints {
       '/api/v1/site/<site_id>/lists_for_places';
   static const String exportInterventionsCSV =
       "/api/v1/intervention_values/csv?site_id=<site_id>&type_intervention_id=scaffolding%20request";
+  static const String downloadFEB =
+      "/backoffice/v1/intervention_values/feb/xlsx/<intervention_values_id>";
 }

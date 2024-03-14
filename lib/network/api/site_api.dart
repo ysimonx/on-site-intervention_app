@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:on_site_intervention_app/models/model_user.dart';
 import 'package:on_site_intervention_app/ui/lists_for_places_page.dart';
 
 import '../../models/model_lists_for_places.dart';
@@ -69,9 +70,17 @@ class SiteApi {
   Future<Response> addUserRoles(
       {required String idSite,
       required String email,
-      required List<String> idsRoles}) async {
+      required List<String> idsRoles,
+      required User user}) async {
     try {
-      var formData = {"user_email": email, "roles": idsRoles};
+      var formData = {
+        "user_id": user.id,
+        "user_email": user.email,
+        "user_firstname": user.firstname,
+        "user_lastname": user.lastname,
+        "user_phone": user.phone,
+        "roles": idsRoles
+      };
       String json = jsonEncode(formData);
 
       String s = Endpoints.addUserRoles.replaceAll("<site_id>", idSite);

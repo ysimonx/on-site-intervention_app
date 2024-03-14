@@ -2,6 +2,7 @@
 
 import 'package:diacritic/diacritic.dart';
 import 'package:dio/dio.dart';
+import 'package:flex_list/flex_list.dart';
 import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/models/model_tenant.dart';
@@ -145,7 +146,7 @@ class UsersPageState extends State<UsersPage> {
                                 _showDialog(
                                     callback: callBack,
                                     site: s,
-                                    email: u.email,
+                                    user: u,
                                     roles:
                                         dictRolesUsers[u.id] as List<String>);
                               },
@@ -186,7 +187,8 @@ class UsersPageState extends State<UsersPage> {
     return FloatingActionButton(
       // onPressed: {},
       onPressed: () async {
-        _showDialog(callback: callback, site: s, email: null, roles: []);
+        _showDialog(
+            callback: callback, site: s, user: User.nobody(), roles: []);
       },
       child: const Icon(Icons.add),
     );
@@ -195,16 +197,23 @@ class UsersPageState extends State<UsersPage> {
   void _showDialog(
       {required void Function(String message) callback,
       required Site site,
-      required String? email,
-      required List<String> roles}) {
+      required List<String> roles,
+      required User user}) {
     late TextEditingController textEmailController = TextEditingController();
+    late TextEditingController textFirstnameController =
+        TextEditingController();
+    late TextEditingController textLastnameController = TextEditingController();
+    late TextEditingController textPhoneController = TextEditingController();
+    late TextEditingController textCompanyController = TextEditingController();
 
     Map<String, bool> dictSiteRoles = {};
     SiteApi siteApi = SiteApi();
 
-    if (email != null) {
-      textEmailController.text = email;
-    }
+    textEmailController.text = user.email;
+    textFirstnameController.text = user.firstname;
+    textLastnameController.text = user.lastname;
+    textPhoneController.text = user.phone;
+    textCompanyController.text = user.company;
 
     showDialog<void>(
       useRootNavigator: false,
@@ -222,9 +231,9 @@ class UsersPageState extends State<UsersPage> {
           });
         }
         return AlertDialog(
-          title: (email == null)
+          title: (user.isNobody())
               ? Text(translateI18N("nouvel utilisateur").toTitleCase())
-              : Text(email.toTitleCase()),
+              : Text(user.email.toTitleCase()),
           content: SizedBox(
               width: double.maxFinite,
               child: StatefulBuilder(
@@ -233,28 +242,83 @@ class UsersPageState extends State<UsersPage> {
                   /*const Text(
                             "En tant qu'administrateur  vous pouvez administrer la liste des utilisateurs",
                           ),*/
-                  (email == null)
-                      ? TextField(
-                          controller: textEmailController,
-                          textCapitalization: TextCapitalization.none,
-                          keyboardType: TextInputType.emailAddress,
-                          autofocus: true,
-                          onChanged: (value) {
-                            value = value.replaceAll(" ", "");
-                            value = removeDiacritics(value);
-                            textEmailController.value = TextEditingValue(
-                                text: value.toLowerCase(),
-                                selection: textEmailController.selection);
-                          },
-                          decoration: InputDecoration(
-                              hintText:
-                                  "Enter the e-mail address of the new user"
-                                      .toCapitalized()),
+
+                  SizedBox(
+                      width: double.maxFinite,
+                      child: TextField(
+                        controller: textFirstnameController,
+                        textCapitalization: TextCapitalization.none,
+                        keyboardType: TextInputType.name,
+                        autofocus: true,
+                        onChanged: (value) {
+                          value = value.replaceAll(" ", "");
+                          // value = removeDiacritics(value);
+                          textFirstnameController.value = TextEditingValue(
+                              text: value.toLowerCase(),
+                              selection: textFirstnameController.selection);
+                        },
+                        decoration:
+                            InputDecoration(hintText: "Prénom".toCapitalized()),
+                      )),
+                  SizedBox(
+                    width: double.maxFinite,
+                    child: TextField(
+                      controller: textLastnameController,
+                      textCapitalization: TextCapitalization.none,
+                      keyboardType: TextInputType.name,
+                      autofocus: true,
+                      onChanged: (value) {
+                        value = value.replaceAll(" ", "");
+                        // value = removeDiacritics(value);
+                        textLastnameController.value = TextEditingValue(
+                            text: value.toLowerCase(),
+                            selection: textLastnameController.selection);
+                      },
+                      decoration:
+                          InputDecoration(hintText: "Nom".toCapitalized()),
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.maxFinite,
+                    child: TextField(
+                      controller: textPhoneController,
+                      textCapitalization: TextCapitalization.none,
+                      keyboardType: TextInputType.phone,
+                      autofocus: true,
+                      onChanged: (value) {
+                        value = value.replaceAll(" ", "");
+                        // value = removeDiacritics(value);
+                        textPhoneController.value = TextEditingValue(
+                            text: value.toLowerCase(),
+                            selection: textPhoneController.selection);
+                      },
+                      decoration: InputDecoration(
+                          hintText: "Téléphone".toCapitalized()),
+                    ),
+                  ),
+                  (user.isNobody())
+                      ? SizedBox(
+                          width: double.maxFinite,
+                          child: TextField(
+                            controller: textEmailController,
+                            textCapitalization: TextCapitalization.none,
+                            keyboardType: TextInputType.emailAddress,
+                            autofocus: true,
+                            onChanged: (value) {
+                              value = value.replaceAll(" ", "");
+                              value = removeDiacritics(value);
+                              textEmailController.value = TextEditingValue(
+                                  text: value.toLowerCase(),
+                                  selection: textEmailController.selection);
+                            },
+                            decoration: InputDecoration(
+                                hintText: "E-mail".toCapitalized()),
+                          ),
                         )
-                      : const Text(""),
+                      : const SizedBox(width: double.maxFinite, height: 0),
                   Flexible(
                       // width: constrains.maxWidth * .8,
-                      // height: constrains.maxHeight * .7, //
+                      //height: constrains.maxHeight * .7, //
                       child: ListView.builder(
                           itemCount: listRoles.length,
                           itemBuilder: (_, index) {
@@ -294,7 +358,10 @@ class UsersPageState extends State<UsersPage> {
               onPressed: () async {
                 String email = textEmailController.text.toLowerCase();
                 List<String> idsRole = [];
-
+                user.email = textEmailController.text.toLowerCase();
+                user.firstname = textFirstnameController.text.toLowerCase();
+                user.lastname = textLastnameController.text.toLowerCase();
+                user.phone = textPhoneController.text.toLowerCase();
                 dictSiteRoles.forEach((key, value) {
                   if (value) {
                     idsRole.add(key);
@@ -303,7 +370,10 @@ class UsersPageState extends State<UsersPage> {
 
                 try {
                   Response response = await siteApi.addUserRoles(
-                      idSite: s.id, email: email, idsRoles: idsRole);
+                      idSite: s.id,
+                      email: email,
+                      user: user,
+                      idsRoles: idsRole);
 
                   if (response.statusCode == 200) {
                     Navigator.pop(context);

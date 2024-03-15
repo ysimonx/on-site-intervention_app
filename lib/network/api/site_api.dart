@@ -79,6 +79,7 @@ class SiteApi {
         "user_firstname": user.firstname,
         "user_lastname": user.lastname,
         "user_phone": user.phone,
+        "user_company": user.company,
         "roles": idsRoles
       };
       String json = jsonEncode(formData);

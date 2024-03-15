@@ -214,11 +214,13 @@ class UsersPageState extends State<UsersPage> {
     textLastnameController.text = user.lastname;
     textPhoneController.text = user.phone;
     textCompanyController.text = user.company;
+    List<String> companies = [];
 
     showDialog<void>(
       useRootNavigator: false,
       context: context,
       builder: (BuildContext context) {
+        print(site.toString());
         List<Map<String, dynamic>> listRoles = [];
         for (var i = 0; i < site.roles.length; i++) {
           Map<String, dynamic> x = site.roles[i];
@@ -227,6 +229,21 @@ class UsersPageState extends State<UsersPage> {
             dictSiteRoles[jsonRole["id"]] = false;
             if (roles.contains(jsonRole["name"])) {
               dictSiteRoles[jsonRole["id"]] = true;
+            }
+            List<dynamic> users = jsonRole["users"];
+            for (var j = 0; j < users.length; j++) {
+              Map<String, dynamic> userJSON = users[j]["user"];
+
+              print(userJSON.toString());
+              String x = userJSON["company"];
+              print(x);
+              if (userJSON["company"] != null) {
+                String company = userJSON["company"];
+
+                if (companies.contains(company) == false) {
+                  companies.add(company);
+                }
+              }
             }
           });
         }
@@ -316,6 +333,13 @@ class UsersPageState extends State<UsersPage> {
                           ),
                         )
                       : const SizedBox(width: double.maxFinite, height: 0),
+                  genRawAutoCompleteCompany(
+                      companies: companies,
+                      onSubmit: (value) {
+                        print(value);
+                        textCompanyController.text = value;
+                      },
+                      initialValue: textCompanyController.text),
                   Flexible(
                       // width: constrains.maxWidth * .8,
                       //height: constrains.maxHeight * .7, //
@@ -362,6 +386,7 @@ class UsersPageState extends State<UsersPage> {
                 user.firstname = textFirstnameController.text.toLowerCase();
                 user.lastname = textLastnameController.text.toLowerCase();
                 user.phone = textPhoneController.text.toLowerCase();
+                user.company = textCompanyController.text.toLowerCase();
                 dictSiteRoles.forEach((key, value) {
                   if (value) {
                     idsRole.add(key);
@@ -392,6 +417,74 @@ class UsersPageState extends State<UsersPage> {
             ),
           ],
         );
+      },
+    );
+  }
+
+  RawAutocomplete<String> genRawAutoCompleteCompany(
+      {required String? initialValue,
+      required Null Function(dynamic value) onSubmit,
+      required List<String> companies}) {
+    if (initialValue == null) {
+      initialValue = "";
+    }
+    return RawAutocomplete<String>(
+      initialValue: TextEditingValue(text: initialValue),
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        List<String> _options = companies;
+
+        return _options.where((String option) {
+          return option.contains(textEditingValue.text.toLowerCase());
+        });
+      },
+      fieldViewBuilder: (
+        BuildContext context,
+        TextEditingController textEditingController,
+        FocusNode focusNode,
+        VoidCallback onFieldSubmitted,
+      ) {
+        return TextFormField(
+          // initialValue: initialValue,
+          controller: textEditingController,
+          focusNode: focusNode,
+          onChanged: (String value) {
+            onSubmit(value);
+          },
+          onFieldSubmitted: (String value) {
+            //  onFieldSubmitted();
+
+            onSubmit(value);
+          },
+        );
+      },
+      onSelected: (value) {
+        // ICI !
+        print(value);
+        onSubmit(value);
+      },
+      optionsViewBuilder: (BuildContext context,
+          void Function(String) onSelected, Iterable<String> options) {
+        return Align(
+            alignment: Alignment.topLeft,
+            child: Material(
+                elevation: 4.0,
+                child: SizedBox(
+                    height: 200.0,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(8.0),
+                      itemCount: options.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final String option = options.elementAt(index);
+                        return GestureDetector(
+                          onTap: () {
+                            onSelected(option);
+                          },
+                          child: ListTile(
+                            title: Text(option),
+                          ),
+                        );
+                      },
+                    ))));
       },
     );
   }

@@ -214,7 +214,7 @@ class UsersPageState extends State<UsersPage> {
     textLastnameController.text = user.lastname;
     textPhoneController.text = user.phone;
     textCompanyController.text = user.company;
-    List<String> companies = [];
+    List<String> listCompanies = [];
 
     showDialog<void>(
       useRootNavigator: false,
@@ -240,8 +240,8 @@ class UsersPageState extends State<UsersPage> {
               if (userJSON["company"] != null) {
                 String company = userJSON["company"];
 
-                if (companies.contains(company) == false) {
-                  companies.add(company);
+                if (listCompanies.contains(company) == false) {
+                  listCompanies.add(company);
                 }
               }
             }
@@ -334,7 +334,7 @@ class UsersPageState extends State<UsersPage> {
                         )
                       : const SizedBox(width: double.maxFinite, height: 0),
                   genRawAutoCompleteCompany(
-                      companies: companies,
+                      companies: listCompanies,
                       onSubmit: (value) {
                         print(value);
                         textCompanyController.text = value;
@@ -428,6 +428,8 @@ class UsersPageState extends State<UsersPage> {
     if (initialValue == null) {
       initialValue = "";
     }
+    companies.sort();
+
     return RawAutocomplete<String>(
       initialValue: TextEditingValue(text: initialValue),
       optionsBuilder: (TextEditingValue textEditingValue) {

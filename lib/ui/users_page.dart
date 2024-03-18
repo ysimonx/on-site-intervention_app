@@ -12,6 +12,7 @@ import '../network/api/site_api.dart';
 import '../network/api/user_api.dart';
 import 'utils/i18n.dart';
 import 'widget/app_bar.dart';
+import 'widget/common_widgets.dart';
 
 class UsersPage extends StatefulWidget {
   final List<Tenant> tenants;
@@ -86,26 +87,11 @@ class UsersPageState extends State<UsersPage> {
             List<User> listUsers = snapshot.data;
             return widgetBody(listUsers);
           } else if (snapshot.hasError) {
-            return widgetError(widget.user);
+            return widgetError();
           } else {
-            return widgetWaiting(widget.user);
+            return widgetWaiting();
           }
         });
-  }
-
-  Scaffold widgetWaiting(User? user) {
-    return Scaffold(
-        appBar: widgetAppBar(user),
-        body: const Center(
-            child: SizedBox(
-          width: 60,
-          height: 60,
-          child: CircularProgressIndicator(),
-        )));
-  }
-
-  Scaffold widgetError(User? user) {
-    return Scaffold(appBar: widgetAppBar(user), body: const Text("error"));
   }
 
   PreferredSize widgetAppBar(User? me) {
@@ -118,6 +104,8 @@ class UsersPageState extends State<UsersPage> {
   }
 
   Widget widgetBody(List<User> listUsers) {
+    listUsers.sort((u1, u2) => u1.lastname.compareTo(u2.lastname));
+
     return Scaffold(
       appBar: widgetAppBar(widget.user),
       body: ListTileTheme(
@@ -133,11 +121,20 @@ class UsersPageState extends State<UsersPage> {
                 return Card(
                     margin: const EdgeInsets.all(10),
                     child: ListTile(
-                        title: Text(u.email),
+                        title: Text(
+                            "${u.lastname.toUpperCase()}, ${u.firstname.toCapitalized()}"),
                         leading: const Icon(Icons.person_2_outlined),
-                        subtitle: Text(
-                          "roles: $sroles",
-                          overflow: TextOverflow.ellipsis,
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(u.company.toUpperCase()),
+                            Text(u.phone),
+                            Text(u.email),
+                            Text(
+                              "roles: $sroles",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
                         trailing:
                             Row(mainAxisSize: MainAxisSize.min, children: [

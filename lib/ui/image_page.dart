@@ -1,8 +1,9 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
+
+import 'widget/common_widgets.dart';
 
 class ImagePage extends StatefulWidget {
   final String filepath;
@@ -47,20 +48,6 @@ class ImagePageState extends State<ImagePage> {
             return widgetWaiting();
           }
         });
-  }
-
-  Scaffold widgetWaiting() {
-    return const Scaffold(
-        body: Center(
-            child: SizedBox(
-      width: 60,
-      height: 60,
-      child: CircularProgressIndicator(),
-    )));
-  }
-
-  Scaffold widgetError() {
-    return const Scaffold(body: Text("error"));
   }
 
   Widget widgetBody() {

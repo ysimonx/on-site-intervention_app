@@ -11,6 +11,7 @@ import '../network/api/site_api.dart';
 import '../network/api/user_api.dart';
 import 'utils/i18n.dart';
 import 'widget/app_bar.dart';
+import 'widget/common_widgets.dart';
 
 class ListsForPlacesPage extends StatefulWidget {
   final Site? site;
@@ -48,9 +49,9 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
             return widgetBody(
                 user: widget.user, lists_for_places: lists_for_places);
           } else if (snapshot.hasError) {
-            return widgetError(widget.user);
+            return widgetError();
           } else {
-            return widgetWaiting(widget.user);
+            return widgetWaiting();
           }
         });
   }
@@ -107,21 +108,6 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
       },
       child: const Icon(Icons.add),
     );
-  }
-
-  Scaffold widgetWaiting(User? user) {
-    return Scaffold(
-        appBar: widgetAppBar(user),
-        body: const Center(
-            child: SizedBox(
-          width: 60,
-          height: 60,
-          child: CircularProgressIndicator(),
-        )));
-  }
-
-  Scaffold widgetError(User? user) {
-    return Scaffold(appBar: widgetAppBar(user), body: const Text("error"));
   }
 
   Widget widgetListOfListContent(

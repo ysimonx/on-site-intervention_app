@@ -25,6 +25,7 @@ import '../network/api/user_api.dart';
 import 'utils/logger.dart';
 import 'widget/card_settings_schema.dart';
 import 'widget/card_settings_gallery.dart';
+import 'widget/card_settings_float.dart';
 import 'widget/card_settings_signature.dart';
 import 'widget/choose_place.dart';
 import 'widget/widgetListInterventionSamePlace.dart';
@@ -682,25 +683,25 @@ class InterventionPageState extends State<InterventionPage> {
     );
   }
 
-  CardSettingsDouble genCardSettingsFloat(
+  CardSettingsFloat genCardSettingsFloat(
       String initialValue, Section s, Field f) {
-    double initialIntValue = 0;
+    double initialDoubleValue = 0.0;
 
     if (initialValue == "") {
-      initialIntValue = 0;
+      initialDoubleValue = 0.0;
     } else {
       try {
-        initialIntValue = double.parse(initialValue);
+        initialDoubleValue = double.parse(initialValue);
       } catch (e) {
-        initialIntValue = 0;
+        initialDoubleValue = 0.0;
       }
     }
 
-    return CardSettingsDouble(
-      initialValue: initialIntValue,
+    return CardSettingsFloat(
+      initialValue: initialDoubleValue,
       label: f.field_label,
       controller: fieldsController[f.field_on_site_uuid],
-      validator: (value) {
+      onChanged: (value) {
         String newvalue;
         if (value == null) {
           newvalue = "";
@@ -716,6 +717,9 @@ class InterventionPageState extends State<InterventionPage> {
           }
           _needSave = true;
         }
+        return null;
+      },
+      validator: (value) {
         return null;
       },
       onSaved: (value) {},

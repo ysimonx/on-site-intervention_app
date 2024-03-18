@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:diacritic/diacritic.dart';
+//import 'package:tccore_plugin/TCDebug.dart';
 
+import '../../network/api/tc.dart';
 import '../utils/context.dart';
 
 import '../../network/api/login_api.dart';
@@ -27,9 +29,13 @@ class _HomepageUnAuthentifiedContentState
 
   bool badAuth = false;
 
+  late TC tc;
+
   @override
   void initState() {
     super.initState();
+
+    tc = TC();
   }
 
   @override
@@ -110,6 +116,7 @@ class _HomepageUnAuthentifiedContentState
                 return;
               }
               badAuth = false;
+              await tc.sendEventLogin(email: email);
               widget.onConnexion(1);
 
               // setState(() {});

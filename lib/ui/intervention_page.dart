@@ -498,6 +498,10 @@ class InterventionPageState extends State<InterventionPage> {
       return genCardSettingsInt(initialValue, s, f);
     }
 
+    if (f.field_type == "float") {
+      return genCardSettingsFloat(initialValue, s, f);
+    }
+
     if (f.field_type == "list_from_mandatory_lists") {
       List<dynamic> possible_values = [];
 
@@ -653,6 +657,46 @@ class InterventionPageState extends State<InterventionPage> {
     }
 
     return CardSettingsInt(
+      initialValue: initialIntValue,
+      label: f.field_label,
+      controller: fieldsController[f.field_on_site_uuid],
+      validator: (value) {
+        String newvalue;
+        if (value == null) {
+          newvalue = "";
+        } else {
+          newvalue = value.toString();
+        }
+        fieldsController[f.field_on_site_uuid]!.text = newvalue;
+
+        // keep track of real updates
+        if (newvalue != initialValue) {
+          if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+            listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+          }
+          _needSave = true;
+        }
+        return null;
+      },
+      onSaved: (value) {},
+    );
+  }
+
+  CardSettingsDouble genCardSettingsFloat(
+      String initialValue, Section s, Field f) {
+    double initialIntValue = 0;
+
+    if (initialValue == "") {
+      initialIntValue = 0;
+    } else {
+      try {
+        initialIntValue = double.parse(initialValue);
+      } catch (e) {
+        initialIntValue = 0;
+      }
+    }
+
+    return CardSettingsDouble(
       initialValue: initialIntValue,
       label: f.field_label,
       controller: fieldsController[f.field_on_site_uuid],

@@ -861,6 +861,33 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0+1"
+  tc_consent_plugin:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: d5064cdb9d24fc50023e88dee4041d94dae87b92
+      url: "https://github.com/CommandersAct/tc-consent-plugin.git"
+    source: git
+    version: "1.3.0"
+  tc_serverside_plugin:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: "1.0.5"
+      resolved-ref: "400af2a019c67602a45378c05514b4434e3c06c1"
+      url: "https://github.com/CommandersAct/tcserverside-flutter-plugin.git"
+    source: git
+    version: "1.0.5"
+  tccore_plugin:
+    dependency: transitive
+    description:
+      path: "."
+      ref: "1.1.0"
+      resolved-ref: d9b9571b52206fdf0cd3c0c70252695ab6d199e2
+      url: "https://github.com/CommandersAct/tccore_plugin.git"
+    source: git
+    version: "1.1.0"
   term_glyph:
     dependency: transitive
     description:

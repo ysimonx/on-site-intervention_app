@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../network/api/tc.dart';
 import 'intervention_page.dart';
 import 'widget/common_widgets.dart';
 import 'widget/filter_list.dart';
@@ -58,6 +59,7 @@ class _SitePageState extends State<SitePage> {
   List<Intervention> prec_result = [];
 
   late SitePageArguments args;
+  late TC tc;
 
   @override
   void initState() {
@@ -65,6 +67,7 @@ class _SitePageState extends State<SitePage> {
 
     interventionAPI = InterventionApi();
     userAPI = UserApi();
+    tc = TC();
   }
 
   @override
@@ -224,6 +227,8 @@ class _SitePageState extends State<SitePage> {
                 List<Intervention> listInterventions = list;
                 // if (listInterventions.isNotEmpty) {
                 logger.d("ta da builder ${listInterventions.length}");
+
+                tc.sendCustomEvent(key: "view_ui", value: "sites");
                 return Column(children: <Widget>[
                   widgetFilterList(filterList, user: args.user, site: args.site,
                       onChangedFilterList: (FilterList value) async {

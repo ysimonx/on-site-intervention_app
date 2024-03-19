@@ -64,7 +64,6 @@ class CardSettingsListFromRole extends FormField<String>
     this.showClearButtonIOS = OverlayVisibilityMode.never,
     this.fieldPadding,
     this.contentPadding = const EdgeInsets.all(0.0),
-    required String initialItem,
     required this.items,
   })  : assert(maxLength > 0),
         assert(controller == null || inputMask == null),
@@ -79,7 +78,7 @@ class CardSettingsListFromRole extends FormField<String>
         );
 
   @override
-  final ValueChanged<String>? onChanged;
+  final ValueChanged<User>? onChanged;
 
   final TextEditingController? controller;
 
@@ -187,7 +186,7 @@ class _CardSettingsTextState extends FormFieldState<String> {
   TextEditingController? _controller;
 
   List<DropdownMenuItem<int>> listDropdownMenuItemsUsers = [];
-
+  late int iDropdownMenuItemsUsers;
   @override
   CardSettingsListFromRole get widget =>
       super.widget as CardSettingsListFromRole;
@@ -201,6 +200,13 @@ class _CardSettingsTextState extends FormFieldState<String> {
           .add(DropdownMenuItem(value: i, child: genDrowdownUserContent(u)));
     }
     print(listDropdownMenuItemsUsers);
+    if (widget.initialValue is String) {
+      try {
+        iDropdownMenuItemsUsers = int.parse(widget.initialValue!);
+      } catch (e) {
+        iDropdownMenuItemsUsers = 0;
+      }
+    }
     _initController(widget.initialValue);
   }
 
@@ -248,10 +254,10 @@ class _CardSettingsTextState extends FormFieldState<String> {
     }
   }
 
-  void _handleOnChanged(String value) {
+  void _handleOnChanged(User value) {
     if (widget.onChanged != null) {
       // `value` doesn't apple any masks when this is called, so the controller has the actual formatted value
-      widget.onChanged!(_controller!.value.text);
+      widget.onChanged!(value);
     }
   }
 
@@ -347,7 +353,7 @@ class _CardSettingsTextState extends FormFieldState<String> {
         maxLength: (widget.showCounter)
             ? widget.maxLength
             : null, // if we want counter use default behavior
-        onChanged: _handleOnChanged,
+        // onChanged: _handleOnChanged,
         onSubmitted: _onFieldSubmitted,
         inputFormatters: widget.inputFormatters ??
             [
@@ -459,17 +465,24 @@ class _CardSettingsTextState extends FormFieldState<String> {
       enabled: widget.enabled,
       fieldPadding: widget.fieldPadding,
       content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (listDropdownMenuItemsUsers.length > 0)
             DropdownButton<int>(
-                value: 0,
+                value: iDropdownMenuItemsUsers,
                 items: listDropdownMenuItemsUsers,
                 onChanged: (value) {
                   if (value is int) {
+                    iDropdownMenuItemsUsers = value;
                     print(value.toString());
+                    User u = widget.items[value];
+                    _handleOnChanged(u);
+                    setState(() {
+                      print(value.toString());
+                    });
                   }
                 }),
-          TextField(
+          /*TextField(
             controller: _controller,
             focusNode: widget.focusNode,
             keyboardType: widget.keyboardType,
@@ -496,14 +509,14 @@ class _CardSettingsTextState extends FormFieldState<String> {
             maxLength: (widget.showCounter)
                 ? widget.maxLength
                 : null, // if we want counter use default behavior
-            onChanged: _handleOnChanged,
+            //onChanged: _handleOnChanged,
             onSubmitted: _onFieldSubmitted,
             inputFormatters: widget.inputFormatters ??
                 [
                   // if we don't want the counter, use this maxLength instead
                   LengthLimitingTextInputFormatter(widget.maxLength)
                 ],
-          ),
+          ),*/
         ],
       ),
     );

@@ -590,30 +590,34 @@ class InterventionPageState extends State<InterventionPage> {
     return genCardSettingsInt(initialValue, s, f);
   }
 
-  dynamic genCardSettingsUserFromRole(String initialValue, Field f) {
+  dynamic genCardSettingsUserFromRole(String initialValueUserID, Field f) {
     String roleName = f.field_possible_values[0];
     List<User> possibleUsers = widget.site.getUsersForRoleName(roleName);
-
+    possibleUsers.insert(0, User.nobody());
+    String initialValue = "0";
+    for (var i = 0; i < possibleUsers.length; i++) {
+      User u = possibleUsers[i];
+      if (u.id == initialValueUserID) {
+        initialValue = "${i}";
+      }
+    }
     return CardSettingsListFromRole(
-        initialItem: initialValue,
+        initialValue: initialValue,
         label: f.field_label,
         items: possibleUsers,
         // controller: fieldsController[f.field_on_site_uuid],
-        validator: (value) {
-          String newvalue = "";
-          if (value is String) {
-            newvalue = value;
-          }
-          fieldsController[f.field_on_site_uuid]!.text = newvalue;
-
-          // keep track of real updates
-          if (newvalue != initialValue) {
+        onChanged: (user) {
+          print(user.toString());
+          String old_user_id = fieldsController[f.field_on_site_uuid]!.text;
+          if (old_user_id != user.id) {
+            fieldsController[f.field_on_site_uuid]!.text = user.id;
             if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
               listFieldsUUIDUpdated.add(f.field_on_site_uuid);
             }
             _needSave = true;
           }
-
+        },
+        validator: (value) {
           return null;
         });
   }

@@ -603,6 +603,7 @@ class InterventionPageState extends State<InterventionPage> {
     }
     return CardSettingsListFromRole(
         initialValue: initialValue,
+        icon: Icon(Icons.person),
         label: f.field_label,
         items: possibleUsers,
         // controller: fieldsController[f.field_on_site_uuid],

@@ -24,6 +24,7 @@ import '../network/api/image.api.dart';
 import '../network/api/intervention_api.dart';
 import '../network/api/user_api.dart';
 import 'utils/logger.dart';
+import 'widget/card_settings_listfromrole.dart';
 import 'widget/card_settings_schema.dart';
 import 'widget/card_settings_gallery.dart';
 import 'widget/card_settings_float.dart';
@@ -589,7 +590,35 @@ class InterventionPageState extends State<InterventionPage> {
     return genCardSettingsInt(initialValue, s, f);
   }
 
-  CardSettingsListPicker<dynamic> genCardSettingsUserFromRole(
+  dynamic genCardSettingsUserFromRole(String initialValue, Field f) {
+    String roleName = f.field_possible_values[0];
+    List<User> possibleUsers = widget.site.getUsersForRoleName(roleName);
+
+    return CardSettingsListFromRole(
+        initialItem: initialValue,
+        label: f.field_label,
+        items: possibleUsers,
+        // controller: fieldsController[f.field_on_site_uuid],
+        validator: (value) {
+          String newvalue = "";
+          if (value is String) {
+            newvalue = value;
+          }
+          fieldsController[f.field_on_site_uuid]!.text = newvalue;
+
+          // keep track of real updates
+          if (newvalue != initialValue) {
+            if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+              listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+            }
+            _needSave = true;
+          }
+
+          return null;
+        });
+  }
+
+  /* CardSettingsListPicker<dynamic> genCardSettingsUserFromRole_old(
       String initialValue, Field f) {
     String roleName = f.field_possible_values[0];
     List<String> possibleValues = widget.site.getUsersForRoleName(roleName);
@@ -616,7 +645,7 @@ class InterventionPageState extends State<InterventionPage> {
 
           return null;
         });
-  }
+  }*/
 
   CardSettingsListPicker<dynamic> genCardSettingsListPicker(
       String initialValue, Field f,

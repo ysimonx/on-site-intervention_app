@@ -73,18 +73,8 @@ Widget widgetFilterList(FilterList filterList,
 
   for (var i = 0; i < usersCoordinators.length; i++) {
     User u = usersCoordinators[i];
-    listDropdownMenuItemsUsers.add(DropdownMenuItem(
-        value: i,
-        child: Row(
-          children: [
-            SizedBox(
-                width: 200.0,
-                child: Text(
-                    overflow: TextOverflow.ellipsis,
-                    " ${u.firstname.toCapitalized()} ${u.lastname.toCapitalized()} ")),
-            SizedBox(child: Text(" ${u.company.toUpperCase()}")),
-          ],
-        )));
+    listDropdownMenuItemsUsers
+        .add(DropdownMenuItem(value: i, child: genDrowdownUserContent(u)));
   }
   return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20.0),
@@ -142,4 +132,17 @@ Widget widgetFilterList(FilterList filterList,
           ])
         ]),
       ]));
+}
+
+Widget genDrowdownUserContent(User u) {
+  return Row(
+    children: [
+      SizedBox(
+          width: 200.0,
+          child: Text(
+              overflow: TextOverflow.ellipsis,
+              " ${u.firstname.toCapitalized()} ${u.lastname.toCapitalized()} ")),
+      SizedBox(child: Text(" ${u.company.toUpperCase()}")),
+    ],
+  );
 }

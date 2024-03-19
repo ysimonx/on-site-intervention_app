@@ -29,6 +29,7 @@ import 'widget/card_settings_gallery.dart';
 import 'widget/card_settings_float.dart';
 import 'widget/card_settings_signature.dart';
 import 'widget/choose_place.dart';
+import 'widget/filter_list.dart';
 import 'widget/widgetListInterventionSamePlace.dart';
 
 // Create a Form widget.
@@ -314,7 +315,7 @@ class InterventionPageState extends State<InterventionPage> {
     for (var i = 0; i < usersCoordinators.length; i++) {
       User u = usersCoordinators[i];
       listDropdownMenuItemsUsers
-          .add(DropdownMenuItem(value: u, child: Text(u.email)));
+          .add(DropdownMenuItem(value: u, child: genDrowdownUserContent(u)));
     }
     if (listStatus.contains(intervention_status) == false) {
       intervention_status = listStatus[0];

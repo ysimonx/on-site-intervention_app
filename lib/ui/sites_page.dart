@@ -75,20 +75,20 @@ class _SitePageState extends State<SitePage> {
     args = ModalRoute.of(context)!.settings.arguments as SitePageArguments;
     filterList = FilterList(
         user: args.user, user_coordinator: User.nobody(), site: args.site);
-    myFuture = newMethod();
+    myFuture = futureMethod();
     initTimer();
     super.didChangeDependencies();
   }
 
   void refreshUI() {
     setState(() {
-      myFuture = newMethod();
+      myFuture = futureMethod();
     });
   }
 
-  Future<String> newMethod() {
+  Future<String> futureMethod() {
     return Future<String>.delayed(
-      const Duration(seconds: 1),
+      const Duration(microseconds: 100),
       () {
         return getListInterventions();
       },
@@ -229,13 +229,13 @@ class _SitePageState extends State<SitePage> {
                 logger.d("ta da builder ${listInterventions.length}");
 
                 tc.sendCustomEvent(key: "view_ui", value: "sites");
+
                 return Column(children: <Widget>[
                   widgetFilterList(filterList, user: args.user, site: args.site,
                       onChangedFilterList: (FilterList value) async {
                     await _storage.write(
                         key: "lastStatus", value: value.status);
                     String? x = await _storage.read(key: "lastStatus");
-                    print(x);
                     await _storage.write(
                         key: "lastCoordinatorUserId",
                         value: value.user_coordinator.id);

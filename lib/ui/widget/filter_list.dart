@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/models/model_user.dart';
 import 'package:on_site_intervention_app/network/api/user_api.dart';
+import 'package:on_site_intervention_app/ui/utils/i18n.dart';
 
 import '../../network/api/constants.dart';
 
@@ -72,8 +73,18 @@ Widget widgetFilterList(FilterList filterList,
 
   for (var i = 0; i < usersCoordinators.length; i++) {
     User u = usersCoordinators[i];
-    listDropdownMenuItemsUsers
-        .add(DropdownMenuItem(value: i, child: Text(u.email)));
+    listDropdownMenuItemsUsers.add(DropdownMenuItem(
+        value: i,
+        child: Row(
+          children: [
+            SizedBox(
+                width: 200.0,
+                child: Text(
+                    overflow: TextOverflow.ellipsis,
+                    " ${u.firstname.toCapitalized()} ${u.lastname.toCapitalized()} ")),
+            SizedBox(child: Text(" ${u.company.toUpperCase()}")),
+          ],
+        )));
   }
   return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20.0),

@@ -4,6 +4,8 @@ import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/models/model_user.dart';
 import 'package:on_site_intervention_app/network/api/user_api.dart';
 
+import '../../network/api/constants.dart';
+
 class FilterList {
   final User user;
   String? status = "";
@@ -113,7 +115,7 @@ Widget widgetFilterList(FilterList filterList,
                 })
           ]),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text("Coordinator"),
+            const Text(Config.roleAssignee),
             DropdownButton<int>(
                 value: filterList.indiceCoordinator,
                 items: listDropdownMenuItemsUsers,

@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:card_settings/card_settings.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/ui/utils/mobilefirst.dart';
@@ -321,7 +322,7 @@ class InterventionPageState extends State<InterventionPage> {
 
     return FlexList(horizontalSpacing: 5, verticalSpacing: 10, children: [
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text("Coordinateur"),
+        const Text(Config.roleAssignee),
         DropdownButton<User>(
           value: userCoordinator,
           items: listDropdownMenuItemsUsers,
@@ -644,7 +645,7 @@ class InterventionPageState extends State<InterventionPage> {
         });
   }
 
-  CardSettingsInt genCardSettingsInt(String initialValue, Section s, Field f) {
+  CardSettingsText genCardSettingsInt(String initialValue, Section s, Field f) {
     int initialIntValue = 0;
 
     if (initialValue == "") {
@@ -657,33 +658,33 @@ class InterventionPageState extends State<InterventionPage> {
       }
     }
 
-    return CardSettingsInt(
-      initialValue: initialIntValue,
-      label: f.field_label,
-      controller: fieldsController[f.field_on_site_uuid],
-      validator: (value) {
-        String newvalue;
-        if (value == null) {
-          newvalue = "";
-        } else {
-          newvalue = value.toString();
-        }
-        fieldsController[f.field_on_site_uuid]!.text = newvalue;
+    String initialValueVerified = "${initialValue}";
 
-        // keep track of real updates
-        if (newvalue != initialValue) {
-          if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
-            listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+    return CardSettingsText(
+        label: f.field_label,
+        initialValue: initialValueVerified,
+        keyboardType: TextInputType.numberWithOptions(decimal: false),
+        inputFormatters: [
+          // LengthLimitingTextInputFormatter(maxLength),
+          FilteringTextInputFormatter.allow(RegExp("[0-9]+")),
+        ],
+        validator: (value) {
+          logger.f(value);
+          fieldsController[f.field_on_site_uuid]!.text = value as String;
+
+          // keep track of real updates
+          if (value != initialValue) {
+            if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+              listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+            }
+            _needSave = true;
           }
-          _needSave = true;
-        }
-        return null;
-      },
-      onSaved: (value) {},
-    );
+
+          return null;
+        });
   }
 
-  CardSettingsFloat genCardSettingsFloat(
+  CardSettingsText genCardSettingsFloat(
       String initialValue, Section s, Field f) {
     double initialDoubleValue = 0.0;
 
@@ -697,33 +698,30 @@ class InterventionPageState extends State<InterventionPage> {
       }
     }
 
-    return CardSettingsFloat(
-      initialValue: initialDoubleValue,
-      label: f.field_label,
-      controller: fieldsController[f.field_on_site_uuid],
-      onChanged: (value) {
-        String newvalue;
-        if (value == null) {
-          newvalue = "";
-        } else {
-          newvalue = value.toString();
-        }
-        fieldsController[f.field_on_site_uuid]!.text = newvalue;
+    String initialValueVerified = "${initialDoubleValue}";
 
-        // keep track of real updates
-        if (newvalue != initialValue) {
-          if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
-            listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+    return CardSettingsText(
+        label: f.field_label,
+        initialValue: initialValueVerified,
+        keyboardType: TextInputType.numberWithOptions(decimal: false),
+        inputFormatters: [
+          // LengthLimitingTextInputFormatter(maxLength),
+          FilteringTextInputFormatter.allow(RegExp("[0-9\.]+")),
+        ],
+        validator: (value) {
+          logger.f(value);
+          fieldsController[f.field_on_site_uuid]!.text = value as String;
+
+          // keep track of real updates
+          if (value != initialValue) {
+            if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+              listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+            }
+            _needSave = true;
           }
-          _needSave = true;
-        }
-        return null;
-      },
-      validator: (value) {
-        return null;
-      },
-      onSaved: (value) {},
-    );
+
+          return null;
+        });
   }
 
   CardSettingsDatePicker genCardSettingsDatePicker(
@@ -987,6 +985,9 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Widget widgetNumChrono() {
+    if (widget.intervention.num_chrono == "[NNNNN]") {
+      return Text("numero de chrono en attente de génération...");
+    }
     if (widget.intervention.num_chrono == null ||
         isNumericUsingRegularExpression(widget.intervention.num_chrono) ==
             false) {
@@ -1026,9 +1027,6 @@ class InterventionPageState extends State<InterventionPage> {
                         })),
               ]));
     } else {
-      if (widget.intervention.num_chrono == "[NNNNN]") {
-        return Text("numero de chrono en attente de génération...");
-      }
       return Text('num_chrono ${widget.intervention.num_chrono}');
     }
   }

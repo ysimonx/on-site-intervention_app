@@ -40,6 +40,7 @@ PODS:
     - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
+  - IOSV5-TCCore (5.3.1)
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -54,6 +55,19 @@ PODS:
     - Flutter
     - FlutterMacOS
   - SwiftyGif (5.4.4)
+  - tc_consent_plugin (1.3.0):
+    - Flutter
+    - IOSV5-TCCore (= 5.3.1)
+    - TCConsent (= 5.1.9)
+  - tc_serverside_plugin (1.0.0):
+    - Flutter
+    - IOSV5-TCCore (= 5.3.1)
+    - TCServerSide_noIDFA (= 5.4.1)
+  - TCConsent (5.1.9)
+  - tccore_plugin (1.1.0):
+    - Flutter
+    - IOSV5-TCCore (= 5.3.1)
+  - TCServerSide_noIDFA (5.4.1)
   - url_launcher_ios (0.0.1):
     - Flutter
 
@@ -67,14 +81,20 @@ DEPENDENCIES:
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/darwin`)
+  - tc_consent_plugin (from `.symlinks/plugins/tc_consent_plugin/ios`)
+  - tc_serverside_plugin (from `.symlinks/plugins/tc_serverside_plugin/ios`)
+  - tccore_plugin (from `.symlinks/plugins/tccore_plugin/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   trunk:
     - DKImagePickerController
     - DKPhotoGallery
+    - IOSV5-TCCore
     - SDWebImage
     - SwiftyGif
+    - TCConsent
+    - TCServerSide_noIDFA
 
 EXTERNAL SOURCES:
   camera_avfoundation:
@@ -95,6 +115,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/darwin"
+  tc_consent_plugin:
+    :path: ".symlinks/plugins/tc_consent_plugin/ios"
+  tc_serverside_plugin:
+    :path: ".symlinks/plugins/tc_serverside_plugin/ios"
+  tccore_plugin:
+    :path: ".symlinks/plugins/tccore_plugin/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
@@ -106,12 +132,18 @@ SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be
   geolocator_apple: 9157311f654584b9bb72686c55fc02a97b73f461
+  IOSV5-TCCore: 90a7566019c2b2a8a9d650978572e00a9e7f9604
   package_info_plus: 115f4ad11e0698c8c1c5d8a689390df880f47e85
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
   permission_handler_apple: 036b856153a2b1f61f21030ff725f3e6fece2b78
   SDWebImage: fc8f2d48bbfd72ef39d70e981bd24a3f3be53fec
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
+  tc_consent_plugin: f121e6076fd2c8a40bc657f3a4545d81146806ac
+  tc_serverside_plugin: c0a8a5885b6f0b21e1dd52b4c6085958268bb585
+  TCConsent: 695f30b7c68b0a1c4f28110e7eb081be537da7c8
+  tccore_plugin: b7f1170d44879c8d556bf810678bea7541f9d4a6
+  TCServerSide_noIDFA: 8f17b177d07f4f7d4342c38e847e774588dbd5d1
   url_launcher_ios: bbd758c6e7f9fd7b5b1d4cde34d2b95fcce5e812
 
 PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189

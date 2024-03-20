@@ -54,7 +54,10 @@ class widgetListInterventionSamePlaceState
     logger.d("ta da getListInterventions debut");
 
     List<Intervention> list = await interventionAPI.getListInterventions(
-        site: widget.site, realtime: false, place: widget.place);
+        site: widget.site,
+        realtime: false,
+        place: widget.place,
+        from: "xgetListInterventions");
 
     for (var i = 0; i < list.length; i++) {
       Intervention intervention = list[i];

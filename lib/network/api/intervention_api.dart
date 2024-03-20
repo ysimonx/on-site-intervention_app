@@ -34,9 +34,10 @@ class InterventionApi {
       {required Site site,
       required bool realtime,
       Place? place,
-      List<Intervention>? prec_result}) async {
+      List<Intervention>? prec_result,
+      required String from}) async {
     dynamic content = null;
-
+    print(mapListInterventionsLastModified.toString());
     logger.d("ta da getListInterventions 10");
 
     if (place != null) {
@@ -48,7 +49,7 @@ class InterventionApi {
 
     if (true) {
       try {
-        Map<String, String> qParams = {'site_id': site.id};
+        Map<String, String> qParams = {'site_id': site.id, 'from': from};
 
         // if not modified-since
         if (mapListInterventionsLastModified.containsKey(site.id)) {
@@ -99,11 +100,13 @@ class InterventionApi {
       }
     }
     if (mapListInterventionsLastModified.containsKey(site.id)) {
-      if (mapListInterventionsLastModified[site.id] == lastModified) {
-        if (prec_result != null) {
-          if (prec_result.length > 0) {
-            print("deja chargé en mémoire");
-            return prec_result;
+      if (lastModified != "") {
+        if (mapListInterventionsLastModified[site.id] == lastModified) {
+          if (prec_result != null) {
+            if (prec_result.length > 0) {
+              print("deja chargé en mémoire");
+              return prec_result;
+            }
           }
         }
       }
@@ -128,7 +131,9 @@ class InterventionApi {
     List<dynamic> arrayJsonMobileFirst = [];
 
     arrayJsonMobileFirst = jsonDecode(content);
-    mapListInterventionsLastModified[site.id] = lastModified;
+    if (lastModified != "") {
+      mapListInterventionsLastModified[site.id] = lastModified;
+    }
 
     //}
 
@@ -453,7 +458,7 @@ class InterventionApi {
 
   Future<void> downloadPhotos({required Site site}) async {
     List<String> photosToDownload = [];
-    String lastModified = "";
+    String lastPhotoModified = "";
 
     try {
       Map<String, String> qParams = {'site_id': site.id};
@@ -466,17 +471,17 @@ class InterventionApi {
         response.headers.forEach((name, values) {
           // print("header ${name} = ${values.toString()}");
           if (name == "x-lastmodified") {
-            lastModified = values.join(",");
-            print(lastModified);
+            lastPhotoModified = values.join(",");
+            print(lastPhotoModified);
           }
         });
         if (site.name == "sandbox") {
           print("to");
         }
 
-        if (lastModified != "") {
+        if (lastPhotoModified != "") {
           if (mapListPhotosLastModified.containsKey(site.id)) {
-            if (mapListPhotosLastModified[site.id] == lastModified) {
+            if (mapListPhotosLastModified[site.id] == lastPhotoModified) {
               return;
             }
           }
@@ -514,7 +519,9 @@ class InterventionApi {
       ImageApi.syncImages(
           list: photosToDownload,
           onSuccess: () {
-            mapListPhotosLastModified[site.id] = lastModified;
+            if (lastPhotoModified != "") {
+              mapListPhotosLastModified[site.id] = lastPhotoModified;
+            }
           });
 
       print(photosToDownload);

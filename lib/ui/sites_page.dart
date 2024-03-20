@@ -128,7 +128,10 @@ class _SitePageState extends State<SitePage> {
     List<Intervention> result = [];
 
     result = await interventionAPI.getListInterventions(
-        site: args.site, realtime: false, prec_result: prec_result);
+        site: args.site,
+        realtime: false,
+        prec_result: prec_result,
+        from: "sites_page");
 
     prec_result = result;
 

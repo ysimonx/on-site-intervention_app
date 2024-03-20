@@ -57,27 +57,36 @@ class FormulairePageState extends State<FormulairePage> {
                   return Card(
                       margin: const EdgeInsets.all(10),
                       child: ListTile(
-                        leading: const Icon(Icons.list),
-                        // ignore: unnecessary_string_interpolations
-                        title: Text(f!.form_name),
-                        //subtitle:
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.arrow_forward),
-                              onPressed: () {
-                                /* Map<String, Formulaire> mapFormulaires =
-                                    ConvertJsonToMapFormulaires(
-                                        mapTypesIntervention[type_intervention]
-                                            ["forms"]);
-                                print(mapFormulaires.toString());
-                                */
-                              },
+                          leading: const Icon(Icons.list),
+                          // ignore: unnecessary_string_interpolations
+                          title: Text(f!.form_name),
+                          //subtitle:
+                          trailing: FittedBox(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      iconSize: 40.0,
+                                      icon: const Icon(Icons.settings),
+                                      onPressed: () {
+                                        print("tyo");
+                                        /* Map<String, Formulaire> mapFormulaires =
+                                        ConvertJsonToMapFormulaires(
+                                            mapTypesIntervention[type_intervention]
+                                                ["forms"]);
+                                    print(mapFormulaires.toString());
+                                    */
+                                      },
+                                    ),
+                                    Text("champs personnalisés")
+                                  ],
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ));
+                          )));
                 })));
   }
 

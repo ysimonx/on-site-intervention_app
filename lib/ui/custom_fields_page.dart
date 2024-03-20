@@ -69,8 +69,22 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
                       child: ListTile(
                           leading: const Icon(Icons.list),
                           // ignore: unnecessary_string_interpolations
-                          title: Text(
-                              '${customField.code} - ${customField.label}'),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  SizedBox(
+                                      width: 80.0, child: Text('Libellé: ')),
+                                  Text(customField.label),
+                                ],
+                              ),
+                              Row(children: [
+                                SizedBox(width: 80.0, child: Text('Code: ')),
+                                Text(customField.code)
+                              ])
+                            ],
+                          ),
                           trailing: FittedBox(
                               child: Row(
                             mainAxisSize: MainAxisSize.min,

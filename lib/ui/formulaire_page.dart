@@ -7,6 +7,7 @@ import '../models/model_intervention.dart';
 import '../models/model_site.dart';
 import '../models/model_tenant.dart';
 import '../models/model_user.dart';
+import 'custom_fields_page.dart';
 import 'widget/app_bar.dart';
 
 class FormulairePage extends StatefulWidget {
@@ -73,12 +74,16 @@ class FormulairePageState extends State<FormulairePage> {
                                       icon: const Icon(Icons.settings),
                                       onPressed: () {
                                         print("tyo");
-                                        /* Map<String, Formulaire> mapFormulaires =
-                                        ConvertJsonToMapFormulaires(
-                                            mapTypesIntervention[type_intervention]
-                                                ["forms"]);
-                                    print(mapFormulaires.toString());
-                                    */
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                          return CustomFieldsPage(
+                                              site: widget.site,
+                                              user: widget.user,
+                                              formulaire: f,
+                                              type_intervention:
+                                                  widget.type_intervention);
+                                        }));
                                       },
                                     ),
                                     Text("champs personnalisés")

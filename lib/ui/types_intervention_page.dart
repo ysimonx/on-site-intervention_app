@@ -68,12 +68,6 @@ class TypesInterventionPageState extends State<TypesInterventionPage> {
                                       user: widget.user,
                                       type_intervention: type_intervention);
                                 }));
-                                /* Map<String, Formulaire> mapFormulaires =
-                                    ConvertJsonToMapFormulaires(
-                                        mapTypesIntervention[type_intervention]
-                                            ["forms"]);
-                                print(mapFormulaires.toString());
-                                */
                               },
                             ),
                           ],

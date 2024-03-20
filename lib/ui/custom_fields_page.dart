@@ -8,6 +8,7 @@ import 'package:on_site_intervention_app/models/model_formulaire.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 import 'package:on_site_intervention_app/models/model_tenant.dart';
 
+import '../models/model_custom_field.dart';
 import '../models/model_user.dart';
 import '../network/api/site_api.dart';
 import '../network/api/user_api.dart';
@@ -36,7 +37,7 @@ class CustomFieldsPage extends StatefulWidget {
 
 // Create a corresponding State class.
 class CustomFieldsPageState extends State<CustomFieldsPage> {
-  late Map<int, String> dictCustomFields = {};
+  late Map<int, CustomField> dictCustomFields = {};
 
   late String _title = 'champs personnalisés';
 
@@ -61,33 +62,59 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
                 padding: const EdgeInsets.all(8),
                 itemCount: dictCustomFields.length,
                 itemBuilder: (BuildContext context, int index) {
-                  String x = dictCustomFields[index]!;
+                  CustomField customField = dictCustomFields[index]!;
 
                   return Card(
                       margin: const EdgeInsets.all(10),
                       child: ListTile(
                           leading: const Icon(Icons.list),
                           // ignore: unnecessary_string_interpolations
-                          title: Text(x)));
+                          title: Text(
+                              '${customField.code} - ${customField.label}'),
+                          trailing: FittedBox(
+                              child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    iconSize: 40.0,
+                                    icon: const Icon(Icons.settings),
+                                    onPressed: () {
+                                      _showDialog(
+                                          site: widget.site,
+                                          customfieldname: customField.label,
+                                          customfieldcodename: customField.code,
+                                          onNewValue: (
+                                              {required CustomField
+                                                  customField}) {
+                                            setState(() {
+                                              dictCustomFields[index] =
+                                                  customField;
+                                            });
+                                          });
+                                    },
+                                  )
+                                ],
+                              ),
+                            ],
+                          ))));
                 })),
         floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () async {
-              print("yo");
               _showDialog(
                   site: widget.site,
                   customfieldname: null,
                   customfieldcodename: null,
-                  onNewValue: (
-                      {required String customfieldname,
-                      required String customfieldcodename}) {
-                    print(customfieldname);
+                  onNewValue: ({required CustomField customField}) {
                     setState(() {
                       int size = dictCustomFields.length;
-                      dictCustomFields[size] = customfieldname;
+                      dictCustomFields[size] = customField;
+                      saveCustomFields();
                     });
                   });
-              //fabNewList(context: context, callback: () {}),
             }));
   }
 
@@ -104,10 +131,7 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
     required Site site,
     required String? customfieldname,
     required String? customfieldcodename,
-    required Null Function(
-            {required String customfieldname,
-            required String customfieldcodename})
-        onNewValue,
+    required Null Function({required CustomField customField}) onNewValue,
   }) {
     late TextEditingController controllerCustomFieldCodeName =
         TextEditingController();
@@ -116,6 +140,9 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
 
     if (customfieldname != null) {
       controllerCustomFieldName.text = customfieldname;
+    }
+    if (customfieldcodename != null) {
+      controllerCustomFieldCodeName.text = customfieldcodename;
     }
 
     showDialog<void>(
@@ -128,19 +155,6 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
           content: Column(children: [
             TextField(
               onChanged: (v) {
-                controllerCustomFieldCodeName.text = v.toLowerCase();
-              },
-              controller: controllerCustomFieldCodeName,
-              autofocus: true,
-              decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color(0xFFF2F2F2),
-                  hintText:
-                      "Entrez le 'code' du champ personnalisé".toCapitalized()),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              onChanged: (v) {
                 controllerCustomFieldName.text = v.toLowerCase();
               },
               controller: controllerCustomFieldName,
@@ -148,9 +162,22 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
               decoration: InputDecoration(
                   filled: true,
                   fillColor: const Color(0xFFF2F2F2),
-                  hintText: "Entrez le 'libellé' du champ personnalisé"
+                  hintText: "Entrez le libellé du champ personnalisé"
                       .toCapitalized()),
             ),
+            const SizedBox(height: 10),
+            TextField(
+              onChanged: (v) {
+                controllerCustomFieldCodeName.text = v.toLowerCase();
+              },
+              controller: controllerCustomFieldCodeName,
+              autofocus: true,
+              decoration: InputDecoration(
+                  filled: true,
+                  fillColor: const Color(0xFFF2F2F2),
+                  hintText: "Entrez le code 'csv' du champ personnalisé"
+                      .toCapitalized()),
+            )
           ]),
           actions: <Widget>[
             TextButton(
@@ -168,11 +195,11 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
               ),
               child: const Text('Ok'),
               onPressed: () async {
-                onNewValue(
-                    customfieldcodename:
-                        controllerCustomFieldCodeName.text.toLowerCase(),
-                    customfieldname:
-                        controllerCustomFieldName.text.toLowerCase());
+                CustomField customField = CustomField(
+                    code: controllerCustomFieldCodeName.text.toLowerCase(),
+                    label: controllerCustomFieldName.text.toLowerCase());
+
+                onNewValue(customField: customField);
                 Navigator.pop(context);
               },
             ),
@@ -180,5 +207,29 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
         );
       },
     );
+  }
+
+  void saveCustomFields() async {
+    SiteApi siteApi = SiteApi();
+    /*
+    try {
+      Response response = await siteApi.updateSiteLists(
+          idSite: widget.site!.id, dictOfLists: dictOfLists);
+
+      if (response.statusCode == 200) {
+        Navigator.pop(context);
+
+        callback(message: "Processing Data", dictOfLists: dictOfLists);
+        return;
+      }
+      if (response.statusCode == 400) {
+        callback(
+            message: "Processing Data Error ${response.data["error"]}",
+            dictOfLists: dictOfLists);
+        return;
+      }
+    } catch (e) {
+      callback(message: e.toString(), dictOfLists: dictOfLists);
+    }*/
   }
 }

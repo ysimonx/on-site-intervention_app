@@ -463,6 +463,10 @@ class InterventionApi {
     try {
       Map<String, String> qParams = {'site_id': site.id};
 
+      // if not modified-since
+      if (mapListPhotosLastModified.containsKey(site.id)) {
+        qParams["maxutc"] = mapListPhotosLastModified[site.id];
+      }
       final Response response = await dioClient.get(
           Endpoints.listInterventionsValuesPhotos,
           queryParameters: qParams);
@@ -507,6 +511,9 @@ class InterventionApi {
     } on DioException catch (e) {
       if (e.response != null) {
         if (e.response!.statusCode == 401) {
+          return;
+        }
+        if (e.response!.statusCode == 304) {
           return;
         }
         logger.e("downloadPhotos : ${e.response!.statusCode}");

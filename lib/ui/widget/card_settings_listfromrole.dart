@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter_cupertino_settings/flutter_cupertino_settings.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/model_user.dart';
 import 'filter_list.dart';
@@ -482,6 +483,43 @@ class _CardSettingsTextState extends FormFieldState<String> {
                     });
                   }
                 }),
+          Row(
+            children: [
+              IconButton(
+                padding: EdgeInsets.zero,
+                iconSize: 40,
+                icon: const Icon(Icons.email_outlined),
+                onPressed: () async {
+                  User u = widget.items[int.parse(widget.initialValue!)];
+                  String url = "mailto:${u.email}";
+
+                  final Uri _url = Uri.parse(url);
+
+                  if (!await launchUrl(_url)) {
+                    throw Exception('Could not launch $_url');
+                  }
+                  // Navigator.of(context).pop(null);
+                },
+              ),
+              SizedBox(width: 40.0),
+              IconButton(
+                padding: EdgeInsets.zero,
+                iconSize: 40,
+                icon: const Icon(Icons.phone_outlined),
+                onPressed: () async {
+                  User u = widget.items[int.parse(widget.initialValue!)];
+                  String url = "tel:${u.phone}";
+
+                  final Uri _url = Uri.parse(url);
+
+                  if (!await launchUrl(_url)) {
+                    throw Exception('Could not launch $_url');
+                  }
+                  // Navigator.of(context).pop(null);
+                },
+              ),
+            ],
+          )
           /*TextField(
             controller: _controller,
             focusNode: widget.focusNode,

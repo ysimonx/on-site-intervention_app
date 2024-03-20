@@ -454,6 +454,7 @@ class _CardSettingsTextState extends FormFieldState<String> {
   }
 
   CardSettingsField _buildMaterialTextbox(BuildContext context) {
+    User u = widget.items[iDropdownMenuItemsUsers];
     return CardSettingsField(
       label: widget.label,
       labelAlign: widget.labelAlign,
@@ -474,52 +475,53 @@ class _CardSettingsTextState extends FormFieldState<String> {
                 items: listDropdownMenuItemsUsers,
                 onChanged: (value) {
                   if (value is int) {
-                    iDropdownMenuItemsUsers = value;
                     print(value.toString());
                     User u = widget.items[value];
                     _handleOnChanged(u);
                     setState(() {
+                      iDropdownMenuItemsUsers = value;
                       print(value.toString());
                     });
                   }
                 }),
-          Row(
-            children: [
-              IconButton(
-                padding: EdgeInsets.zero,
-                iconSize: 40,
-                icon: const Icon(Icons.email_outlined),
-                onPressed: () async {
-                  User u = widget.items[int.parse(widget.initialValue!)];
-                  String url = "mailto:${u.email}";
+          (u.isNobody() == false)
+              ? Row(
+                  children: [
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      iconSize: 40,
+                      icon: const Icon(Icons.email_outlined),
+                      onPressed: () async {
+                        String url = "mailto:${u.email}";
 
-                  final Uri _url = Uri.parse(url);
+                        final Uri _url = Uri.parse(url);
 
-                  if (!await launchUrl(_url)) {
-                    throw Exception('Could not launch $_url');
-                  }
-                  // Navigator.of(context).pop(null);
-                },
-              ),
-              SizedBox(width: 40.0),
-              IconButton(
-                padding: EdgeInsets.zero,
-                iconSize: 40,
-                icon: const Icon(Icons.phone_outlined),
-                onPressed: () async {
-                  User u = widget.items[int.parse(widget.initialValue!)];
-                  String url = "tel:${u.phone}";
+                        if (!await launchUrl(_url)) {
+                          throw Exception('Could not launch $_url');
+                        }
+                        // Navigator.of(context).pop(null);
+                      },
+                    ),
+                    SizedBox(width: 40.0),
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      iconSize: 40,
+                      icon: const Icon(Icons.phone_outlined),
+                      onPressed: () async {
+                        String url = "tel:${u.phone}";
 
-                  final Uri _url = Uri.parse(url);
+                        final Uri _url = Uri.parse(url);
 
-                  if (!await launchUrl(_url)) {
-                    throw Exception('Could not launch $_url');
-                  }
-                  // Navigator.of(context).pop(null);
-                },
-              ),
-            ],
-          )
+                        if (!await launchUrl(_url)) {
+                          throw Exception('Could not launch $_url');
+                        }
+                        // Navigator.of(context).pop(null);
+                      },
+                    ),
+                  ],
+                )
+              : SizedBox(width: 1.0)
+
           /*TextField(
             controller: _controller,
             focusNode: widget.focusNode,

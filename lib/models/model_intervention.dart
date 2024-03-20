@@ -137,7 +137,7 @@ class Intervention {
   }
 }
 
-Map<String, Formulaire> ConvertJsonToMapFormulaires(map) {
+Map<String, Formulaire> ConvertJsonToMapFormulaires(dynamic map) {
   Map<String, Formulaire> res = {};
 
   map.forEach((key, value) {

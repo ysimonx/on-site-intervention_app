@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:on_site_intervention_app/models/model_custom_field.dart';
 import 'package:on_site_intervention_app/models/model_user.dart';
 import 'package:on_site_intervention_app/ui/lists_for_places_page.dart';
 
@@ -205,6 +206,53 @@ class SiteApi {
 
       if (response.statusCode == 200) {
         logger.d("toutes les listes for places ont été mises à jour :)");
+      }
+
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        logger.e(e.response!.statusCode);
+        if (e.response!.statusCode == 401) {
+          return e.response!;
+        }
+        if (e.response!.statusCode == 400) {
+          return e.response!;
+        }
+      }
+      rethrow;
+    }
+  }
+
+  updateCustomFields(
+      {required String idSite,
+      required Map<int, CustomField> dictOfCustomFields,
+      required type_intervention}) async {
+    Map<String, dynamic> dict_of_custom_fields = {};
+    dictOfCustomFields.forEach((key, value) {
+      dict_of_custom_fields["${key}"] = value.toJSON();
+    });
+
+    try {
+      DioClient dioClient = DioClient(Dio());
+
+      var formData = {
+        "type_intervention": type_intervention,
+        "dict_of_custom_fields": dict_of_custom_fields
+      };
+      String json = jsonEncode(formData);
+
+      String s = Endpoints.updateCustomFields.replaceAll("<site_id>", idSite);
+
+      final Response response = await dioClient.post(
+        s,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: json,
+      );
+
+      if (response.statusCode == 201) {
+        logger.d("tous les custom fields du site ont été mis à jour :)");
       }
 
       return response;

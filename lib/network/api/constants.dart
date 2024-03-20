@@ -42,6 +42,9 @@ class Endpoints {
   static const String updateLists = '/api/v1/site/<site_id>/lists';
   static const String updateListsForPlaces =
       '/api/v1/site/<site_id>/lists_for_places';
+  static const String updateCustomFields =
+      '/api/v1/site/<site_id>/custom_fields';
+
   static const String exportInterventionsCSV =
       "/api/v1/intervention_values/csv?site_id=<site_id>&type_intervention_id=scaffolding%20request";
   static const String downloadFEB =

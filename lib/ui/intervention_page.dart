@@ -208,7 +208,7 @@ class InterventionPageState extends State<InterventionPage> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                     content: Text(message),
-                                    duration: Duration(seconds: 1)),
+                                    duration: const Duration(seconds: 1)),
                               );
                               print(message);
                             });
@@ -226,7 +226,7 @@ class InterventionPageState extends State<InterventionPage> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                     content: Text(message),
-                                    duration: Duration(seconds: 1)),
+                                    duration: const Duration(seconds: 1)),
                               );
                             });
                             // }
@@ -598,12 +598,12 @@ class InterventionPageState extends State<InterventionPage> {
     for (var i = 0; i < possibleUsers.length; i++) {
       User u = possibleUsers[i];
       if (u.id == initialValueUserID) {
-        initialValue = "${i}";
+        initialValue = "$i";
       }
     }
     return CardSettingsListFromRole(
         initialValue: initialValue,
-        icon: Icon(Icons.person),
+        icon: const Icon(Icons.person),
         label: f.field_label,
         items: possibleUsers,
         // controller: fieldsController[f.field_on_site_uuid],
@@ -693,12 +693,12 @@ class InterventionPageState extends State<InterventionPage> {
       }
     }
 
-    String initialValueVerified = "${initialValue}";
+    String initialValueVerified = "$initialIntValue";
 
     return CardSettingsText(
         label: f.field_label,
         initialValue: initialValueVerified,
-        keyboardType: TextInputType.numberWithOptions(decimal: false),
+        keyboardType: const TextInputType.numberWithOptions(decimal: false),
         inputFormatters: [
           // LengthLimitingTextInputFormatter(maxLength),
           FilteringTextInputFormatter.allow(RegExp("[0-9]+")),
@@ -733,12 +733,12 @@ class InterventionPageState extends State<InterventionPage> {
       }
     }
 
-    String initialValueVerified = "${initialDoubleValue}";
+    String initialValueVerified = "$initialDoubleValue";
 
     return CardSettingsText(
         label: f.field_label,
         initialValue: initialValueVerified,
-        keyboardType: TextInputType.numberWithOptions(decimal: false),
+        keyboardType: const TextInputType.numberWithOptions(decimal: false),
         inputFormatters: [
           // LengthLimitingTextInputFormatter(maxLength),
           FilteringTextInputFormatter.allow(RegExp("[0-9\.]+")),
@@ -1021,7 +1021,7 @@ class InterventionPageState extends State<InterventionPage> {
 
   Widget widgetNumChrono() {
     if (widget.intervention.num_chrono == "[NNNNN]") {
-      return Text("numero de chrono en attente de génération...");
+      return const Text("numero de chrono en attente de génération...");
     }
     if (widget.intervention.num_chrono == null ||
         isNumericUsingRegularExpression(widget.intervention.num_chrono) ==
@@ -1044,7 +1044,7 @@ class InterventionPageState extends State<InterventionPage> {
                       })
                 ]),
                 Padding(
-                    padding: EdgeInsets.only(top: 5.0),
+                    padding: const EdgeInsets.only(top: 5.0),
                     child: widgetListInterventionSamePlace(
                         site: widget.site,
                         place: widget.intervention.place,

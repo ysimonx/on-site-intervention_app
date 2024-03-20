@@ -74,13 +74,14 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
                             children: [
                               Row(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                       width: 80.0, child: Text('Libellé: ')),
                                   Text(customField.label),
                                 ],
                               ),
                               Row(children: [
-                                SizedBox(width: 80.0, child: Text('Code: ')),
+                                const SizedBox(
+                                    width: 80.0, child: Text('Code: ')),
                                 Text(customField.code)
                               ])
                             ],
@@ -103,6 +104,7 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
                                           onNewValue: (
                                               {required CustomField
                                                   customField}) {
+                                            saveCustomFields();
                                             setState(() {
                                               dictCustomFields[index] =
                                                   customField;
@@ -225,25 +227,34 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
 
   void saveCustomFields() async {
     SiteApi siteApi = SiteApi();
-    /*
+
     try {
-      Response response = await siteApi.updateSiteLists(
-          idSite: widget.site!.id, dictOfLists: dictOfLists);
+      Response response = await siteApi.updateCustomFields(
+          idSite: widget.site.id,
+          dictOfCustomFields: dictCustomFields,
+          type_intervention: widget.type_intervention);
 
       if (response.statusCode == 200) {
         Navigator.pop(context);
-
-        callback(message: "Processing Data", dictOfLists: dictOfLists);
-        return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              duration: Duration(milliseconds: 100),
+              content: const Text("Processing Data")),
+        );
       }
       if (response.statusCode == 400) {
-        callback(
-            message: "Processing Data Error ${response.data["error"]}",
-            dictOfLists: dictOfLists);
-        return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              duration: const Duration(milliseconds: 1000),
+              content: Text("Processing Data Error ${response.data["error"]}")),
+        );
       }
     } catch (e) {
-      callback(message: e.toString(), dictOfLists: dictOfLists);
-    }*/
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            duration: const Duration(milliseconds: 2000),
+            content: Text("Processing Data Error ${e.toString()}")),
+      );
+    }
   }
 }

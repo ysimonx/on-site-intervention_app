@@ -193,93 +193,89 @@ class ListsPageState extends State<ListsPage> {
       useRootNavigator: false,
       context: context,
       builder: (BuildContext context) {
-        return LayoutBuilder(
-            builder: (_, constrains) => AlertDialog(
-                  title: Text(translateI18N("nouvelle liste").toTitleCase()),
-                  content: StatefulBuilder(
-                      builder: (BuildContext context, StateSetter setState) {
-                    return Column(children: [
-                      TextField(
-                        onChanged: (v) {
-                          controllerListName.text = v.toLowerCase();
-                        },
-                        controller: controllerListName,
-                        autofocus: true,
-                        decoration: InputDecoration(
-                            filled: true,
-                            fillColor: const Color(0xFFF2F2F2),
-                            hintText: "Enter the name of this new list"
-                                .toCapitalized()),
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: controllerValues,
-                        autofocus: true,
-                        autocorrect: false,
-                        keyboardType: TextInputType.multiline,
-                        minLines: 5,
-                        maxLines: 10,
-                        decoration: const InputDecoration(
-                          filled: true,
-                          fillColor: Color(0xFFF2F2F2),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                            borderSide: BorderSide(width: 1),
-                          ),
-                        ),
-                      ),
-                    ]);
-                  }),
-                  actions: <Widget>[
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        textStyle: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      child: Text(translateI18N("annuler").toTitleCase()),
-                      onPressed: () async {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        textStyle: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      child: const Text('Ok'),
-                      onPressed: () async {
-                        dictOfLists.remove(listname);
-                        dictOfLists[controllerListName.text] =
-                            controllerValues.text.split("\n");
+        return AlertDialog(
+          title: Text(translateI18N("nouvelle liste").toTitleCase()),
+          content: Column(children: [
+            TextField(
+              controller: controllerListName,
+              textCapitalization: TextCapitalization.none,
+              keyboardType: TextInputType.name,
+              onChanged: (v) {
+                // controllerListName.text = v.toLowerCase();
+                controllerListName.value = TextEditingValue(
+                    text: v.toLowerCase(),
+                    selection: controllerListName.selection);
+              },
 
-                        SiteApi siteApi = SiteApi();
+              // autofocus: false,
+              decoration: InputDecoration(
+                  hintText: "Enter the name of this new list".toCapitalized()),
+            ),
+            const SizedBox(height: 10),
+            TextFormField(
+              controller: controllerValues,
+              autofocus: false,
+              autocorrect: false,
+              keyboardType: TextInputType.multiline,
+              minLines: 5,
+              maxLines: 10,
+              decoration: const InputDecoration(
+                filled: true,
+                fillColor: Color(0xFFF2F2F2),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  borderSide: BorderSide(width: 1),
+                ),
+              ),
+            ),
+          ]),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: Text(translateI18N("annuler").toTitleCase()),
+              onPressed: () async {
+                Navigator.pop(context);
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Ok'),
+              onPressed: () async {
+                dictOfLists.remove(listname);
+                dictOfLists[controllerListName.text] =
+                    controllerValues.text.split("\n");
 
-                        try {
-                          Response response = await siteApi.updateSiteLists(
-                              idSite: widget.site!.id,
-                              dictOfLists: dictOfLists);
+                SiteApi siteApi = SiteApi();
 
-                          if (response.statusCode == 200) {
-                            Navigator.pop(context);
+                try {
+                  Response response = await siteApi.updateSiteLists(
+                      idSite: widget.site!.id, dictOfLists: dictOfLists);
 
-                            callback(
-                                message: "Processing Data",
-                                dictOfLists: dictOfLists);
-                            return;
-                          }
-                          if (response.statusCode == 400) {
-                            callback(
-                                message:
-                                    "Processing Data Error ${response.data["error"]}",
-                                dictOfLists: dictOfLists);
-                            return;
-                          }
-                        } catch (e) {
-                          callback(
-                              message: e.toString(), dictOfLists: dictOfLists);
-                        }
-                      },
-                    ),
-                  ],
-                ));
+                  if (response.statusCode == 200) {
+                    Navigator.pop(context);
+
+                    callback(
+                        message: "Processing Data", dictOfLists: dictOfLists);
+                    return;
+                  }
+                  if (response.statusCode == 400) {
+                    callback(
+                        message:
+                            "Processing Data Error ${response.data["error"]}",
+                        dictOfLists: dictOfLists);
+                    return;
+                  }
+                } catch (e) {
+                  callback(message: e.toString(), dictOfLists: dictOfLists);
+                }
+              },
+            ),
+          ],
+        );
       },
     );
   }

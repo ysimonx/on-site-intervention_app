@@ -208,7 +208,10 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
           content: Column(children: [
             TextField(
               onChanged: (v) {
-                controllerCustomFieldName.text = v.toLowerCase();
+                // controllerCustomFieldName.text = v.toLowerCase();
+                controllerCustomFieldName.value = TextEditingValue(
+                    text: v.toLowerCase(),
+                    selection: controllerCustomFieldName.selection);
               },
               controller: controllerCustomFieldName,
               autofocus: true,
@@ -221,7 +224,10 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
             const SizedBox(height: 10),
             TextField(
               onChanged: (v) {
-                controllerCustomFieldCodeName.text = v.toLowerCase();
+                // controllerCustomFieldCodeName.text = v.toLowerCase();
+                controllerCustomFieldCodeName.value = TextEditingValue(
+                    text: v.toLowerCase(),
+                    selection: controllerCustomFieldCodeName.selection);
               },
               controller: controllerCustomFieldCodeName,
               autofocus: true,

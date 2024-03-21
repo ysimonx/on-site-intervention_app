@@ -43,8 +43,11 @@ Future<bool> requestPermission() async {
   return true;
 }
 
-bool isNumericUsingRegularExpression(String string) {
+bool isNumericUsingRegularExpression(String? string) {
   final numericRegex = RegExp(r'^-?(([0-9]*)|(([0-9]*)\.([0-9]*)))$');
 
-  return numericRegex.hasMatch(string);
+  if (string is String) {
+    return numericRegex.hasMatch(string);
+  }
+  return false;
 }

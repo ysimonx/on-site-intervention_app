@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+
 import 'package:card_settings/card_settings.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -24,6 +25,7 @@ import '../network/api/image.api.dart';
 import '../network/api/intervention_api.dart';
 import '../network/api/user_api.dart';
 import 'utils/logger.dart';
+import 'utils/tools.dart';
 import 'widget/card_settings_listfromrole.dart';
 import 'widget/card_settings_schema.dart';
 import 'widget/card_settings_gallery.dart';
@@ -54,18 +56,14 @@ class InterventionPage extends StatefulWidget {
 // Create a corresponding State class.
 class InterventionPageState extends State<InterventionPage> {
   late List<GlobalKey<FormState>> _formsKey = [];
-
-  bool _needSave = false;
-
   late Map<String, Formulaire> mapFormulaires = {};
   late Map<String, dynamic> mapMandatoryLists = {};
 
-  String placename = "";
-  int _initialIndex = 0;
+  bool _needSave = false;
 
   late Formulaire currentFormulaire;
+  int _indexFormulaires = 0;
 
-  //Map<String, String> fieldsValue = {};
   Map<String, TextEditingController> fieldsController = {};
   List<String> listFieldsUUIDUpdated = [];
 
@@ -87,20 +85,11 @@ class InterventionPageState extends State<InterventionPage> {
 
     intervention_status = widget.intervention.status;
 
-    usersCoordinators =
-        UserApi.getCoordinatorsList(user: widget.user, site: widget.site);
-    usersCoordinators.insert(0, User.nobody());
-    userCoordinator = usersCoordinators[0];
-    print(widget.intervention.assignee_user_id);
-    for (var i = 0; i < usersCoordinators.length; i++) {
-      if (usersCoordinators[i].id == widget.intervention.assignee_user_id) {
-        userCoordinator = usersCoordinators[i];
-      }
-    }
+    _initCoordinators();
 
     myFuture = Future<String>.delayed(
       const Duration(milliseconds: 100),
-      () => getMyConfig(),
+      () => getMyFuture(),
     );
   }
 
@@ -108,17 +97,16 @@ class InterventionPageState extends State<InterventionPage> {
     setState(() {
       myFuture = Future<String>.delayed(
         const Duration(milliseconds: 100),
-        () => getMyVides(),
+        () => doNothing(),
       );
     });
   }
 
-  Future<String> getMyVides() async {
+  Future<String> doNothing() async {
     return "";
   }
 
-  // Future<List<User>> getMyConfig() async {
-  Future<String> getMyConfig() async {
+  Future<String> getMyFuture() async {
     mapFormulaires = await UserApi.getInterventionFormsFromTemplate(
         user: widget.user,
         site_name: widget.site.name,
@@ -155,7 +143,7 @@ class InterventionPageState extends State<InterventionPage> {
       });
     });
 
-    String s = (_initialIndex + 1).toString();
+    String s = (_indexFormulaires + 1).toString();
     currentFormulaire = mapFormulaires[s] as Formulaire;
 
     if (isOfflineFirst()) {
@@ -187,55 +175,13 @@ class InterventionPageState extends State<InterventionPage> {
             return Scaffold(
                 resizeToAvoidBottomInset: false,
                 appBar: AppBar(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.inversePrimary,
-                    title: Text(widget.intervention.intervention_name),
-                    actions: []),
+                  backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                  title: Text(widget.intervention.intervention_name),
+                ),
                 body: widgetMainBody(context),
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.centerDocked,
-                floatingActionButton: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        FloatingActionButton(
-                          onPressed: () async {
-                            // Validate returns true if the form is valid, or false otherwise.
-                            // if (_formKey.currentState!.validate()) {
-                            await downloadFEB(context,
-                                onMessage: (String message) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content: Text(message),
-                                    duration: const Duration(seconds: 1)),
-                              );
-                              print(message);
-                            });
-                            // }
-                          },
-                          tooltip: 'print FEB',
-                          child: const Icon(Icons.print),
-                        ),
-                        FloatingActionButton(
-                          onPressed: () async {
-                            // Validate returns true if the form is valid, or false otherwise.
-                            // if (_formKey.currentState!.validate()) {
-                            await saveIntervention(context,
-                                onMessage: (String message) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content: Text(message),
-                                    duration: const Duration(seconds: 1)),
-                              );
-                            });
-                            // }
-                          },
-                          tooltip: 'Save',
-                          child: const Icon(Icons.save),
-                        )
-                      ]),
-                ));
+                floatingActionButton: widgetFAB(context));
           }
           return const SizedBox(
             width: 60,
@@ -243,6 +189,47 @@ class InterventionPageState extends State<InterventionPage> {
             child: CircularProgressIndicator(),
           );
         });
+  }
+
+  Padding widgetFAB(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        FloatingActionButton(
+          onPressed: () async {
+            // Validate returns true if the form is valid, or false otherwise.
+            // if (_formKey.currentState!.validate()) {
+            await _downloadFEB(context, onMessage: (String message) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content: Text(message),
+                    duration: const Duration(seconds: 1)),
+              );
+              print(message);
+            });
+            // }
+          },
+          tooltip: 'print FEB',
+          child: const Icon(Icons.print),
+        ),
+        FloatingActionButton(
+          onPressed: () async {
+            // Validate returns true if the form is valid, or false otherwise.
+            // if (_formKey.currentState!.validate()) {
+            await saveIntervention(context, onMessage: (String message) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content: Text(message),
+                    duration: const Duration(seconds: 1)),
+              );
+            });
+            // }
+          },
+          tooltip: 'Save',
+          child: const Icon(Icons.save),
+        )
+      ]),
+    );
   }
 
   Widget widgetMainBody(BuildContext context) {
@@ -272,9 +259,13 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Widget widgetBodyForm(BuildContext context) {
+    Widget w = widgetBodyFormulaireNG(_indexFormulaires);
+    // GestureRecognizerDetector gestureRecognizerDetector =
+    //     GestureRecognizerDetector();
+    // gestureRecognizerDetector.addGestureRecognizer(swipeGestureRecognizer);
     return Wrap(children: [
       Form(
-          key: _formsKey[_initialIndex],
+          key: _formsKey[_indexFormulaires],
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Padding(
@@ -290,7 +281,7 @@ class InterventionPageState extends State<InterventionPage> {
             const Padding(
                 padding: EdgeInsets.symmetric(vertical: 2), child: Text(' ')),
             widgetBodyTabsFormulaires(),
-            widgetBodyFormulaireNG(_initialIndex),
+            w,
             const SizedBox(
               height: 600,
             ),
@@ -299,27 +290,27 @@ class InterventionPageState extends State<InterventionPage> {
   }
 
   Widget widgetHeaderFormulaire() {
-    List<dynamic> listStatus = UserApi.getListStatusFromTemplate(
+    List<dynamic> listStatuses = UserApi.getListStatusFromTemplate(
         user: widget.user,
         site: widget.site,
         type_intervention_name: widget.intervention.type_intervention_name);
 
     List<DropdownMenuItem<String>> listStatusDropdownMenuItems = [];
-
     List<DropdownMenuItem<User>> listDropdownMenuItemsUsers = [];
 
-    for (var i = 0; i < listStatus.length; i++) {
-      listStatusDropdownMenuItems.add(
-          DropdownMenuItem(value: listStatus[i], child: Text(listStatus[i])));
+    for (var i = 0; i < listStatuses.length; i++) {
+      String status = listStatuses[i];
+      listStatusDropdownMenuItems
+          .add(DropdownMenuItem(value: status, child: Text(status)));
     }
 
     for (var i = 0; i < usersCoordinators.length; i++) {
-      User u = usersCoordinators[i];
-      listDropdownMenuItemsUsers
-          .add(DropdownMenuItem(value: u, child: genDrowdownUserContent(u)));
+      User user = usersCoordinators[i];
+      listDropdownMenuItemsUsers.add(
+          DropdownMenuItem(value: user, child: genDrowdownUserContent(user)));
     }
-    if (listStatus.contains(intervention_status) == false) {
-      intervention_status = listStatus[0];
+    if (listStatuses.contains(intervention_status) == false) {
+      intervention_status = listStatuses[0];
     }
 
     return FlexList(horizontalSpacing: 5, verticalSpacing: 10, children: [
@@ -346,7 +337,7 @@ class InterventionPageState extends State<InterventionPage> {
           DropdownButton<String>(
               value: intervention_status,
               items: listStatusDropdownMenuItems,
-              onChanged: dropdownCallback)
+              onChanged: dropdownStatusCallback)
         ])
       ]),
     ]);
@@ -356,16 +347,15 @@ class InterventionPageState extends State<InterventionPage> {
     List<Tab> tabs = [];
     mapFormulaires.forEach((k, f) => tabs.add(Tab(child: Text(f.form_name))));
     return DefaultTabController(
-        initialIndex: _initialIndex,
+        initialIndex: _indexFormulaires,
         length: mapFormulaires.length,
         child: TabBar(
             tabAlignment: TabAlignment.start,
             isScrollable: true,
             onTap: (selectedTabIndex) async {
-              //await saveIntervention(context);
               setState(() {
-                _initialIndex = selectedTabIndex;
-                String s = (_initialIndex + 1).toString();
+                _indexFormulaires = selectedTabIndex;
+                String s = (_indexFormulaires + 1).toString();
                 currentFormulaire = mapFormulaires[s] as Formulaire;
               });
             },
@@ -374,8 +364,6 @@ class InterventionPageState extends State<InterventionPage> {
 
   Future<void> saveIntervention(BuildContext context,
       {required Null Function(String message) onMessage}) async {
-    // sauvegarde du nom
-
     // TODO : ici, on n'a QUE la liste des champs qui ont été modifiés en local
     print(listFieldsUUIDUpdated.toString());
 
@@ -423,7 +411,6 @@ class InterventionPageState extends State<InterventionPage> {
               child: const Text('Sauvegarder et quitter'),
               onPressed: () async {
                 await saveIntervention(context, onMessage: (String message) {
-                  print(message);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                         content: Text('Processing Data'),
@@ -452,21 +439,69 @@ class InterventionPageState extends State<InterventionPage> {
 
   Widget widgetBodyFormulaireNG(int initialIndex) {
     Map<String, Section> sections = currentFormulaire.sections;
-    List<CardSettingsSection> lCardSettingsSection = [];
+    List<CardSettingsSection> listCardsSettingsSection = [];
 
-    sections
-        .forEach((k, s) => lCardSettingsSection.add(sectionCardSettings(s)));
+    sections.forEach(
+        (k, s) => listCardsSettingsSection.add(cardSettingsSection(s)));
 
-    return Form(
-        child: CardSettings(
-      labelWidth: 200.0,
-      showMaterialonIOS: true, // default is false
-      cardless: true, // default is fals
-      children: lCardSettingsSection,
-    ));
+    Map<String, dynamic> jsonCF = getCustomFields(
+        type_intervention: widget.intervention.type_intervention_name,
+        form_on_site_uuid: currentFormulaire.form_on_site_uuid);
+
+    // todo ajouter section des custom fields
+
+    return GestureDetector(
+        onHorizontalDragEnd: (DragEndDetails details) {
+          if (details.primaryVelocity is double) {
+            if (details.primaryVelocity! > 0) {
+              print("gauche");
+              if (_indexFormulaires > 0) {
+                setState(() {
+                  _indexFormulaires--;
+                  String s = (_indexFormulaires + 1).toString();
+                  currentFormulaire = mapFormulaires[s] as Formulaire;
+                });
+              }
+            } else if (details.primaryVelocity! < 0) {
+              if (_indexFormulaires < mapFormulaires.length - 1) {
+                setState(() {
+                  _indexFormulaires++;
+                  String s = (_indexFormulaires + 1).toString();
+                  currentFormulaire = mapFormulaires[s] as Formulaire;
+                });
+              }
+              print("droite");
+            }
+          }
+        },
+        child: Form(
+            child: Column(
+          children: [
+            CardSettings(
+              labelWidth: 200.0,
+              showMaterialonIOS: true, // default is false
+              cardless: true, // default is fals
+              children: listCardsSettingsSection,
+            ),
+          ],
+        )));
   }
 
-  CardSettingsSection sectionCardSettings(Section s) {
+  Map<String, dynamic> getCustomFields(
+      {required String type_intervention, required String form_on_site_uuid}) {
+    Map<String, dynamic> result = {};
+
+    if (widget.site.dictOfCustomFields.containsKey(type_intervention)) {
+      Map<String, dynamic> dictCF =
+          widget.site.dictOfCustomFields[type_intervention]["forms"];
+      if (dictCF.keys.contains(form_on_site_uuid)) {
+        result = dictCF[form_on_site_uuid]["custom_fields"];
+      }
+    }
+    return result;
+  }
+
+  CardSettingsSection cardSettingsSection(Section s) {
     List<CardSettingsWidget> lCardSettingsWidget = [];
 
     s.fields
@@ -1000,7 +1035,7 @@ class InterventionPageState extends State<InterventionPage> {
         });
   }
 
-  void dropdownCallback(String? value) {
+  void dropdownStatusCallback(String? value) {
     setState(() {
       if (value is String) {
         intervention_status = value;
@@ -1008,15 +1043,6 @@ class InterventionPageState extends State<InterventionPage> {
         _needSave = true;
       }
     });
-  }
-
-  bool isNumericUsingRegularExpression(String? string) {
-    final numericRegex = RegExp(r'^-?(([0-9]*)|(([0-9]*)\.([0-9]*)))$');
-    try {
-      return numericRegex.hasMatch(string!);
-    } catch (e) {
-      return false;
-    }
   }
 
   Widget widgetNumChrono() {
@@ -1066,7 +1092,7 @@ class InterventionPageState extends State<InterventionPage> {
     }
   }
 
-  downloadFEB(BuildContext context,
+  _downloadFEB(BuildContext context,
       {required Null Function(String message) onMessage}) async {
     String url =
         "${Endpoints.baseUrl}${Endpoints.downloadFEB.replaceAll("<intervention_values_id>", widget.intervention.id)}";
@@ -1075,6 +1101,18 @@ class InterventionPageState extends State<InterventionPage> {
 
     if (!await launchUrl(_url)) {
       throw Exception('Could not launch $_url');
+    }
+  }
+
+  void _initCoordinators() {
+    usersCoordinators =
+        UserApi.getCoordinatorsList(user: widget.user, site: widget.site);
+    usersCoordinators.insert(0, User.nobody());
+    userCoordinator = usersCoordinators[0];
+    for (var i = 0; i < usersCoordinators.length; i++) {
+      if (usersCoordinators[i].id == widget.intervention.assignee_user_id) {
+        userCoordinator = usersCoordinators[i];
+      }
     }
   }
 }

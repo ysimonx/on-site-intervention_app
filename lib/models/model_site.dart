@@ -9,6 +9,7 @@ class Site {
   List<dynamic> roles = [];
   Map<String, dynamic> dictOfLists = {};
   Map<String, dynamic> dictOfListsForPlaces = {};
+  Map<String, dynamic> dictOfCustomFields = {};
   late ListsForPlaces listsForPlaces;
 
   late Tenant tenant;
@@ -38,6 +39,10 @@ class Site {
         listsForPlaces = json.containsKey('dict_of_lists_for_places')
             ? ListsForPlaces.fromJSON(json['dict_of_lists_for_places'])
             : ListsForPlaces.fromJSON({}),
+        dictOfCustomFields =
+            json.containsKey("types_interventions_dict_of_custom_fields")
+                ? json["types_interventions_dict_of_custom_fields"]
+                : {},
         tenant = Tenant.fromJson(json['tenant']);
 
   List<String> getRoleNamesForUser(User u) {

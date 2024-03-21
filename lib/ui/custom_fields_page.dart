@@ -13,6 +13,7 @@ import '../models/model_user.dart';
 import '../network/api/site_api.dart';
 import '../network/api/user_api.dart';
 import 'utils/i18n.dart';
+import 'utils/logger.dart';
 import 'widget/app_bar.dart';
 import 'widget/common_widgets.dart';
 
@@ -39,6 +40,8 @@ class CustomFieldsPage extends StatefulWidget {
 class CustomFieldsPageState extends State<CustomFieldsPage> {
   late Map<int, CustomField> dictCustomFields = {};
 
+  late Map<String, dynamic> mapCustomFieldsSite = {};
+
   late String _title = 'champs personnalisés';
 
   @override
@@ -48,6 +51,31 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
     dictCustomFields = {};
 
     _title = "champs personnalisés";
+
+    mapCustomFieldsSite = widget.site.dictOfCustomFields;
+    print(mapCustomFieldsSite.toString());
+    if (mapCustomFieldsSite.containsKey(widget.type_intervention)) {
+      Map<String, dynamic> confCustomFields =
+          mapCustomFieldsSite[widget.type_intervention];
+      if (confCustomFields.containsKey("forms")) {
+        Map<String, dynamic> confCustomFieldsForms = confCustomFields["forms"];
+        if (confCustomFieldsForms
+            .containsKey(widget.formulaire.form_on_site_uuid)) {
+          Map<String, dynamic> conf =
+              confCustomFieldsForms[widget.formulaire.form_on_site_uuid];
+          if (conf.containsKey("custom_fields")) {
+            conf["custom_fields"].forEach((key, value) {
+              print(key);
+              print(value);
+              dictCustomFields[int.parse(key)] = CustomField.fromJson(value);
+            });
+          }
+
+          print(dictCustomFields);
+          print("yes !!! c'est ici ");
+        }
+      }
+    }
   }
 
   @override
@@ -90,6 +118,15 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
                               child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                              IconButton(
+                                  iconSize: 40.0,
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () async {
+                                    removeFromList(index: index);
+                                    saveCustomFields();
+                                    setState(() {});
+                                  }),
+                              SizedBox(width: 40.0),
                               Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -257,5 +294,24 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
             content: Text("Processing Data Error ${e.toString()}")),
       );
     }
+  }
+
+  void removeFromList({required int index}) {
+    logger.i("$index");
+    dictCustomFields.remove(index);
+    fixOrderOfList();
+  }
+
+  void fixOrderOfList() {
+    List<int> keys = dictCustomFields.keys.toList();
+    keys.sort();
+    Map<int, CustomField> newmapLists = {};
+
+    int j = 0;
+    keys.forEach((element) {
+      newmapLists[j] = dictCustomFields[element] as CustomField;
+      j++;
+    });
+    dictCustomFields = newmapLists;
   }
 }

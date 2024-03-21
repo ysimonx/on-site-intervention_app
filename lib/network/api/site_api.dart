@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:on_site_intervention_app/models/model_custom_field.dart';
+import 'package:on_site_intervention_app/models/model_formulaire.dart';
 import 'package:on_site_intervention_app/models/model_user.dart';
 import 'package:on_site_intervention_app/ui/lists_for_places_page.dart';
 
@@ -226,7 +227,8 @@ class SiteApi {
   updateCustomFields(
       {required String idSite,
       required Map<int, CustomField> dictOfCustomFields,
-      required type_intervention}) async {
+      required type_intervention,
+      required Formulaire formulaire}) async {
     Map<String, dynamic> dict_of_custom_fields = {};
     dictOfCustomFields.forEach((key, value) {
       dict_of_custom_fields["${key}"] = value.toJSON();
@@ -237,6 +239,7 @@ class SiteApi {
 
       var formData = {
         "type_intervention": type_intervention,
+        "formulaire": formulaire.toJSON(),
         "dict_of_custom_fields": dict_of_custom_fields
       };
       String json = jsonEncode(formData);

@@ -231,6 +231,7 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
     try {
       Response response = await siteApi.updateCustomFields(
           idSite: widget.site.id,
+          formulaire: widget.formulaire,
           dictOfCustomFields: dictCustomFields,
           type_intervention: widget.type_intervention);
 

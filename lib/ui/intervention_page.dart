@@ -9,11 +9,14 @@ import 'package:card_settings/card_settings.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
+import 'package:on_site_intervention_app/ui/utils/i18n.dart';
 import 'package:on_site_intervention_app/ui/utils/mobilefirst.dart';
+import 'package:on_site_intervention_app/ui/utils/uuid.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flex_list/flex_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../models/model_custom_field.dart';
 import '../models/model_field.dart';
 import '../models/model_formulaire.dart';
 import '../models/model_intervention.dart';
@@ -76,6 +79,8 @@ class InterventionPageState extends State<InterventionPage> {
   late List<User> usersCoordinators;
 
   late Future<String> myFuture;
+
+  var testCF = "";
 
   // late Directory directory;
 
@@ -448,6 +453,18 @@ class InterventionPageState extends State<InterventionPage> {
         type_intervention: widget.intervention.type_intervention_name,
         form_on_site_uuid: currentFormulaire.form_on_site_uuid);
 
+    CardSettingsSection css = cardSettingsSectionCustomFields(
+        section: Section(
+            section_on_site_uuid: generateUUID(),
+            section_name: 'site',
+            section_type: 'custom'),
+        json_custom_fields: jsonCF);
+    if (listCardsSettingsSection.length < 1) {
+      listCardsSettingsSection.add(css);
+    } else {
+      listCardsSettingsSection.insert(1, css);
+    }
+
     // todo ajouter section des custom fields
 
     return GestureDetector(
@@ -509,7 +526,7 @@ class InterventionPageState extends State<InterventionPage> {
 
     return CardSettingsSection(
         header: CardSettingsHeader(
-          label: s.section_name,
+          label: s.section_name.toCapitalized(),
           /* child: Container(
                 color: Colors.grey,
                 child: Column(children: [
@@ -521,6 +538,41 @@ class InterventionPageState extends State<InterventionPage> {
                 */
         ),
         children: lCardSettingsWidget);
+  }
+
+  CardSettingsSection cardSettingsSectionCustomFields(
+      {required Section section,
+      required Map<String, dynamic> json_custom_fields}) {
+    List<CardSettingsWidget> lCardSettingsWidget = [];
+
+    if (json_custom_fields.length > 0) {
+      print("yo");
+      json_custom_fields.forEach((key, value) {
+        CustomField cf = CustomField.fromJson(json_custom_fields[key]);
+        lCardSettingsWidget.add(fieldCardSettingsCustomField(
+            custom_field: cf, initialValue: testCF));
+      });
+    }
+    return CardSettingsSection(
+        header: CardSettingsHeader(
+          label: section.section_name.toCapitalized(),
+          /* child: Container(
+                color: Colors.grey,
+                child: Column(children: [
+                  SizedBox(height: 100),
+                  Row(children: [
+                    Text(s.section_name, style: TextStyle(fontSize: 18))
+                  ])
+                ])),
+                */
+        ),
+        children: lCardSettingsWidget);
+  }
+
+  CardSettingsWidget fieldCardSettingsCustomField(
+      {required CustomField custom_field, required String initialValue}) {
+    return genCardSettingsTextCustomField(
+        custom_field: custom_field, initialValue: initialValue);
   }
 
   CardSettingsWidget fieldCardSettings(Field f, Section s) {
@@ -1114,5 +1166,29 @@ class InterventionPageState extends State<InterventionPage> {
         userCoordinator = usersCoordinators[i];
       }
     }
+  }
+
+  CardSettingsWidget genCardSettingsTextCustomField(
+      {required CustomField custom_field, required String initialValue}) {
+    return CardSettingsText(
+        label: custom_field.label,
+        initialValue: initialValue,
+        validator: (value) {
+          logger.f(value);
+          // fieldsController[f.field_on_site_uuid]!.text = value as String;
+
+          // keep track of real updates
+          if (value is String) {
+            if (value != initialValue) {
+              testCF = value;
+              /* if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+              listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+            }*/
+              _needSave = true;
+            }
+          }
+
+          return null;
+        });
   }
 }

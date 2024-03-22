@@ -65,14 +65,9 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
               confCustomFieldsForms[widget.formulaire.form_on_site_uuid];
           if (conf.containsKey("custom_fields")) {
             conf["custom_fields"].forEach((key, value) {
-              print(key);
-              print(value);
               dictCustomFields[int.parse(key)] = CustomField.fromJson(value);
             });
           }
-
-          print(dictCustomFields);
-          print("yes !!! c'est ici ");
         }
       }
     }
@@ -141,10 +136,10 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
                                           onNewValue: (
                                               {required CustomField
                                                   customField}) {
-                                            saveCustomFields();
                                             setState(() {
                                               dictCustomFields[index] =
                                                   customField;
+                                              saveCustomFields();
                                             });
                                           });
                                     },

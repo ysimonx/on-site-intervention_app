@@ -21,6 +21,7 @@ class Intervention {
   int version = 1;
   Map<String, Formulaire> forms = {};
   Map<String, dynamic> field_on_site_uuid_values = {};
+  Map<String, String> custom_fields_values = {};
   Place place;
   String? assignee_user_id;
   User? assignee_user;
@@ -59,6 +60,7 @@ class Intervention {
     data['hashtag'] = hashtag;
     data['indice'] = indice;
     data['num_chrono'] = num_chrono;
+    data['custom_fields_values'] = custom_fields_values;
 
     return data;
   }
@@ -113,7 +115,10 @@ class Intervention {
             : User.nobody(),
         num_chrono =
             json['num_chrono'] != null ? "${json['num_chrono']}" : null,
-        hashtag = json.containsKey('hashtag') ? "${json['hashtag']}" : "";
+        hashtag = json.containsKey('hashtag') ? "${json['hashtag']}" : "",
+        custom_fields_values = json.containsKey('custom_fields_values')
+            ? json["custom_fields_values"]
+            : {};
 
   // forms2 = {};
   String BuildNumRegistre() {

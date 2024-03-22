@@ -70,6 +70,8 @@ class InterventionPageState extends State<InterventionPage> {
   Map<String, TextEditingController> fieldsController = {};
   List<String> listFieldsUUIDUpdated = [];
 
+  Map<String, String> mapCustomFieldsValues = {};
+
   late Directory? deviceApplicationDocumentsDirectory;
   late Directory? directoryImageGallery;
   late Directory? directoryPendingUploadImageGallery;
@@ -378,6 +380,8 @@ class InterventionPageState extends State<InterventionPage> {
       widget.intervention.field_on_site_uuid_values[key] = value.text;
     });
 
+    widget.intervention.custom_fields_values = mapCustomFieldsValues;
+
     try {
       onMessage('Processing Data');
     } catch (e) {
@@ -453,16 +457,19 @@ class InterventionPageState extends State<InterventionPage> {
         type_intervention: widget.intervention.type_intervention_name,
         form_on_site_uuid: currentFormulaire.form_on_site_uuid);
 
-    CardSettingsSection css = cardSettingsSectionCustomFields(
-        section: Section(
-            section_on_site_uuid: generateUUID(),
-            section_name: 'site',
-            section_type: 'custom'),
-        json_custom_fields: jsonCF);
-    if (listCardsSettingsSection.length < 1) {
-      listCardsSettingsSection.add(css);
-    } else {
-      listCardsSettingsSection.insert(1, css);
+    // if custom_fields was configured for this formulaire and for this type of intervention
+    if (jsonCF.length > 0) {
+      CardSettingsSection css = cardSettingsSectionCustomFields(
+          section: Section(
+              section_on_site_uuid: generateUUID(),
+              section_name: 'site',
+              section_type: 'custom'),
+          json_custom_fields: jsonCF);
+      if (listCardsSettingsSection.length < 1) {
+        listCardsSettingsSection.add(css);
+      } else {
+        listCardsSettingsSection.insert(1, css);
+      }
     }
 
     // todo ajouter section des custom fields
@@ -1181,6 +1188,7 @@ class InterventionPageState extends State<InterventionPage> {
           if (value is String) {
             if (value != initialValue) {
               testCF = value;
+              mapCustomFieldsValues[custom_field.code] = value;
               /* if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
               listFieldsUUIDUpdated.add(f.field_on_site_uuid);
             }*/

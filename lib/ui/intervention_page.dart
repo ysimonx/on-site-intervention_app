@@ -29,6 +29,7 @@ import '../network/api/intervention_api.dart';
 import '../network/api/user_api.dart';
 import 'utils/logger.dart';
 import 'utils/tools.dart';
+import 'widget/card_settings_autocompletetext.dart';
 import 'widget/card_settings_listfromrole.dart';
 import 'widget/card_settings_schema.dart';
 import 'widget/card_settings_gallery.dart';
@@ -1183,25 +1184,23 @@ class InterventionPageState extends State<InterventionPage> {
 
   CardSettingsWidget genCardSettingsTextCustomField(
       {required CustomField custom_field, required String initialValue}) {
-    return CardSettingsText(
-        label: custom_field.label,
-        initialValue: initialValue,
-        validator: (value) {
-          logger.f(value);
-          // fieldsController[f.field_on_site_uuid]!.text = value as String;
+    return CardSettingsAutoCompleteText(
+      label: custom_field.label,
+      initialValue: initialValue,
+      items: custom_field.autocomplete_values,
+      onChanged: (value) {
+        logger.f(value);
+        // fieldsController[f.field_on_site_uuid]!.text = value as String;
 
-          // keep track of real updates
-          if (value is String) {
-            if (value != initialValue) {
-              mapCustomFieldsValues[custom_field.code] = value;
-              /* if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+        // keep track of real updates
+        if (value != initialValue) {
+          mapCustomFieldsValues[custom_field.code] = value;
+          /* if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
               listFieldsUUIDUpdated.add(f.field_on_site_uuid);
             }*/
-              _needSave = true;
-            }
-          }
-
-          return null;
-        });
+          _needSave = true;
+        }
+      },
+    );
   }
 }

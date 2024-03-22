@@ -133,6 +133,8 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
                                           site: widget.site,
                                           customfieldname: customField.label,
                                           customfieldcodename: customField.code,
+                                          customfieldvalues:
+                                              customField.autocomplete_values,
                                           onNewValue: (
                                               {required CustomField
                                                   customField}) {
@@ -156,6 +158,7 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
                   site: widget.site,
                   customfieldname: null,
                   customfieldcodename: null,
+                  customfieldvalues: [],
                   onNewValue: ({required CustomField customField}) {
                     setState(() {
                       int size = dictCustomFields.length;
@@ -179,12 +182,14 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
     required Site site,
     required String? customfieldname,
     required String? customfieldcodename,
+    required List<dynamic> customfieldvalues,
     required Null Function({required CustomField customField}) onNewValue,
   }) {
     late TextEditingController controllerCustomFieldCodeName =
         TextEditingController();
     late TextEditingController controllerCustomFieldName =
         TextEditingController();
+    late TextEditingController controllerValues = TextEditingController();
 
     if (customfieldname != null) {
       controllerCustomFieldName.text = customfieldname;
@@ -192,6 +197,8 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
     if (customfieldcodename != null) {
       controllerCustomFieldCodeName.text = customfieldcodename;
     }
+
+    controllerValues.text = customfieldvalues.join("\n");
 
     showDialog<void>(
       useRootNavigator: false,
@@ -203,7 +210,6 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
           content: Column(children: [
             TextField(
               onChanged: (v) {
-                // controllerCustomFieldName.text = v.toLowerCase();
                 controllerCustomFieldName.value = TextEditingValue(
                     text: v.toLowerCase(),
                     selection: controllerCustomFieldName.selection);
@@ -219,7 +225,6 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
             const SizedBox(height: 10),
             TextField(
               onChanged: (v) {
-                // controllerCustomFieldCodeName.text = v.toLowerCase();
                 controllerCustomFieldCodeName.value = TextEditingValue(
                     text: v.toLowerCase(),
                     selection: controllerCustomFieldCodeName.selection);
@@ -231,7 +236,24 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
                   fillColor: const Color(0xFFF2F2F2),
                   hintText: "Entrez le code 'csv' du champ personnalisé"
                       .toCapitalized()),
-            )
+            ),
+            const SizedBox(height: 10),
+            TextFormField(
+              controller: controllerValues,
+              autofocus: false,
+              autocorrect: false,
+              keyboardType: TextInputType.multiline,
+              minLines: 5,
+              maxLines: 10,
+              decoration: const InputDecoration(
+                filled: true,
+                fillColor: Color(0xFFF2F2F2),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  borderSide: BorderSide(width: 1),
+                ),
+              ),
+            ),
           ]),
           actions: <Widget>[
             TextButton(
@@ -251,7 +273,8 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
               onPressed: () async {
                 CustomField customField = CustomField(
                     code: controllerCustomFieldCodeName.text.toLowerCase(),
-                    label: controllerCustomFieldName.text.toLowerCase());
+                    label: controllerCustomFieldName.text.toLowerCase(),
+                    autocomplete_values: controllerValues.text.split("\n"));
 
                 onNewValue(customField: customField);
                 Navigator.pop(context);

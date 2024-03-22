@@ -70,7 +70,7 @@ class InterventionPageState extends State<InterventionPage> {
   Map<String, TextEditingController> fieldsController = {};
   List<String> listFieldsUUIDUpdated = [];
 
-  Map<String, String> mapCustomFieldsValues = {};
+  Map<String, dynamic> mapCustomFieldsValues = {};
 
   late Directory? deviceApplicationDocumentsDirectory;
   late Directory? directoryImageGallery;
@@ -81,8 +81,6 @@ class InterventionPageState extends State<InterventionPage> {
   late List<User> usersCoordinators;
 
   late Future<String> myFuture;
-
-  var testCF = "";
 
   // late Directory directory;
 
@@ -170,6 +168,8 @@ class InterventionPageState extends State<InterventionPage> {
 
     String interventionName = widget.intervention.BuildNumRegistre();
     widget.intervention.intervention_name = interventionName;
+
+    mapCustomFieldsValues = widget.intervention.custom_fields_values;
     return "";
   }
 
@@ -554,8 +554,14 @@ class InterventionPageState extends State<InterventionPage> {
 
     if (json_custom_fields.length > 0) {
       print("yo");
+
       json_custom_fields.forEach((key, value) {
+        String testCF = "";
+
         CustomField cf = CustomField.fromJson(json_custom_fields[key]);
+        if (mapCustomFieldsValues.keys.contains(cf.code)) {
+          testCF = mapCustomFieldsValues[cf.code] as String;
+        }
         lCardSettingsWidget.add(fieldCardSettingsCustomField(
             custom_field: cf, initialValue: testCF));
       });
@@ -1187,7 +1193,6 @@ class InterventionPageState extends State<InterventionPage> {
           // keep track of real updates
           if (value is String) {
             if (value != initialValue) {
-              testCF = value;
               mapCustomFieldsValues[custom_field.code] = value;
               /* if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
               listFieldsUUIDUpdated.add(f.field_on_site_uuid);

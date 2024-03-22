@@ -21,7 +21,7 @@ class Intervention {
   int version = 1;
   Map<String, Formulaire> forms = {};
   Map<String, dynamic> field_on_site_uuid_values = {};
-  Map<String, String> custom_fields_values = {};
+  Map<String, dynamic> custom_fields_values = {};
   Place place;
   String? assignee_user_id;
   User? assignee_user;

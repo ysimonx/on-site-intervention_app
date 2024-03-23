@@ -496,10 +496,12 @@ class InterventionPageState extends State<InterventionPage> {
         child: Form(
             child: Column(
           children: [
-            CardSettings(
+            CardSettings.sectioned(
+              cardElevation: 20.0,
+              cardless: false,
               labelWidth: 200.0,
               showMaterialonIOS: true, // default is false
-              cardless: true, // default is fals
+
               children: listCardsSettingsSection,
             ),
           ],

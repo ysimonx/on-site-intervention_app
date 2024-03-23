@@ -31,7 +31,6 @@ class TypesInterventionPageState extends State<TypesInterventionPage> {
   void initState() {
     super.initState();
     mapTypesIntervention = widget.user.myconfig.config_types_intervention;
-    print(mapTypesIntervention.toString());
   }
 
   @override
@@ -53,7 +52,7 @@ class TypesInterventionPageState extends State<TypesInterventionPage> {
                       margin: const EdgeInsets.all(10),
                       child: ListTile(
                         leading: const Icon(Icons.list),
-                        title: Text("${type_intervention}"),
+                        title: Text(type_intervention),
                         //subtitle:
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -78,6 +77,7 @@ class TypesInterventionPageState extends State<TypesInterventionPage> {
 
   PreferredSize widgetAppBar(User? me) {
     return PreferredSize(
-        preferredSize: Size.fromHeight(100), child: BaseAppBar(title: _title));
+        preferredSize: const Size.fromHeight(100),
+        child: BaseAppBar(title: _title));
   }
 }

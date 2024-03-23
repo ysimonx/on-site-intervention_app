@@ -217,7 +217,6 @@ class UsersPageState extends State<UsersPage> {
       useRootNavigator: false,
       context: context,
       builder: (BuildContext context) {
-        print(site.toString());
         List<Map<String, dynamic>> listRoles = [];
         for (var i = 0; i < site.roles.length; i++) {
           Map<String, dynamic> x = site.roles[i];
@@ -231,9 +230,7 @@ class UsersPageState extends State<UsersPage> {
             for (var j = 0; j < users.length; j++) {
               Map<String, dynamic> userJSON = users[j]["user"];
 
-              print(userJSON.toString());
               String x = userJSON["company"];
-              print(x);
               if (userJSON["company"] != null) {
                 String company = userJSON["company"];
 
@@ -333,7 +330,6 @@ class UsersPageState extends State<UsersPage> {
                   genRawAutoCompleteCompany(
                       companies: listCompanies,
                       onSubmit: (value) {
-                        print(value);
                         textCompanyController.text = value;
                       },
                       initialValue: textCompanyController.text),
@@ -458,7 +454,6 @@ class UsersPageState extends State<UsersPage> {
       },
       onSelected: (value) {
         // ICI !
-        print(value);
         onSubmit(value);
       },
       optionsViewBuilder: (BuildContext context,

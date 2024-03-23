@@ -32,7 +32,6 @@ class ChoosePlaceWidgetState extends State<ChoosePlaceWidget> {
 
     // initiation des valeurs des listes
     listsForPlaces = widget.site!.listsForPlaces;
-    print(widget.place.toString());
     listsForPlaces.mapLists.forEach((key, listForPlaces) {
       dataForPlaces[listForPlaces.list_name] = "-"; // valeur par defaut
 

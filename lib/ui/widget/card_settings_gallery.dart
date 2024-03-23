@@ -149,7 +149,6 @@ Widget widgetGalleryItem(
       String host = Endpoints.baseUrl;
       path = path.replaceAll("<image>", uriPicture);
       urlImg = "${host}${path}";
-      print(urlImg);
     }
     widgetChild = CachedNetworkImage(
         imageUrl: urlImg, fit: BoxFit.cover, width: 1000.0, height: 1000.0);

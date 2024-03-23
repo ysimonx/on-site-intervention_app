@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
     if (isOfflineFirst()) {
       await ImageApi.uploadPhotos();
       int nbInterventionsUploaded = await interventionAPI.uploadInterventions();
-      logger.i("nb interventions uploaded ${nbInterventionsUploaded}");
+      logger.i("nb interventions uploaded $nbInterventionsUploaded");
 
       try {
         List<Site> list = user.sites;

@@ -77,8 +77,8 @@ class CardSettingsFloat extends CardSettingsText
           focusNode: focusNode,
           inputAction: inputAction,
           inputActionNode: inputActionNode,
-          keyboardType:
-              keyboardType ?? TextInputType.numberWithOptions(decimal: false),
+          keyboardType: keyboardType ??
+              const TextInputType.numberWithOptions(decimal: false),
           style: style,
           maxLengthEnforcement: maxLengthEnforcement,
           onFieldSubmitted: onFieldSubmitted,

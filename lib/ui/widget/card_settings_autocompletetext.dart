@@ -248,8 +248,9 @@ class _CardSettingsTextState extends FormFieldState<String> {
       return;
     }
 
-    if (this.widget.onFieldSubmitted != null)
+    if (this.widget.onFieldSubmitted != null) {
       this.widget.onFieldSubmitted!(value);
+    }
   }
 
   Widget _build(BuildContext context) {

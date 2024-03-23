@@ -462,7 +462,7 @@ class InterventionPageState extends State<InterventionPage> {
               section_name: 'site',
               section_type: 'custom'),
           json_custom_fields: jsonCF);
-      if (listCardsSettingsSection.length < 1) {
+      if (listCardsSettingsSection.isEmpty) {
         listCardsSettingsSection.add(css);
       } else {
         listCardsSettingsSection.insert(1, css);
@@ -547,7 +547,7 @@ class InterventionPageState extends State<InterventionPage> {
       required Map<String, dynamic> json_custom_fields}) {
     List<CardSettingsWidget> lCardSettingsWidget = [];
 
-    if (json_custom_fields.length > 0) {
+    if (json_custom_fields.isNotEmpty) {
       json_custom_fields.forEach((key, value) {
         String testCF = "";
 

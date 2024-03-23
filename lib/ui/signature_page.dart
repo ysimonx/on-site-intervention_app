@@ -227,7 +227,7 @@ class _SignaturePageState extends State<SignaturePage> {
                   }
                   if ((x - x_prec).abs() > minDistanceBetweenPoints ||
                       (y - y_prec).abs() > minDistanceBetweenPoints) {
-                    String s = "${x},${y}";
+                    String s = "$x,$y";
                     filteredPoints.add(s);
                     x_prec = x;
                     y_prec = y;

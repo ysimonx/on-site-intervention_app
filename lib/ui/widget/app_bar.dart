@@ -138,13 +138,12 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                           children: [
                             Text(translateI18N("export Excel").toCapitalized()),
                             Expanded(
-                                child: Container(
-                                    child: IconButton(
-                              icon: Icon(Icons.copy),
+                                child: IconButton(
+                              icon: const Icon(Icons.copy),
                               onPressed: () {
                                 copy(context: context);
                               },
-                            ))),
+                            )),
                           ],
                         ),
                       ),
@@ -219,7 +218,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                     SnackBar(
                         content:
                             Text('${info.appName} version ${info.version}'),
-                        duration: Duration(seconds: 5)),
+                        duration: const Duration(seconds: 5)),
                   );
                 }
                 if (value == valueGOOGLESTORE) {
@@ -253,7 +252,7 @@ class AuthentifiedBaseAppBar extends StatelessWidget
     String url =
         "${Endpoints.baseUrl}${Endpoints.exportInterventionsCSV.replaceAll("<site_id>", site!.id)}";
     await FlutterClipboard.copy(url);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       backgroundColor: Colors.green,
       content: Text(
         "📝 text url export Excel copiées dans le presse-papier",

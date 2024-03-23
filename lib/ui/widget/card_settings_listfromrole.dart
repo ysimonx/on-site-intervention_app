@@ -200,7 +200,6 @@ class _CardSettingsTextState extends FormFieldState<String> {
       listDropdownMenuItemsUsers
           .add(DropdownMenuItem(value: i, child: genDrowdownUserContent(u)));
     }
-    print(listDropdownMenuItemsUsers);
     if (widget.initialValue is String) {
       try {
         iDropdownMenuItemsUsers = int.parse(widget.initialValue!);
@@ -270,15 +269,17 @@ class _CardSettingsTextState extends FormFieldState<String> {
       return;
     }
 
-    if (this.widget.onFieldSubmitted != null)
+    if (this.widget.onFieldSubmitted != null) {
       this.widget.onFieldSubmitted!(value);
+    }
   }
 
   Widget _build(BuildContext context) {
-    if (showCupertino(context, widget.showMaterialonIOS))
+    if (showCupertino(context, widget.showMaterialonIOS)) {
       return _buildCupertinoTextbox(context);
-    else
+    } else {
       return _buildMaterialTextbox(context);
+    }
   }
 
   Container _buildCupertinoTextbox(BuildContext context) {
@@ -312,11 +313,11 @@ class _CardSettingsTextState extends FormFieldState<String> {
         decoration: hasError
             ? BoxDecoration(
                 border: Border.all(color: Colors.red),
-                borderRadius: BorderRadius.all(
+                borderRadius: const BorderRadius.all(
                   Radius.circular(4.0),
                 ),
               )
-            : BoxDecoration(
+            : const BoxDecoration(
                 border: Border(
                   top: BorderSide(
                     color: CupertinoColors.lightBackgroundGray,
@@ -382,14 +383,15 @@ class _CardSettingsTextState extends FormFieldState<String> {
                       style: CSWidgetStyle(icon: widget.icon),
                     ),
                     Container(
-                      padding: EdgeInsets.all(5.0),
-                      child: _child,
+                      padding: const EdgeInsets.all(5.0),
                       color: Theme.of(context).brightness == Brightness.dark
                           ? null
                           : CupertinoColors.white,
+                      child: _child,
                     ),
                     Container(
-                      padding: widget.showCounter ? EdgeInsets.all(5.0) : null,
+                      padding:
+                          widget.showCounter ? const EdgeInsets.all(5.0) : null,
                       color: Theme.of(context).brightness == Brightness.dark
                           ? null
                           : CupertinoColors.white,
@@ -399,7 +401,7 @@ class _CardSettingsTextState extends FormFieldState<String> {
                               children: <Widget>[
                                 Text(
                                   "${_controller?.text.length ?? 0}/${widget.maxLength}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: CupertinoColors.inactiveGray,
                                   ),
                                 ),
@@ -413,7 +415,7 @@ class _CardSettingsTextState extends FormFieldState<String> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     CSControl(
-                      nameWidget: Container(
+                      nameWidget: SizedBox(
                         width: widget.labelWidth ??
                             CardSettings.of(context)?.labelWidth ??
                             120.0,
@@ -423,14 +425,15 @@ class _CardSettingsTextState extends FormFieldState<String> {
                       ),
                       contentWidget: Expanded(
                         child: Container(
-                          padding: EdgeInsets.only(left: 10.0),
+                          padding: const EdgeInsets.only(left: 10.0),
                           child: _child,
                         ),
                       ),
                       style: CSWidgetStyle(icon: widget.icon),
                     ),
                     Container(
-                      padding: widget.showCounter ? EdgeInsets.all(5.0) : null,
+                      padding:
+                          widget.showCounter ? const EdgeInsets.all(5.0) : null,
                       color: Theme.of(context).brightness == Brightness.dark
                           ? null
                           : CupertinoColors.white,
@@ -440,7 +443,7 @@ class _CardSettingsTextState extends FormFieldState<String> {
                               children: <Widget>[
                                 Text(
                                   "${_controller?.text.length ?? 0}/${widget.maxLength}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: CupertinoColors.inactiveGray,
                                   ),
                                 ),
@@ -469,18 +472,16 @@ class _CardSettingsTextState extends FormFieldState<String> {
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (listDropdownMenuItemsUsers.length > 0)
+          if (listDropdownMenuItemsUsers.isNotEmpty)
             DropdownButton<int>(
                 value: iDropdownMenuItemsUsers,
                 items: listDropdownMenuItemsUsers,
                 onChanged: (value) {
                   if (value is int) {
-                    print(value.toString());
                     User u = widget.items[value];
                     _handleOnChanged(u);
                     setState(() {
                       iDropdownMenuItemsUsers = value;
-                      print(value.toString());
                     });
                   }
                 }),
@@ -502,7 +503,7 @@ class _CardSettingsTextState extends FormFieldState<String> {
                         // Navigator.of(context).pop(null);
                       },
                     ),
-                    SizedBox(width: 40.0),
+                    const SizedBox(width: 40.0),
                     IconButton(
                       padding: EdgeInsets.zero,
                       iconSize: 40,
@@ -520,7 +521,7 @@ class _CardSettingsTextState extends FormFieldState<String> {
                     ),
                   ],
                 )
-              : SizedBox(width: 1.0)
+              : const SizedBox(width: 1.0)
 
           /*TextField(
             controller: _controller,

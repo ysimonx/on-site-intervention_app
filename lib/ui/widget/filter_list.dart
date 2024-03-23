@@ -88,11 +88,8 @@ Widget widgetFilterList(FilterList filterList,
                 onSubmitted: (value) {
                   filterList.searchText = value;
                   onChangedFilterList(filterList);
-                  print(value.toString());
                 },
-                onChanged: (value) {
-                  print(value.toString());
-                },
+                onChanged: (value) {},
               )),
               IconButton(
                   icon: const Icon(Icons.close),
@@ -101,7 +98,7 @@ Widget widgetFilterList(FilterList filterList,
                     filterList.searchText = "";
                     onChangedFilterList(filterList);
                   }),
-              Icon(Icons.search)
+              const Icon(Icons.search)
             ])),
         FlexList(horizontalSpacing: 1, verticalSpacing: 1, children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -112,7 +109,6 @@ Widget widgetFilterList(FilterList filterList,
                 onChanged: (value) {
                   filterList.status = value;
                   onChangedFilterList(filterList);
-                  print(value);
                 })
           ]),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -126,7 +122,6 @@ Widget widgetFilterList(FilterList filterList,
                         filterList.usersCoordinators[value];
                     filterList.indiceCoordinator = value;
                     onChangedFilterList(filterList);
-                    print(value.toString());
                   }
                 })
           ])

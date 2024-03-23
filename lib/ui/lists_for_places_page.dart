@@ -179,7 +179,7 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
         builder: (_) {
           return AlertDialog(
             title:
-                Text("Confirmez-vous la suppression de la liste '${listname}'"),
+                Text("Confirmez-vous la suppression de la liste '$listname'"),
             actions: [
               TextButton(
                 style: TextButton.styleFrom(
@@ -300,7 +300,6 @@ class ListsForPlacesPageState extends State<ListsForPlacesPage> {
                             values: controllerValues.text.split("\n"));
 
                         lists_for_places.mapLists[order] = lfp;
-                        print(lists_for_places.toString());
                         saveListForPlaces(callback: callback);
                       },
                     ),

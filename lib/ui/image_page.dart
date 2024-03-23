@@ -27,10 +27,10 @@ class ImagePageState extends State<ImagePage> {
     try {
       f = File(widget.filepath);
 
+      // ignore: unused_local_variable
       final image = img.decodeImage(File(widget.filepath).readAsBytesSync())!;
-      print(image.toString());
     } catch (e) {
-      print(e.toString());
+      // print(e.toString());
     }
     return [];
   }

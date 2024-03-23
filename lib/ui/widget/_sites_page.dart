@@ -42,15 +42,11 @@ Widget getSitesWidget(
                 IconButton(
                     iconSize: 30,
                     onPressed: () async {
-                      /*await Navigator.push(
+                      await Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
                                   SitePage(user: user, site: sites[index])));
-                      */
-                      await Navigator.pushNamed(context, SitePage.routeName,
-                          arguments: SitePageArguments(user, sites[index]));
-
                       onRefresh(1);
                     },
                     icon: const Icon(Icons.navigate_next))

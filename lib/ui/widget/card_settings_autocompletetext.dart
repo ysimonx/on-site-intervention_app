@@ -1,15 +1,12 @@
 // Copyright (c) 2018, codegrue. All rights reserved. Use of this source code
 // is governed by the MIT license that can be found in the LICENSE file.
 
-import 'package:card_settings/helpers/platform_functions.dart';
 import 'package:card_settings/interfaces/common_field_properties.dart';
 import 'package:card_settings/interfaces/text_field_properties.dart';
 import 'package:card_settings/widgets/card_settings_field.dart';
-import 'package:card_settings/widgets/card_settings_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
-import 'package:flutter_cupertino_settings/flutter_cupertino_settings.dart';
 import 'package:flutter/cupertino.dart';
 
 /// This is a standard one line text entry  It's based on the [TextFormField] widget.

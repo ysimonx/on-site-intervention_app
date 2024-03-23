@@ -213,7 +213,6 @@ class InterventionPageState extends State<InterventionPage> {
                     content: Text(message),
                     duration: const Duration(seconds: 1)),
               );
-              print(message);
             });
             // }
           },
@@ -373,7 +372,6 @@ class InterventionPageState extends State<InterventionPage> {
   Future<void> saveIntervention(BuildContext context,
       {required Null Function(String message) onMessage}) async {
     // TODO : ici, on n'a QUE la liste des champs qui ont été modifiés en local
-    print(listFieldsUUIDUpdated.toString());
 
     // sauvegarde des valeurs textes des formulaires
     // widget.intervention.field_on_site_uuid_values = {};
@@ -385,9 +383,7 @@ class InterventionPageState extends State<InterventionPage> {
 
     try {
       onMessage('Processing Data');
-    } catch (e) {
-      print(e.toString());
-    }
+    } catch (e) {}
 
     InterventionApi interventionApi = InterventionApi();
 
@@ -459,7 +455,7 @@ class InterventionPageState extends State<InterventionPage> {
         form_on_site_uuid: currentFormulaire.form_on_site_uuid);
 
     // if custom_fields was configured for this formulaire and for this type of intervention
-    if (jsonCF.length > 0) {
+    if (jsonCF.isNotEmpty) {
       CardSettingsSection css = cardSettingsSectionCustomFields(
           section: Section(
               section_on_site_uuid: generateUUID(),
@@ -479,7 +475,6 @@ class InterventionPageState extends State<InterventionPage> {
         onHorizontalDragEnd: (DragEndDetails details) {
           if (details.primaryVelocity is double) {
             if (details.primaryVelocity! > 0) {
-              print("gauche");
               if (_indexFormulaires > 0) {
                 setState(() {
                   _indexFormulaires--;
@@ -495,7 +490,6 @@ class InterventionPageState extends State<InterventionPage> {
                   currentFormulaire = mapFormulaires[s] as Formulaire;
                 });
               }
-              print("droite");
             }
           }
         },
@@ -554,8 +548,6 @@ class InterventionPageState extends State<InterventionPage> {
     List<CardSettingsWidget> lCardSettingsWidget = [];
 
     if (json_custom_fields.length > 0) {
-      print("yo");
-
       json_custom_fields.forEach((key, value) {
         String testCF = "";
 
@@ -709,7 +701,6 @@ class InterventionPageState extends State<InterventionPage> {
         items: possibleUsers,
         // controller: fieldsController[f.field_on_site_uuid],
         onChanged: (user) {
-          print(user.toString());
           String old_user_id = fieldsController[f.field_on_site_uuid]!.text;
           if (old_user_id != user.id) {
             fieldsController[f.field_on_site_uuid]!.text = user.id;

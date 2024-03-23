@@ -73,7 +73,6 @@ class FormulairePageState extends State<FormulairePage> {
                                       iconSize: 40.0,
                                       icon: const Icon(Icons.settings),
                                       onPressed: () {
-                                        print("tyo");
                                         Navigator.push(context,
                                             MaterialPageRoute(
                                                 builder: (context) {
@@ -86,7 +85,7 @@ class FormulairePageState extends State<FormulairePage> {
                                         }));
                                       },
                                     ),
-                                    Text("champs personnalisés")
+                                    const Text("champs personnalisés")
                                   ],
                                 ),
                               ],
@@ -97,6 +96,7 @@ class FormulairePageState extends State<FormulairePage> {
 
   PreferredSize widgetAppBar(User? me) {
     return PreferredSize(
-        preferredSize: Size.fromHeight(100), child: BaseAppBar(title: _title));
+        preferredSize: const Size.fromHeight(100),
+        child: BaseAppBar(title: _title));
   }
 }

@@ -19,9 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Fidwork',
       debugShowCheckedModeBanner: false,
-      routes: {
-        SitePage.routeName: (context) => const SitePage(),
-      },
+
       // https://docs.flutter.dev/cookbook/design/themes#set-a-unique-themedata-instance
       // https://medium.flutterdevs.com/implement-dark-mode-in-flutter-using-provider-158925112bf9
       theme: ThemeData(

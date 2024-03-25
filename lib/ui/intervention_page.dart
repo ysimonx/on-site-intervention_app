@@ -512,13 +512,18 @@ class InterventionPageState extends State<InterventionPage> {
       {required String type_intervention, required String form_on_site_uuid}) {
     Map<String, dynamic> result = {};
 
-    if (widget.site.dictOfCustomFields.containsKey(type_intervention)) {
-      Map<String, dynamic> dictCF =
-          widget.site.dictOfCustomFields[type_intervention]["forms"];
-      if (dictCF.keys.contains(form_on_site_uuid)) {
-        result = dictCF[form_on_site_uuid]["custom_fields"];
+    try {
+      if (widget.site.dictOfCustomFields.containsKey(type_intervention)) {
+        Map<String, dynamic> docfTypeIntervention =
+            widget.site.dictOfCustomFields[type_intervention];
+        if (docfTypeIntervention.containsKey("forms")) {
+          Map<String, dynamic> dictCF = docfTypeIntervention["forms"];
+          if (dictCF.keys.contains(form_on_site_uuid)) {
+            result = dictCF[form_on_site_uuid]["custom_fields"];
+          }
+        }
       }
-    }
+    } catch (e) {}
     return result;
   }
 
@@ -622,6 +627,11 @@ class InterventionPageState extends State<InterventionPage> {
 
     if (f.field_type == "list") {
       return genCardSettingsListPicker(initialValue, f,
+          possible_values: f.field_possible_values);
+    }
+
+    if (f.field_type == "radio_button") {
+      return genCardSettingsListRadioButton(initialValue, f,
           possible_values: f.field_possible_values);
     }
 
@@ -746,10 +756,40 @@ class InterventionPageState extends State<InterventionPage> {
         });
   }*/
 
-  CardSettingsListPicker<dynamic> genCardSettingsListPicker(
+//genCardSettingsListRadioButton
+  CardSettingsSelectionPicker<dynamic> genCardSettingsListRadioButton(
       String initialValue, Field f,
       {required List<dynamic> possible_values}) {
-    return CardSettingsListPicker(
+    return CardSettingsSelectionPicker(
+        showMaterialonIOS: true,
+        initialItem: initialValue,
+        label: f.field_label,
+        items: possible_values,
+        validator: (value) {
+          String newvalue;
+          if (value == null) {
+            newvalue = "";
+          } else {
+            newvalue = value;
+          }
+          fieldsController[f.field_on_site_uuid]!.text = newvalue;
+
+          // keep track of real updates
+          if (newvalue != initialValue) {
+            if (!listFieldsUUIDUpdated.contains(f.field_on_site_uuid)) {
+              listFieldsUUIDUpdated.add(f.field_on_site_uuid);
+            }
+            _needSave = true;
+          }
+
+          return null;
+        });
+  }
+
+  CardSettingsSelectionPicker<dynamic> genCardSettingsListPicker(
+      String initialValue, Field f,
+      {required List<dynamic> possible_values}) {
+    return CardSettingsSelectionPicker(
         initialItem: initialValue,
         label: f.field_label,
         items: possible_values,

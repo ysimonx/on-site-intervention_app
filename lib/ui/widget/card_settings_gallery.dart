@@ -1,6 +1,8 @@
 // Copyright (c) 2018, codegrue. All rights reserved. Use of this source code
 // is governed by the MIT license that can be found in the LICENSE file.
 
+// ignore_for_file: unnecessary_brace_in_string_interps, non_constant_identifier_names
+
 import 'dart:convert';
 import 'dart:io';
 

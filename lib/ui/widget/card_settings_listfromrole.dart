@@ -1,6 +1,8 @@
 // Copyright (c) 2018, codegrue. All rights reserved. Use of this source code
 // is governed by the MIT license that can be found in the LICENSE file.
 
+// ignore_for_file: unnecessary_this
+
 import 'package:card_settings/card_settings.dart';
 import 'package:card_settings/helpers/platform_functions.dart';
 import 'package:card_settings/interfaces/common_field_properties.dart';

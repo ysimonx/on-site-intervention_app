@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, non_constant_identifier_names, empty_catches
 
 import 'dart:convert';
 import 'dart:io';
@@ -26,6 +26,7 @@ import '../models/model_user.dart';
 import '../network/api/constants.dart';
 import '../network/api/image.api.dart';
 import '../network/api/intervention_api.dart';
+import '../network/api/tc.dart';
 import '../network/api/user_api.dart';
 import 'utils/logger.dart';
 import 'utils/tools.dart';
@@ -63,6 +64,8 @@ class InterventionPageState extends State<InterventionPage> {
   late Map<String, Formulaire> mapFormulaires = {};
   late Map<String, dynamic> mapMandatoryLists = {};
 
+  late TC tc;
+
   bool _needSave = false;
 
   late Formulaire currentFormulaire;
@@ -88,6 +91,8 @@ class InterventionPageState extends State<InterventionPage> {
   @override
   void initState() {
     super.initState();
+
+    tc = TC();
 
     intervention_status = widget.intervention.status;
 
@@ -180,6 +185,11 @@ class InterventionPageState extends State<InterventionPage> {
         future: myFuture,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
+            tc.sendCustomEvent(
+                key: "view_ui",
+                value:
+                    "intervention : ${widget.intervention.intervention_name}");
+
             return Scaffold(
                 resizeToAvoidBottomInset: false,
                 appBar: AppBar(
@@ -319,6 +329,8 @@ class InterventionPageState extends State<InterventionPage> {
     if (listStatuses.contains(intervention_status) == false) {
       intervention_status = listStatuses[0];
     }
+
+    // todo : https://api.flutter.dev/flutter/material/DropdownButton-class.html
 
     return FlexList(horizontalSpacing: 5, verticalSpacing: 10, children: [
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1170,7 +1182,7 @@ class InterventionPageState extends State<InterventionPage> {
                 ]),
                 Padding(
                     padding: const EdgeInsets.only(top: 5.0),
-                    child: widgetListInterventionSamePlace(
+                    child: WidgetListInterventionSamePlace(
                         site: widget.site,
                         place: widget.intervention.place,
                         onChanged: (
@@ -1196,10 +1208,10 @@ class InterventionPageState extends State<InterventionPage> {
     String url =
         "${Endpoints.baseUrl}${Endpoints.downloadFEB.replaceAll("<intervention_values_id>", widget.intervention.id)}";
 
-    final Uri _url = Uri.parse(url);
+    final Uri url0 = Uri.parse(url);
 
-    if (!await launchUrl(_url)) {
-      throw Exception('Could not launch $_url');
+    if (!await launchUrl(url0)) {
+      throw Exception('Could not launch $url0');
     }
   }
 

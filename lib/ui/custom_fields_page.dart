@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, non_constant_identifier_names, avoid_function_literals_in_foreach_calls
 
 import 'package:diacritic/diacritic.dart';
 import 'package:dio/dio.dart';
@@ -53,7 +53,6 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
     _title = "champs personnalisés";
 
     mapCustomFieldsSite = widget.site.dictOfCustomFields;
-    print(mapCustomFieldsSite.toString());
     if (mapCustomFieldsSite.containsKey(widget.type_intervention)) {
       Map<String, dynamic> confCustomFields =
           mapCustomFieldsSite[widget.type_intervention];
@@ -121,7 +120,7 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
                                     saveCustomFields();
                                     setState(() {});
                                   }),
-                              SizedBox(width: 40.0),
+                              const SizedBox(width: 40.0),
                               Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -301,7 +300,7 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
               duration: Duration(milliseconds: 100),
-              content: const Text("Processing Data")),
+              content: Text("Processing Data")),
         );
       }
       if (response.statusCode == 400) {

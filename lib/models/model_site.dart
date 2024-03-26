@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'model_lists_for_places.dart';
 import 'model_tenant.dart';
 import 'model_user.dart';

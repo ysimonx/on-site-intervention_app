@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, prefer_conditional_assignment
 
 import 'package:diacritic/diacritic.dart';
 import 'package:dio/dio.dart';
@@ -230,7 +230,6 @@ class UsersPageState extends State<UsersPage> {
             for (var j = 0; j < users.length; j++) {
               Map<String, dynamic> userJSON = users[j]["user"];
 
-              String x = userJSON["company"];
               if (userJSON["company"] != null) {
                 String company = userJSON["company"];
 
@@ -426,9 +425,9 @@ class UsersPageState extends State<UsersPage> {
     return RawAutocomplete<String>(
       initialValue: TextEditingValue(text: initialValue),
       optionsBuilder: (TextEditingValue textEditingValue) {
-        List<String> _options = companies;
+        List<String> options = companies;
 
-        return _options.where((String option) {
+        return options.where((String option) {
           return option.contains(textEditingValue.text.toLowerCase());
         });
       },

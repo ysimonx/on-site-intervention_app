@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flex_list/flex_list.dart';
 import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
@@ -104,6 +106,8 @@ Widget widgetFilterList(FilterList filterList,
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Text("Status"),
             DropdownButton<String>(
+                //  isExpanded: true,
+                itemHeight: null,
                 value: filterList.status,
                 items: listStatusDropdownMenuItems,
                 onChanged: (value) {
@@ -114,6 +118,8 @@ Widget widgetFilterList(FilterList filterList,
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Text(Config.roleAssignee),
             DropdownButton<int>(
+                //  isExpanded: true,
+                itemHeight: null,
                 value: filterList.indiceCoordinator,
                 items: listDropdownMenuItemsUsers,
                 onChanged: (value) {
@@ -133,11 +139,16 @@ Widget genDrowdownUserContent(User u) {
   return Row(
     children: [
       SizedBox(
-          width: 200.0,
+          width: 150.0,
           child: Text(
               overflow: TextOverflow.ellipsis,
               " ${u.firstname.toCapitalized()} ${u.lastname.toCapitalized()} ")),
-      SizedBox(child: Text(" ${u.company.toUpperCase()}")),
+      SizedBox(
+          width: 100.0,
+          child: Text(
+            " ${u.company.toUpperCase()}",
+            overflow: TextOverflow.ellipsis,
+          )),
     ],
   );
 }

@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, non_constant_identifier_names
 
 import 'dart:io';
 import 'dart:convert';
@@ -231,7 +231,7 @@ class SiteApi {
       required Formulaire formulaire}) async {
     Map<String, dynamic> dict_of_custom_fields = {};
     dictOfCustomFields.forEach((key, value) {
-      dict_of_custom_fields["${key}"] = value.toJSON();
+      dict_of_custom_fields["$key"] = value.toJSON();
     });
 
     try {

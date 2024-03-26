@@ -1,4 +1,4 @@
-// ignore_for_file: empty_statements, unused_import
+// ignore_for_file: empty_statements, unused_import, non_constant_identifier_names
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -223,7 +223,8 @@ class _SitePageState extends State<SitePage> {
                 // if (listInterventions.isNotEmpty) {
                 logger.d("ta da builder ${listInterventions.length}");
 
-                tc.sendCustomEvent(key: "view_ui", value: "sites");
+                tc.sendCustomEvent(
+                    key: "view_ui", value: "site : ${widget.site.name}");
 
                 return Column(children: <Widget>[
                   widgetFilterList(filterList,
@@ -231,7 +232,6 @@ class _SitePageState extends State<SitePage> {
                       onChangedFilterList: (FilterList value) async {
                     await _storage.write(
                         key: "lastStatus", value: value.status);
-                    String? x = await _storage.read(key: "lastStatus");
                     await _storage.write(
                         key: "lastCoordinatorUserId",
                         value: value.user_coordinator.id);

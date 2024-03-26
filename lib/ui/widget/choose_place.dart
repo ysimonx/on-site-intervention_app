@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, avoid_function_literals_in_foreach_calls
+
 import 'package:flutter/material.dart';
 import 'package:on_site_intervention_app/models/model_site.dart';
 

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, avoid_print
+
 import 'package:tc_serverside_plugin/events/TCCustomEvent.dart';
 import 'package:tc_serverside_plugin/events/TCLoginEvent.dart';
 import 'package:tc_serverside_plugin/tc_serverside.dart';
@@ -20,7 +22,11 @@ class TC {
   Future<void> sendEventLogin({required String email}) async {
     //  await serverside.enableRunningInBackground();
     // await serverside.enableServerSide();
-    await serverside.execute(makeTCLoginEvent(email: email));
+    try {
+      await serverside.execute(makeTCLoginEvent(email: email));
+    } catch (e) {
+      print(e.toString());
+    }
     return;
   }
 
@@ -29,7 +35,12 @@ class TC {
     //  await serverside.enableRunningInBackground();
     // await serverside.enableServerSide();
     try {
-      await serverside.execute(makeTCCustomEvent(key: key, value: value));
+      Future<void>.delayed(
+        const Duration(milliseconds: 100),
+        () async {
+          serverside.execute(makeTCCustomEvent(key: key, value: value));
+        },
+      );
     } catch (e) {
       print(e.toString());
     }

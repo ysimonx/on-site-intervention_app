@@ -22,6 +22,7 @@ class DioClient {
       ..options.connectTimeout = Endpoints.connectionTimeout
       ..options.receiveTimeout = Endpoints.receiveTimeout
       ..options.responseType = ResponseType.json
+      ..options.validateStatus = setAcceptedStatusCode
       ..interceptors.add(LogInterceptor(
         request: true,
         requestHeader: true,
@@ -65,6 +66,13 @@ class DioClient {
 
       return handler.next(e);
     }));
+  }
+
+  bool setAcceptedStatusCode(int? status) {
+    if (status is int) {
+      return status >= 200 && status < 300 || status == 304;
+    }
+    return false;
   }
 
   Future<void> refreshAccessToken() async {

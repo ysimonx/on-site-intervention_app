@@ -116,7 +116,7 @@ class _HomepageUnAuthentifiedContentState
                 return;
               }
               badAuth = false;
-              await tc.sendEventLogin(email: email);
+              tc.sendEventLogin(email: email);
               widget.onConnexion(1);
 
               // setState(() {});

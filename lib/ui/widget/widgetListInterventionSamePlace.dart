@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, file_names
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -9,13 +9,13 @@ import '../../models/model_site.dart';
 import '../../network/api/intervention_api.dart';
 import '../utils/logger.dart';
 
-class widgetListInterventionSamePlace extends StatefulWidget {
+class WidgetListInterventionSamePlace extends StatefulWidget {
   final Site site;
   final Place place;
   final void Function(
       {required Intervention intervention,
       required String next_indice}) onChanged;
-  const widgetListInterventionSamePlace({
+  const WidgetListInterventionSamePlace({
     super.key,
     required this.site,
     required this.place,
@@ -24,13 +24,13 @@ class widgetListInterventionSamePlace extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return widgetListInterventionSamePlaceState();
+    return WidgetListInterventionSamePlaceState();
   }
 }
 
 // Create a corresponding State class.
-class widgetListInterventionSamePlaceState
-    extends State<widgetListInterventionSamePlace> {
+class WidgetListInterventionSamePlaceState
+    extends State<WidgetListInterventionSamePlace> {
   late InterventionApi interventionAPI;
   Map<String, String> MaxIndices = {};
   List<Intervention> filteredListIntervention = [];

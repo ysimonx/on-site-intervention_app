@@ -209,8 +209,8 @@ class _SignaturePageState extends State<SignaturePage> {
                 String value = attr.value;
                 List<String> points = value.split(" ");
                 List<String> filteredPoints = [];
-                dynamic x_prec = -1;
-                dynamic y_prec = -1;
+                dynamic xPrec = -1;
+                dynamic yPrec = -1;
 
                 for (String point in points) {
                   List<String> xy = point.split(",");
@@ -225,12 +225,12 @@ class _SignaturePageState extends State<SignaturePage> {
                     x = doublex;
                     y = doubley;
                   }
-                  if ((x - x_prec).abs() > minDistanceBetweenPoints ||
-                      (y - y_prec).abs() > minDistanceBetweenPoints) {
+                  if ((x - xPrec).abs() > minDistanceBetweenPoints ||
+                      (y - yPrec).abs() > minDistanceBetweenPoints) {
                     String s = "$x,$y";
                     filteredPoints.add(s);
-                    x_prec = x;
-                    y_prec = y;
+                    xPrec = x;
+                    yPrec = y;
                   }
                 }
                 childsvg.setAttribute("points", filteredPoints.join(" "));

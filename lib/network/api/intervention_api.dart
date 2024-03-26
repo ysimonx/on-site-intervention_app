@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, unnecessary_brace_in_string_interps, empty_statements, unused_import
+// ignore_for_file: avoid_print, unnecessary_brace_in_string_interps, empty_statements, unused_import, constant_identifier_names, non_constant_identifier_names
 
 import 'dart:io';
 import 'dart:convert';
@@ -93,7 +93,7 @@ class InterventionApi {
 
     if (bln304) {
       if (prec_result != null) {
-        if (prec_result.length > 0) {
+        if (prec_result.isNotEmpty) {
           print("304");
           return prec_result;
         }
@@ -103,7 +103,7 @@ class InterventionApi {
       if (lastModified != "") {
         if (mapListInterventionsLastModified[site.id] == lastModified) {
           if (prec_result != null) {
-            if (prec_result.length > 0) {
+            if (prec_result.isNotEmpty) {
               print("deja chargé en mémoire");
               return prec_result;
             }
@@ -470,6 +470,10 @@ class InterventionApi {
       final Response response = await dioClient.get(
           Endpoints.listInterventionsValuesPhotos,
           queryParameters: qParams);
+
+      if (response.statusCode == 304) {
+        return;
+      }
 
       if (response.statusCode == 200) {
         response.headers.forEach((name, values) {

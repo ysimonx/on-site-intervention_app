@@ -223,10 +223,10 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                 }
                 if (value == valueGOOGLESTORE) {
                   //
-                  final Uri _url = Uri.parse(
+                  final Uri url0 = Uri.parse(
                       'https://play.google.com/store/apps/details?id=fr.fidwork.app&hl=fr-FR');
-                  if (!await launchUrl(_url)) {
-                    throw Exception('Could not launch $_url');
+                  if (!await launchUrl(url0)) {
+                    throw Exception('Could not launch $url0');
                   }
                 }
                 if (value == valueEXPORTCSV) {
@@ -234,9 +234,9 @@ class AuthentifiedBaseAppBar extends StatelessWidget
                   String url =
                       "${Endpoints.baseUrl}${Endpoints.exportInterventionsCSV.replaceAll("<site_id>", site!.id)}";
 
-                  final Uri _url = Uri.parse(url);
-                  if (!await launchUrl(_url)) {
-                    throw Exception('Could not launch $_url');
+                  final Uri url1 = Uri.parse(url);
+                  if (!await launchUrl(url1)) {
+                    throw Exception('Could not launch $url1');
                   }
                 }
               })

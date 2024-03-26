@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, unnecessary_cast, avoid_function_literals_in_foreach_calls
+
 import '../ui/utils/logger.dart';
 
 class ListForPlaces {

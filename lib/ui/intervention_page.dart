@@ -542,7 +542,14 @@ class InterventionPageState extends State<InterventionPage> {
   CardSettingsSection cardSettingsSection(Section s) {
     List<CardSettingsWidget> lCardSettingsWidget = [];
 
-    s.fields
+    Map<int, Field> orderedFields = {};
+
+    s.fields.forEach((key, f) => orderedFields[int.parse(key)] = f);
+
+    var sortedByKeyMap = Map.fromEntries(orderedFields.entries.toList()
+      ..sort((e1, e2) => e1.key.compareTo(e2.key)));
+
+    sortedByKeyMap
         .forEach((key, f) => lCardSettingsWidget.add(fieldCardSettings(f, s)));
 
     return CardSettingsSection(

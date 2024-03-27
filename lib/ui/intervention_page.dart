@@ -710,6 +710,9 @@ class InterventionPageState extends State<InterventionPage> {
   dynamic genCardSettingsUserFromRole(String initialValueUserID, Field f) {
     String roleName = f.field_possible_values[0];
     List<User> possibleUsers = widget.site.getUsersForRoleName(roleName);
+    possibleUsers.sort((usera, userb) => "${usera.company} ${usera.lastname}"
+        .compareTo("${userb.company} ${userb.lastname}"));
+
     possibleUsers.insert(0, User.nobody());
     String initialValue = "0";
     for (var i = 0; i < possibleUsers.length; i++) {

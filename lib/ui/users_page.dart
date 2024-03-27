@@ -156,7 +156,8 @@ class UsersPageState extends State<UsersPage> {
                                     await siteApi.removeUserRoles(
                                         idSite: s.id, email: u.email);
 
-                                if (response.statusCode == 200) {
+                                if (response.statusCode == 200 ||
+                                    response.statusCode == 201) {
                                   callBack("Processing Data");
                                 }
                                 if (response.statusCode == 400) {
@@ -392,7 +393,8 @@ class UsersPageState extends State<UsersPage> {
                       user: user,
                       idsRoles: idsRole);
 
-                  if (response.statusCode == 200) {
+                  if (response.statusCode == 200 ||
+                      response.statusCode == 201) {
                     Navigator.pop(context);
                     callback("Processing Data");
                     return;

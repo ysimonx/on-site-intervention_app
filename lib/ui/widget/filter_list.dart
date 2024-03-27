@@ -142,7 +142,7 @@ Widget genDrowdownUserContent(User u) {
           width: 150.0,
           child: Text(
               overflow: TextOverflow.ellipsis,
-              " ${u.firstname.toCapitalized()} ${u.lastname.toCapitalized()} ")),
+              "${u.lastname.toUpperCase()} ${u.firstname.toCapitalized()}")),
       SizedBox(
           width: 100.0,
           child: Text(

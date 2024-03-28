@@ -224,8 +224,11 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
             const SizedBox(height: 10),
             TextField(
               onChanged: (v) {
+                String new_value = v;
+                new_value = new_value.toLowerCase();
+                new_value = new_value.replaceAll(" ", "-");
                 controllerCustomFieldCodeName.value = TextEditingValue(
-                    text: v.toLowerCase(),
+                    text: new_value,
                     selection: controllerCustomFieldCodeName.selection);
               },
               controller: controllerCustomFieldCodeName,

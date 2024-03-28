@@ -274,9 +274,12 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
               child: const Text('Ok'),
               onPressed: () async {
                 CustomField customField = CustomField(
-                    code: controllerCustomFieldCodeName.text.toLowerCase(),
-                    label: controllerCustomFieldName.text.toLowerCase(),
-                    autocomplete_values: controllerValues.text.split("\n"));
+                    code: cleanString(controllerCustomFieldCodeName.text)
+                        .toLowerCase(),
+                    label: cleanString(controllerCustomFieldName.text)
+                        .toLowerCase(),
+                    autocomplete_values:
+                        controllerValues.text.replaceAll("\r", "").split("\n"));
 
                 onNewValue(customField: customField);
                 Navigator.pop(context);
@@ -286,6 +289,13 @@ class CustomFieldsPageState extends State<CustomFieldsPage> {
         );
       },
     );
+  }
+
+  String cleanString(String s) {
+    String result = s;
+    result = result.replaceAll("\r", "");
+    result = result.trim();
+    return result;
   }
 
   void saveCustomFields() async {
